@@ -1,3 +1,3 @@
-import sys
+import pygame
 
 print "woo!"
