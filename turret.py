@@ -30,7 +30,7 @@ class Turret(object):
                     self.valid_placement = False
         
         for turret in game.turrets:
-            if self.rect.colliderect( turret.rect ):
+            if self.rect.colliderect( turret.rect ) and turret.valid_placement == True:
                 self.valid_placement = False
     
         #attacking statistics
