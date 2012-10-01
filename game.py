@@ -20,7 +20,7 @@ class Game(object):
         self.player = Player(self.imgPlayer)
         self.mapSize = [32, 32]
         self.tiles = []
-        #self.turrets = []
+        self.turrets = []
         #self.creeps = []
 
         self.load_tiles()
@@ -31,6 +31,8 @@ class Game(object):
         self.imgPlayer.set_colorkey( (255, 0, 255) )
         self.imgTile = pygame.image.load("Art/tiles/tile-grass.png").convert()
         self.imgTileWall = pygame.image.load("Art/tiles/obj-wall.png").convert()
+        self.imgBasicTurret = pygame.image.load("Art/tiles/obj-guardtowertest3.png").convert()
+        self.imgBasicTurret.set_colorkey( (255, 0, 255) )
 
     def load_tiles(self):
         """generate a level, and store it in tiles[][]"""
@@ -51,6 +53,13 @@ class Game(object):
 
         self.player.update(self)
         
+        for x, turret in enumerate(self.turrets):
+            if turret.valid_placement == True:
+                turret.update(self)
+            else:
+                #remove turrets that do not have valid placement
+                self.turrets.pop(x)
+                
     def get_input(self):
         """get and handle user input"""
         #exit on esc
@@ -76,6 +85,9 @@ class Game(object):
                     self.player.direction[1] += -1
                 if event.key == pygame.K_d:
                     self.player.direction[0] += -1
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                #event.pos[0] and event.pos[1] are the mouse x,y coordinates respectively relative to the game window
+                self.turrets.append(Turret(self, event.pos[0], event.pos[1]))
         
     def draw(self):
         """draw"""
@@ -83,6 +95,9 @@ class Game(object):
         #draw stuff, from back->front
         self.draw_tiles()
         self.player.draw(self.screen)
+        
+        for turret in self.turrets:
+            turret.draw(self.screen)
         
         #actually draw it
         pygame.display.flip()
