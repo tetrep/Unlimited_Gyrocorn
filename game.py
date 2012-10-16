@@ -2,6 +2,8 @@ import pygame, sys
 from tile import *
 from player import *
 from turret import *
+from creep import *
+from creep_path import *
 
 class Game(object):
     def __init__(self):
@@ -21,7 +23,8 @@ class Game(object):
         self.mapSize = [32, 32]
         self.tiles = []
         self.turrets = []
-        #self.creeps = []
+        self.creeps = []
+        self.creeps.append(Creep(self.imgPlayer))
 
         self.load_tiles()
         
@@ -46,12 +49,20 @@ class Game(object):
                     tempTile.blocking = True
                     tempTile.img = self.imgTileWall
                 self.tiles[x].append( tempTile )
-        
+
+        #generate path for creeps to follow
+        the_path = CreepPath((30, 30))
+        the_path.find_path(self)
+
     def update(self):
         """Do logic/frame"""
         self.deltaT = self.clock.tick()
 
         self.player.update(self)
+
+        #update creeps
+        for creep in self.creeps:
+            creep.update(self)
         
         for x, turret in enumerate(self.turrets):
             if turret.valid_placement == True:
@@ -94,6 +105,11 @@ class Game(object):
         self.screen.fill( (0, 0, 0) ) #screen wipe
         #draw stuff, from back->front
         self.draw_tiles()
+
+        #draw the creeps
+        for creep in self.creeps:
+            creep.draw(self.screen)
+
         self.player.draw(self.screen)
         
         for turret in self.turrets:

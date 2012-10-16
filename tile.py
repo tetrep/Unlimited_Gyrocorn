@@ -9,6 +9,8 @@ class Tile(object):
         self.y = 0
 
         self.blocking = False
+
+        self.creep_value = 999
         
     def draw(self, screen):
         """draw the tile to the screen"""
