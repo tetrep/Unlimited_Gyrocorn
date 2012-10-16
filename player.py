@@ -1,32 +1,34 @@
 import pygame
 
 class Player(object):
+    #  @param img a reference to a pygame.Surface containing the spritesheet to be used for draw calls.
     def __init__(self, img):
         """initialize player"""
         self.img = img
         
-        self.x = 0
-        self.y = 0
-        self.rect = pygame.Rect(self.x, self.y, 24, 32)
+        self.x = 0 #position in pixels
+        self.y = 0 #position in pixels
+        self.rect = pygame.Rect(self.x, self.y, 24, 32) #collision box
         self.speed = 64.0 #speed in pixels/sec
-        self.direction = [0, 0]
-        self.collision = [False, False]
+        self.direction = [0, 0] #-1, 0, or 1 x multiplier for orientation of motion along x and y axes
+        self.collision = [False, False] #whether the x or y axes of motion are obstructed
 
         self.frame = 0
         self.frameMax = 7
         self.frameDirection = 0
         self.frameTimer = 0
         self.frameDelay = 100 #time between frames in ms
-        
+
+    #  @param g a reference to the Game class that is currently running.    
     def update(self, g):
         """update the player (per frame), using data from game g"""
         #collision detection
         self.collision = [False, False]
-        #Need floats to ensure no "sticking" behaviour occurs (int rounding imprecision with rects)
+        #Needs to be floats to ensure the player doesn't get stuck in a wall (rounding errors cause this)
         self.futurex = self.x + self.speed * self.direction[0] * g.deltaT / 1000.0
         self.futurey = self.y + self.speed * self.direction[1] * g.deltaT / 1000.0
         
-        #bounds
+        #bounds of game area
         if self.futurex < 0 or self.futurex + self.rect.width > g.mapSize[0] * 24:
             #cannot move in x
             self.collision[0] = True
@@ -75,6 +77,17 @@ class Player(object):
                 self.frame = 0
         else: #player is idle
             self.frame = 0
-    def draw(self, screen):
+
+    #  @param g a reference to the Game class that is currently running.        
+    def draw(self, g):
         """draw the player to the screen"""
-        screen.blit(self.img, pygame.Rect(self.x, self.y, 24, 32), pygame.Rect(25 * self.frameDirection, 33 * self.frame, 24, 32) )
+        temp = pygame.Surface( (24, 32) ).convert()
+        temp.fill( (255, 255, 0) )
+        temp.set_colorkey( (255, 255, 0) ) 
+        temp.blit(self.img, pygame.Rect(0, 0, 24, 32), pygame.Rect(25 * self.frameDirection, 33 * self.frame, 24, 32) )
+        offset = [-1 *( g.focus[0] - g.view[0] / 2 ), -1 * ( g.focus[1] - g.view[1] / 2 ) ]
+        #zoom logic
+        temp = pygame.transform.scale(temp, ( (int)(temp.get_width() * g.zoom), (int)(temp.get_height() * g.zoom) ) )
+        
+        g.screen.blit(temp, pygame.Rect( (int)(self.x * g.zoom) + offset[0], (int)(self.y * g.zoom) + offset[1], (int)(24 * g.zoom), (int)(32 * g.zoom) ) )
+        #screen.blit(self.img, pygame.Rect(self.x, self.y, 24, 32), pygame.Rect(25 * self.frameDirection, 33 * self.frame, 24, 32) )

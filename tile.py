@@ -1,6 +1,7 @@
 import pygame
 
 class Tile(object):
+    #  @param img a reference to a pygame.Surface containing the image to be used for draw calls.
     def __init__(self, img):
         """initialize tile"""
         self.img = img
@@ -9,7 +10,14 @@ class Tile(object):
         self.y = 0
 
         self.blocking = False
-        
-    def draw(self, screen):
+
+    #  @param g a reference to the Game class that is currently running.
+    def draw(self, g):
         """draw the tile to the screen"""
-        screen.blit( self.img, pygame.Rect( self.x, self.y, 24, 24 ) )
+        temp = pygame.Surface( (24, 24) )
+        temp.blit(self.img, pygame.Rect(0, 0, 24, 24) )
+        offset = [-1 *( g.focus[0] - g.view[0] / 2 ), -1 * ( g.focus[1] - g.view[1] / 2 ) ]
+        #zoom logic
+        temp = pygame.transform.scale(temp, ( (int)(24 * g.zoom), (int)(24 * g.zoom) ))
+        g.screen.blit( temp, pygame.Rect( (int)(self.x * g.zoom) + offset[0], (int)(self.y * g.zoom) + offset[1], (int)(24 * g.zoom), (int)(24 * g.zoom) ) )
+        #g.screen.blit( self.img, pygame.Rect( self.x, self.y, 24, 24 ) )

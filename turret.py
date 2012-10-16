@@ -47,10 +47,25 @@ class Turret(object):
         pass
     
     ## the Turret draw
-    # @param screen the screen on which the Turret will be drawn
-    def draw(self, screen):
-        """draw the player to the screen"""
-        screen.blit(self.img, pygame.Rect(self.x, self.y, self.rect.width, self.rect.height), pygame.Rect(0, 0, self.rect.width, self.rect.height) )
+    # @param g a reference to the Game that is currently running
+    def draw(self, g):
+        """draw the turret to the screen"""
+        #declare a temporary surface to apply transformations to
+        temp = pygame.Surface( (self.rect.width, self.rect.height) ).convert()
+        #set up transparency
+        temp.fill( (255, 255, 0) )
+        temp.set_colorkey( (255, 255, 0) )
+        #draw img to temp
+        temp.blit(self.img, pygame.Rect(0, 0, self.rect.width, self.rect.height) )
+        #calculate offset
+        offset = [-1 *( g.focus[0] - g.view[0] / 2 ), -1 * ( g.focus[1] - g.view[1] / 2 ) ]
+        #zoom logic
+        temp = pygame.transform.scale(temp, ( (int)(self.rect.width * g.zoom), (int)(self.rect.height * g.zoom) ))
+        #draw to the game screen
+        g.screen.blit( temp, pygame.Rect( (int)(self.x * g.zoom) + offset[0], (int)(self.y * g.zoom) + offset[1], \
+            (int)(self.rect.width * g.zoom), (int)(self.rect.height * g.zoom) ) )
+        
+        #g.screen.blit(self.img, pygame.Rect(self.x, self.y, self.rect.width, self.rect.height), pygame.Rect(0, 0, self.rect.width, self.rect.height) )
     
     ## set the Turret attack speed
     # @param new_attack_speed the attack_speed the Turret will be given (default to 0)
