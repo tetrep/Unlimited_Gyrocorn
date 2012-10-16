@@ -121,8 +121,23 @@ class Game(object):
                 if event.key == pygame.K_d:
                     self.player.direction[0] += -1
             if event.type == pygame.MOUSEBUTTONDOWN:
-                #event.pos[0] and event.pos[1] are the mouse x,y coordinates respectively relative to the game window
-                self.turrets.append(Turret(self, event.pos[0], event.pos[1]))
+                if event.button == 1: #left click
+                    #event.pos[0] and event.pos[1] are the mouse x,y coordinates respectively relative to the game window
+                    #needs to be converted to give a mapping in game space.
+                    #if   map = pos * zoom - (focus - view / 2)
+                    #then pos = (map + (focus - view / 2) ) / zoom
+                    pos = [ (event.pos[0] + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (event.pos[1] + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
+                    self.turrets.append( Turret( self, pos[0], pos[1] ) )
+                    
+                elif event.button == 4: #mouse wheel down
+                    self.zoom -= .1
+                    if self.zoom < 1:
+                        self.zoom = 1
+                        
+                elif event.button == 5: #mouse wheel up
+                    self.zoom += .1
+                    if self.zoom > 4:
+                        self.zoom = 4
         
     def draw(self):
         """draw"""
