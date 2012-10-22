@@ -35,10 +35,12 @@ class CreepPath(object):
         #self.path_recursion(0, self.game)
 
         #start the queue
+        self.game.tiles[self.source[0]][self.source[1]].creep_value = 0
         self.queue.put((self.source[0], self.source[1], 0))
 
         self.queue.join()
 
+        """
         temp = ""
         temp2 = 0
         for x2 in range(0, self.game.mapSize[0]):
@@ -48,8 +50,9 @@ class CreepPath(object):
             print temp
             temp = ""
         print temp2
+        """
 
-        sys.exit()
+        #sys.exit()
         
         
 
@@ -59,7 +62,6 @@ class CreepPath(object):
     def path_queue(self):
         while True:
             info = self.queue.get()
-            print "grabbed tile ", info[0], ",", info[1]
             self.process_tile(info[0], info[1], info[2])
             self.queue.task_done()
 
@@ -70,28 +72,34 @@ class CreepPath(object):
     #  @param value the value we want to replace creep_value with
     def process_tile(self, x, y, value):
         #we've found a shorter path, update
-        self.game.tiles[x][y].creep_value = value
 
         #check up-left
-        if y > 0 and x > 0 and value < self.game.tiles[x][y].creep_value:
+        if y > 0 and x > 0 and value < self.game.tiles[x-1][y-1].creep_value:
+            self.game.tiles[x-1][y-1].creep_value = value
             self.queue.put((x-1, y-1, value+1.4))
         #check up
-        if y > 0 and value < self.game.tiles[x][y].creep_value:
+        if y > 0 and value < self.game.tiles[x][y-1].creep_value:
+            self.game.tiles[x][y-1].creep_value = value
             self.queue.put((x, y-1, value+1))
         #check up-right
-        if y > 0 and x < self.game.mapSize[0] and value < self.game.tiles[x][y].creep_value:
+        if y > 0 and x+1 < self.game.mapSize[0] and value < self.game.tiles[x+1][y-1].creep_value:
+            self.game.tiles[x+1][y-1].creep_value = value
             self.queue.put((x+1, y-1, value+1.4))
         #check right
-        if x < self.game.mapSize[0] and value < self.game.tiles[x][y].creep_value:
+        if x+1 < self.game.mapSize[0] and value < self.game.tiles[x+1][y].creep_value:
+            self.game.tiles[x+1][y].creep_value = value
             self.queue.put((x+1, y, value+1))
         #check right-down
-        if x < self.game.mapSize[0] and y < self.game.mapSize[1] and value < self.game.tiles[x][y].creep_value:
+        if x+1 < self.game.mapSize[0] and y+1 < self.game.mapSize[1] and value < self.game.tiles[x+1][y+1].creep_value:
+            self.game.tiles[x+1][y+1].creep_value = value
             self.queue.put((x+1, y+1, value+1.4))
         #check down
-        if y < self.game.mapSize[1] and value < self.game.tiles[x][y].creep_value:
+        if y+1 < self.game.mapSize[1] and value < self.game.tiles[x][y+1].creep_value:
+            self.game.tiles[x][y+1].creep_value = value
             self.queue.put((x, y+1, value+1))
         #check down-left
-        if y < self.game.mapSize[1] and x > 0 and value < self.game.tiles[x][y].creep_value:
+        if y+1 < self.game.mapSize[1] and x > 0 and value < self.game.tiles[x-1][y+1].creep_value:
+            self.game.tiles[x-1][y+1].creep_value = value
             self.queue.put((x-1, y+1, value+1.4))
 
     ## the path_recursion function
