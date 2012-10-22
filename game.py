@@ -24,7 +24,7 @@ class Game(object):
         self.tiles = []
         self.turrets = []
         self.creeps = []
-        self.creeps.append(Creep(self.imgPlayer))
+        self.creeps.append(Creep(self.imgPlayer, 0, self))
 
         self.load_tiles()
         
@@ -51,8 +51,8 @@ class Game(object):
                 self.tiles[x].append( tempTile )
 
         #generate path for creeps to follow
-        the_path = CreepPath((30, 30))
-        the_path.find_path(self)
+        the_path = CreepPath((30, 30), 1, self)
+        the_path.find_path()
 
     def update(self):
         """Do logic/frame"""
@@ -62,7 +62,7 @@ class Game(object):
 
         #update creeps
         for creep in self.creeps:
-            creep.update(self)
+            creep.update()
         
         for x, turret in enumerate(self.turrets):
             if turret.valid_placement == True:

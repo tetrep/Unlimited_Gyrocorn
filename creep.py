@@ -1,9 +1,4 @@
 import pygame
-from exceptions import *
-
-# what we need to optimize
-# @xrefitem opt "Optimizations" "Optimizations List"
-
 
 ##   @class Creep
 #    @brief this is the Creep class
@@ -11,7 +6,11 @@ from exceptions import *
 class Creep(object):
     ## the constructor
     #  @param img the sprite for the creep to use
-    def __init__(self, img):
+    #  @param game the instance of the game this Creep is in
+    def __init__(self, img, number, game):
+
+        #remember the game
+        self.game = game
 
         #set creep sprite
         self.img = img
@@ -39,32 +38,60 @@ class Creep(object):
         #y movement, -1 to 1
         self.y_move = 0
 
+        #initialize our unique attributes
+        self.weapons = []
+        #self.init_attributes(number)
+
+
+    ## the init_attributes function
+    #  @brief generates a class of creep based on the give number
+    #  @param number determines what type of creep to generate
+    #  @todo add more creeps!
+    def init_attributes(self, number):
+        #generic and boring
+        if number == 0:
+            self.health = 100
+            self.speed = 10
+            self.weapons.append(Weapon())
+
+    ## the attack function
+    #  @brief use each weapon on its given tarets
+    def attack(self):
+        for weapon in weapons:
+            weapon.attack()
+
+    ## the find_targets function
+    #  @brief finds targets for each weapon
+    def find_targets(self):
+        for weapon in weapons:
+            weapon.find_targets()
+
     ## the next_move function
     #  @brief look for the next ideal tile to attempt to move to
     #  @todo use vectors to make it perty
-    def next_move(self, game):
+    def next_move(self):
         #remember the lowest creep value
-        cur_creep_value = game.tiles[self.x_tile][self.y_tile].creep_value
+        cur_creep_value = self.game.tiles[self.x_tile][self.y_tile].creep_value
 
         #default next position
         self.x_move = self.y_move = 0
 
         #look up
-        if self.y_tile > 0 and game.tiles[self.x_tile][self.y_tile-1].creep_value < cur_creep_value:
-            cur_creep_value = game.tiles[self.x_tile][self.y_tile-1].creep_value
+        if self.y_tile > 0 and self.game.tiles[self.x_tile][self.y_tile-1].creep_value < cur_creep_value:
+            cur_creep_value = self.game.tiles[self.x_tile][self.y_tile-1].creep_value
             self.y_move = -1
         #look down
-        if self.y_tile < game.mapSize[1]-1 and game.tiles[self.x_tile][self.y_tile+1].creep_value < cur_creep_value:
-            cur_creep_value = game.tiles[self.x_tile][self.y_tile+1].creep_value
+        if self.y_tile < self.game.mapSize[1]-1 and self.game.tiles[self.x_tile][self.y_tile+1].creep_value < cur_creep_value:
+            cur_creep_value = self.game.tiles[self.x_tile][self.y_tile+1].creep_value
             self.y_move = 1
         #look left
-        if self.x_tile > 0 and game.tiles[self.x_tile-1][self.y_tile].creep_value < cur_creep_value:
-            cur_creep_value = game.tiles[self.x_tile-1][self.y_tile].creep_value
+        if self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile].creep_value < cur_creep_value:
+            cur_creep_value = self.game.tiles[self.x_tile-1][self.y_tile].creep_value
             self.x_move = -1
             self.y_move = 0
         #look right
-        if self.x_tile < game.mapSize[0]-1 and game.tiles[self.x_tile+1][self.y_tile].creep_value < cur_creep_value:
-            cur_creep_value = game.tiles[self.x_tile+1][self.y_tile].creep_value
+        if self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile].creep_value < cur_creep_value:
+            cur_creep_value = self.game.tiles[self.x_tile+1][self.y_tile].creep_value
             self.x_move = 1
             self.y_move = 0
 
@@ -87,13 +114,13 @@ class Creep(object):
     ## the update function
     #  @brief handles all creep operations per frame
     #  @param game the instance of the class Game that this Creep resides in
-    def update(self, game):
+    def update(self):
         #update our current tile position (can't do this before draw)
         self.x_tile = self.rect.centerx//24
         self.y_tile = self.rect.centery//24
 
         #set our x/y movement based on our destination
-        self.next_move(game)
+        self.next_move()
 
         self.move(self.x_next, self.y_next)
 
