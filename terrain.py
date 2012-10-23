@@ -1,23 +1,48 @@
-import Entity
+import pygame
 
 class Terrain(object):
     def __init__ (self,engine=None,source=''):
-        super(Terrain,self).__init__(self)
         self.engine = engine
                 
         self.tiles = []
         
         terrainSource = open(source)
         lines = terrainSource.readlines()
-        self.xSize = len(lines[0])
+        self.xSize = len(lines[0].strip())
         self.ySize = len(lines)
+        
+        self.rockSurface = pygame.image.load("Art/tiles/rockmap.png")
+        
+        self.tileSize = pygame.Rect(0,0,self.engine.screen.get_width()/self.xSize,self.engine.screen.get_height()/self.ySize)
         
         for x in xrange(self.xSize):
             self.tiles.append([])
             for y in xrange(self.ySize):
                 #Needs to pass a rect to the Tile, but cannot calculate how big the rect should be until engine has an attribute controlling size of game area
-                
-                self.tiles[x].append(Tile(lines[y][x]))
+                offset=0
+                if lines[y][x] == 'o':
+                    if y!=0 and lines[y-1][x]=='o':
+                        offset+=1
+                    elif y==0:
+                        offset+=1
+                    if x<self.xSize-1 and lines[y][x+1]=='o':
+                        offset+=2
+                    elif x==self.xSize-1:
+                        offset+=2
+                    if y<self.ySize-1 and lines[y+1][x]=='o':
+                        offset+=4
+                    elif y==self.xSize-1:
+                        offset+=4
+                    if lines [y][x-1]=='o':
+                        offset+=8
+                    elif x==0:
+                        offset+=8
+                    surface = pygame.transform.scale(self.rockSurface.subsurface((offset*100,0,100,100)),(self.tileSize.width,self.tileSize.height))
+                    
+                else:
+                    surface=pygame.Surface((self.tileSize.width,self.tileSize.height))
+                    surface.fill((255,255,255))
+                self.tiles[x].append(Tile(surface,self.tileSize.move(x*self.tileSize.width,y*self.tileSize.height),lines[y][x],False))
                 
         self.create_surface()
         
@@ -78,9 +103,17 @@ class Terrain(object):
         return self.tiles.__iter__()
         
 class Tile (object):
-    def __init__(self,rect,contains)
-        self.isBlocking = False
-        self.contains = contains
+    def __init__(self,surface,rect,contains,blocking):
+        if contains is not None:
+            self.contains = contains
+        else:
+            self.contains = []
+            
+        print rect
         
+        self.blocking=blocking
         self.rect = rect
+        self.surface=surface
         
+    def draw(self,displaySurface):
+        displaySurface.blit(self.surface,self.rect)
