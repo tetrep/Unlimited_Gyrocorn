@@ -3,11 +3,14 @@ import pygame
 ##   @class Creep
 #    @brief this is the Creep class
 #    @todo attacks, deaths, animations
-class Creep(object):
+class Creep(SuperClass):
     ## the constructor
     #  @param img the sprite for the creep to use
     #  @param game the instance of the game this Creep is in
     def __init__(self, img, number, game):
+
+        #get x/y/rect set up
+        super(SuperClass, self).__init__(240, 240, game)
 
         #remember the game
         self.game = game
@@ -16,13 +19,13 @@ class Creep(object):
         self.img = img
 
         #initialize coordinates to 240,240
-        self.x = self.y = 240
+        #self.x = self.y = 240
 
         #initialize our current destination to -1, -1
-        self.x_next = self.y_next = -1
+        #self.x_next = self.y_next = -1
 
         #initialize rect, h/w: 24/32
-        self.rect = pygame.Rect(self.x, self.y, 24, 32)
+        #self.rect = pygame.Rect(self.x, self.y, 24, 32)
 
         #set current tile position
         self.x_tile = self.rect.centerx//24
@@ -32,15 +35,9 @@ class Creep(object):
         self.x_speed = 10.0
         self.y_speed = 10.0
 
-        #x movement, -1 to 1
-        self.x_move = 0
-
-        #y movement, -1 to 1
-        self.y_move = 0
-
         #initialize our unique attributes
         self.weapons = []
-        #self.init_attributes(number)
+        self.init_attributes(number)
 
 
     ## the init_attributes function
@@ -52,7 +49,12 @@ class Creep(object):
         if number == 0:
             self.health = 100
             self.speed = 10
-            self.weapons.append(Weapon())
+        elif number == 1:
+            self.health = 1
+            self.speed = 1
+        else
+            self.health = 666
+            self.speed = 666
 
     ## the attack function
     #  @brief use each weapon on its given tarets
@@ -98,14 +100,14 @@ class Creep(object):
         #set x/y next
         self.x_next = self.x + self.x_move * self.x_speed
         self.y_next = self.y + self.y_move * self.y_speed
+        #move rect to next spot
+        self.rect_next = self.rect.move(self.x_next - self.x, self.y_next - self.y)
 
     ## the move function
     #  @brief handles what happens when the creep can actually move to its desired location
-    #  @param x the x coordinate to move to
-    #  @param y the y coordinate to move to
-    def move(self, new_x, new_y):
+    def move(self):
         #update our rect's position
-        self.rect.move_ip(new_x - self.x, new_y - self.y)
+        self.rect = self.rect_next
 
         #update our actual position
         self.x = new_x
@@ -122,7 +124,7 @@ class Creep(object):
         #set our x/y movement based on our destination
         self.next_move()
 
-        self.move(self.x_next, self.y_next)
+        self.move()
 
     ## the draw function
     #  @brief draws the creep to the screen, called once per frame
