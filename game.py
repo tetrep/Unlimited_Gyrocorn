@@ -33,7 +33,7 @@ class Game(object):
         self.load_tiles()
 
         #drawing variables
-        self.zoom = 2.0
+        self.zoom = 1.0
         self.focus = [0, 0]     # the central point of the viewbox
         self.view = [0, 0]      # the width + height of the viewbox
         self.viewMax = [0, 0]   # the width + height of the total screen
