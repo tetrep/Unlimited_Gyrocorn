@@ -177,6 +177,9 @@ class Game(object):
         #draw stuff, from back->front
         self.draw_tiles()
         self.player.draw( self )
+
+        for creep in self.creeps:
+            creep.draw(self)
         
         for turret in self.turrets:
             turret.draw( self )
