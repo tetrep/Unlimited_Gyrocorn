@@ -27,8 +27,8 @@ class Game(object):
         self.tiles = []
         self.turrets = []
         self.creeps = []
-        self.creeps.append(Creep(self.imgPlayer, 666, 240, 240, self))
-        self.creeps.append(Creep(self.imgPlayer, 666, 140, 140, self))
+        self.creeps.append(Creep(self.imgPlayer, 0, 240, 240, self))
+        self.creeps.append(Creep(self.imgPlayer, 0, 140, 140, self))
 
         self.load_tiles()
 
@@ -77,7 +77,7 @@ class Game(object):
         #update creeps
         for creep in self.creeps:
             creep.update()
-            creep.receive_damage(1)
+            #creep.receive_damage(1)
         
         for x, turret in enumerate(self.turrets):
             if turret.valid_placement == True:

@@ -67,7 +67,9 @@ class Turret(object):
             self.time_of_last_shot = -1
         
         #updates existing bullets
-        for bullet in self.projectiles:
+        for b, bullet in enumerate(self.projectiles):
+            if bullet.dead == True:
+                self.projectiles.pop(b)
             bullet.update(game)
     
     ## the Turret draw

@@ -40,4 +40,4 @@ class SuperClass(object):
         dmg *= damageMultiplier
         dmg -= self.absorbtion / 2.0
         #apply damage
-        self.hp[0] -= dmg
+        self.health -= dmg

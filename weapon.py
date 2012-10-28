@@ -19,3 +19,5 @@ class Weapon(object):
 
 
     def find_targets
+        pass
+ 

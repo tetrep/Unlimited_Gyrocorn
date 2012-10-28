@@ -15,7 +15,7 @@ class Bullet(object):
         self.rect.x = starting_x
         self.y = starting_y
         self.rect.y = starting_y
-        
+        self.dead = False
     
         #attacking statistics
         self.attack_damage = starting_attack_damage
@@ -25,7 +25,7 @@ class Bullet(object):
         self.attack_direction_x = starting_x - attack_point_x
         self.attack_direction_y = starting_y - attack_point_y
         self.distance = math.sqrt(self.attack_direction_x**2 + self.attack_direction_y**2)
-    
+        
     ## the Bullet update
     #  @param game the instance of the class Game that this Turret resides in
     def update(self, game):
@@ -33,6 +33,11 @@ class Bullet(object):
         self.x += self.speed * game.deltaT / 1000.0 * self.attack_direction_x / self.distance * -1
         self.y += self.speed * game.deltaT / 1000.0 * self.attack_direction_y / self.distance * -1
         self.rect.move_ip( (int)(self.x - self.rect.x), (int)(self.y - self.rect.y) )
+        
+        for target in game.creeps:
+            if self.rect.colliderect(target.rect):
+                target.take_damage(10)
+                self.dead = True
     
     ## the Bullet draw
     # @param g a reference to the Game that is currently running
