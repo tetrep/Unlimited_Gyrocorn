@@ -94,19 +94,19 @@ class Turret(object):
         #g.screen.blit(self.img, pygame.Rect(self.x, self.y, self.rect.width, self.rect.height), pygame.Rect(0, 0, self.rect.width, self.rect.height) )
     
     def findTarget(self, creeps):
-        min_distance = 0
+        min_distance = 9999
         min_creep = -1
-        for creep,i in enumerate(creeps):
+        for creep in creeps:
             x_distance = creep.x - self.x
             y_distance = creep.y - self.y
             total_distance = math.sqrt(x_distance**2 + y_distance**2)
             if total_distance < min_distance:
                 min_distance = total_distance
-                min_creep = i
+                min_creep = creep
         if min_creep == -1:
             return 0
         else:
-            return creep
+            return min_creep
     
     ## set the Turret attack speed
     # @param new_attack_speed the attack_speed the Turret will be given (default to 0)
