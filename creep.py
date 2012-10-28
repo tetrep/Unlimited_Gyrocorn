@@ -58,7 +58,7 @@ class Creep(SuperClass, Node):
             self.health = 5
             self.speed = 1
         elif self.number == 1 or self.number == 666:
-            self.health = 400
+            self.health = 40
             self.speed = 1
         elif self.number == 2:
             self.health = 10
