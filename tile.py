@@ -11,7 +11,8 @@ class Tile(object):
 
         self.blocking = False
 
-    #  @param g a reference to the Game class that is currently running.
+        self.creep_value = 999
+
     def draw(self, g):
         """draw the tile to the screen"""
         temp = pygame.Surface( (24, 24) )
