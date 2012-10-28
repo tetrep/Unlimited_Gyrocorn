@@ -21,7 +21,7 @@ class Game(object):
         self.mapSize = [32, 32]
         self.tiles = []
         self.turrets = []
-        #self.creeps = []
+        self.creeps = []
 
         self.load_tiles()
 
@@ -38,8 +38,10 @@ class Game(object):
         self.imgPlayer.set_colorkey( (255, 0, 255) )
         self.imgTile = pygame.image.load("Art/tiles/tile-grass.png").convert()
         self.imgTileWall = pygame.image.load("Art/tiles/obj-wall.png").convert()
-        self.imgBasicTurret = pygame.image.load("Art/tiles/obj-guardtowertest3.png").convert()
+        self.imgBasicTurret = pygame.image.load("Art/tiles/obj-guardtower.png").convert()
         self.imgBasicTurret.set_colorkey( (255, 0, 255) )
+        self.imgBasicBullet = pygame.image.load("Art/items/itm-glaive.png").convert()
+        self.imgBasicBullet.set_colorkey( (255, 0, 255) )
 
     def load_tiles(self):
         """generate a level, and store it in tiles[][]"""
@@ -126,8 +128,9 @@ class Game(object):
                     #needs to be converted to give a mapping in game space.
                     #if   map = pos * zoom - (focus - view / 2)
                     #then pos = (map + (focus - view / 2) ) / zoom
+                    #currently hardcoded turret type
                     pos = [ (event.pos[0] + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (event.pos[1] + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
-                    self.turrets.append( Turret( self, pos[0], pos[1] ) )
+                    self.turrets.append( Turret( self, 2, 2, 2, 64, pos[0], pos[1] ) )
                     
                 elif event.button == 4: #mouse wheel down
                     self.zoom -= .1
