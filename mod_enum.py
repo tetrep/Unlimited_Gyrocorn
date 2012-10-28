@@ -1,5 +1,5 @@
 class Mod_Enum(object):
-    def __init__(self, img):
+    def __init__(self):
         """initialize constants for mod code values"""
         MOD_BLANK = 0
         MOD_ATTACK = 1
