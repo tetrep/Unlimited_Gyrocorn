@@ -3,6 +3,8 @@ from tile import *
 from player import *
 from turret import *
 
+#  @class Game
+#  @brief this class is the game engine. It manages game logic, input, and rendering.
 class Game(object):
     def __init__(self):
         """Initialize the game"""
@@ -101,6 +103,7 @@ class Game(object):
         """get and handle user input"""
         #exit on esc
         for event in pygame.event.get():
+            #key pressed
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
@@ -113,6 +116,8 @@ class Game(object):
                     self.player.direction[1] += 1
                 if event.key == pygame.K_d:
                     self.player.direction[0] += 1
+
+            #key released
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w:
                     self.player.direction[1] += 1
@@ -122,6 +127,8 @@ class Game(object):
                     self.player.direction[1] += -1
                 if event.key == pygame.K_d:
                     self.player.direction[0] += -1
+
+            #mouse controls
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: #left click
                     #event.pos[0] and event.pos[1] are the mouse x,y coordinates respectively relative to the game window
