@@ -1,3 +1,5 @@
+import pygame
+
 class SuperClass(object):
     def __init__(self, x, y, game):
         """Initialize the superclass object"""

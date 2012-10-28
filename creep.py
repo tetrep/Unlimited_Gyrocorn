@@ -1,4 +1,5 @@
 import pygame
+from superclass import *
 
 ##   @class Creep
 #    @brief this is the Creep class
@@ -10,7 +11,7 @@ class Creep(SuperClass):
     def __init__(self, img, number, game):
 
         #get x/y/rect set up
-        super(SuperClass, self).__init__(240, 240, game)
+        super(Creep, self).__init__(240, 240, game)
 
         #remember the game
         self.game = game
@@ -52,7 +53,7 @@ class Creep(SuperClass):
         elif number == 1:
             self.health = 1
             self.speed = 1
-        else
+        else:
             self.health = 666
             self.speed = 666
 
@@ -110,8 +111,8 @@ class Creep(SuperClass):
         self.rect = self.rect_next
 
         #update our actual position
-        self.x = new_x
-        self.y = new_y
+        self.x = self.x_next
+        self.y = self.y_next
 
     ## the update function
     #  @brief handles all creep operations per frame
