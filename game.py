@@ -166,8 +166,7 @@ class Game(object):
     def reap(self):
         for creep in self.creeps:
             if creep.reap():
-                pass
-                #creeps.delete(creep)
+                creep = self.creeps.pop()
 
     def spawn_creep(self, img, number, x, y):
         self.creeps.append(Creep(img, number, x, y, self))
