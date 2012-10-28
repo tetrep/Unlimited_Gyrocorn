@@ -4,6 +4,8 @@ from player import *
 from turret import *
 from creep import *
 from creep_path import *
+from linked_list import *
+from node import *
 
 class Game(object):
     def __init__(self):
@@ -24,7 +26,8 @@ class Game(object):
         self.tiles = []
         self.turrets = []
         self.creeps = []
-        self.creeps.append(Creep(self.imgPlayer, 0, self))
+        self.creeps.append(Creep(self.imgPlayer, 666, 240, 240, self))
+        self.creeps.append(Creep(self.imgPlayer, 666, 140, 140, self))
 
         self.load_tiles()
         
@@ -63,6 +66,7 @@ class Game(object):
         #update creeps
         for creep in self.creeps:
             creep.update()
+            creep.receive_damage(1)
         
         for x, turret in enumerate(self.turrets):
             if turret.valid_placement == True:
@@ -70,6 +74,8 @@ class Game(object):
             else:
                 #remove turrets that do not have valid placement
                 self.turrets.pop(x)
+
+        self.reap()
                 
     def get_input(self):
         """get and handle user input"""
@@ -100,6 +106,15 @@ class Game(object):
                 #event.pos[0] and event.pos[1] are the mouse x,y coordinates respectively relative to the game window
                 self.turrets.append(Turret(self, event.pos[0], event.pos[1]))
         
+    def reap(self):
+        for creep in self.creeps:
+            if creep.reap():
+                pass
+                #creeps.delete(creep)
+
+    def spawn_creep(self, img, number, x, y):
+        self.creeps.append(Creep(img, number, x, y, self))
+
     def draw(self):
         """draw"""
         self.screen.fill( (0, 0, 0) ) #screen wipe

@@ -1,17 +1,21 @@
 import pygame
 from superclass import *
+from node import *
 
 ##   @class Creep
 #    @brief this is the Creep class
 #    @todo attacks, deaths, animations
-class Creep(SuperClass):
+class Creep(SuperClass, Node):
     ## the constructor
     #  @param img the sprite for the creep to use
     #  @param game the instance of the game this Creep is in
-    def __init__(self, img, number, game):
-
+    def __init__(self, img, number, x, y, game):
         #get x/y/rect set up
-        super(Creep, self).__init__(240, 240, game)
+        super(Creep, self).__init__(x, y, game)
+
+        #linked list setup
+        #have to do this manually :(
+        Node.__init__(self)
 
         #remember the game
         self.game = game
@@ -33,29 +37,35 @@ class Creep(SuperClass):
         self.y_tile = self.rect.centery//24
 
         #speed in pixels/tick
-        self.x_speed = 10.0
-        self.y_speed = 10.0
+        self.x_speed = 100.0
+        self.y_speed = 100.0
+        self.speed_mod = 1
+
 
         #initialize our unique attributes
         self.weapons = []
-        self.init_attributes(number)
+        self.number = number
+        self.init_attributes()
 
 
     ## the init_attributes function
     #  @brief generates a class of creep based on the give number
     #  @param number determines what type of creep to generate
     #  @todo add more creeps!
-    def init_attributes(self, number):
+    def init_attributes(self):
         #generic and boring
-        if number == 0:
-            self.health = 100
-            self.speed = 10
-        elif number == 1:
-            self.health = 1
+        if self.number == 0:
+            self.health = 5
+            self.speed = 1
+        elif self.number == 1 or self.number == 666:
+            self.health = 400
+            self.speed = 1
+        elif self.number == 2:
+            self.health = 10
             self.speed = 1
         else:
-            self.health = 666
-            self.speed = 666
+            self.health = 25
+            self.speed = 1
 
     ## the attack function
     #  @brief use each weapon on its given tarets
@@ -99,10 +109,11 @@ class Creep(SuperClass):
             self.y_move = 0
 
         #set x/y next
-        self.x_next = self.x + self.x_move * self.x_speed
-        self.y_next = self.y + self.y_move * self.y_speed
+        self.x_next = self.x + self.x_move * self.x_speed * self.speed_mod * self.game.deltaT / 1000
+        self.y_next = self.y + self.y_move * self.y_speed * self.speed_mod * self.game.deltaT / 1000
+
         #move rect to next spot
-        self.rect_next = self.rect.move(self.x_next - self.x, self.y_next - self.y)
+        self.rect_next = self.rect.move(int(self.x_next - self.x), int(self.y_next - self.y))
 
     ## the move function
     #  @brief handles what happens when the creep can actually move to its desired location
@@ -113,6 +124,37 @@ class Creep(SuperClass):
         #update our actual position
         self.x = self.x_next
         self.y = self.y_next
+
+    ## the reduce_damage function
+    #  @brief the function that will take all our defenses into account, and reduce damage accordingly
+    #  @todo should be replaced, just a placeholder for now
+    def reduce_damage(self, damage):
+        return damage
+
+    ## the receive_damage function
+    #  @brief the function to be called by whatever wants to hurt our poor creep
+    #  @todo should be replaced, just a placeholder for now
+    def receive_damage(self, damage):
+        #reduce it!
+        damage = self.reduce_damage(damage)
+
+        self.health -= damage
+
+    ## the reap function
+    #  @brief handles what to do if we are dead
+    def reap(self):
+        #are we dead?
+        if self.health <= 0:
+            if self.number == 666:
+                #offspring!
+                self.game.spawn_creep(self.img, self.number, self.x, self.y-30)
+                self.game.spawn_creep(self.img, self.number, self.x-30, self.y-30)
+
+            return True
+        #we're not dead yet
+        else:
+            return False
+            
 
     ## the update function
     #  @brief handles all creep operations per frame
@@ -132,4 +174,4 @@ class Creep(SuperClass):
     #  @param screen the screen that the creep should be drawn to
     def draw(self, screen):
         #blit it!
-        screen.blit(self.img, pygame.Rect(self.x, self.y, 24, 32), pygame.Rect(25*2, 33 * 2, 24, 32))
+        screen.blit(self.img, self.rect, pygame.Rect(25*2, 33 * 2, 24, 32))
