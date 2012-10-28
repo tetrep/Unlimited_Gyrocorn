@@ -164,9 +164,9 @@ class Game(object):
                         self.zoom = 4
         
     def reap(self):
-        for creep in self.creeps:
+        for x, creep in enumerate(self.creeps):
             if creep.reap():
-                creep = self.creeps.pop()
+                self.creeps.pop(x)
 
     def spawn_creep(self, img, number, x, y):
         self.creeps.append(Creep(img, number, x, y, self))
@@ -179,7 +179,7 @@ class Game(object):
         self.player.draw( self )
 
         for creep in self.creeps:
-            creep.draw(self)
+            creep.draw( self )
         
         for turret in self.turrets:
             turret.draw( self )

@@ -11,7 +11,7 @@ class Creep(SuperClass, Node):
     #  @param game the instance of the game this Creep is in
     def __init__(self, img, number, x, y, game):
         #get x/y/rect set up
-        super(Creep, self).__init__(x, y, game)
+        super(Creep, self).__init__(x, y, 1, 1, 10, game)
 
         #linked list setup
         #have to do this manually :(
@@ -147,8 +147,8 @@ class Creep(SuperClass, Node):
         if self.health <= 0:
             if self.number == 666:
                 #offspring!
-                self.game.spawn_creep(self.img, self.number, self.x, self.y-30)
-                self.game.spawn_creep(self.img, self.number, self.x-30, self.y-30)
+                self.game.spawn_creep(self.img, 0, self.x, self.y-30)
+                self.game.spawn_creep(self.img, 0, self.x-30, self.y-30)
 
             return True
         #we're not dead yet
@@ -172,6 +172,6 @@ class Creep(SuperClass, Node):
     ## the draw function
     #  @brief draws the creep to the screen, called once per frame
     #  @param screen the screen that the creep should be drawn to
-    def draw(self, screen):
+    def draw(self, game):
         #blit it!
-        screen.blit(self.img, self.rect, pygame.Rect(25*2, 33 * 2, 24, 32))
+        game.screen.blit(self.img, self.rect, pygame.Rect(25*2, 33 * 2, 24, 32))
