@@ -137,16 +137,22 @@ class Creep(SuperClass):
     ## the move function
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
-        #calculate our next x/y coords
-        self.x_next = self.x + self.speed
-        self.y_next = self.m * self.x_next + self.b
+        #do we actually want to move?
+        if self.x_tile_next != self.x_tile and self.y_tile_next != self.y_tile:
+            #calculate our next x/y coords
+            self.x_next = self.x + self.speed
+            self.y_next = self.m * self.x_next + self.b + self.speed
 
-        #update our rect
-        self.rect.move_ip(self.x_next - self.x, self.y_next - self.y)
+            #update our rect
+            self.rect.move_ip(self.x_next - self.x, self.y_next - self.y)
 
-        #update our x/y positon
-        self.x = self.x_next
-        self.y = self.y_next
+            #update our x/y positon
+            self.x = self.x_next
+            self.y = self.y_next
+        #relax
+        else:
+            self.x_next = self.x
+            self.y_next = self.y
 
     ## the reduce_damage function
     #  @brief the function that will take all our defenses into account, and reduce damage accordingly
