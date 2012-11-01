@@ -55,7 +55,6 @@ class Creep(SuperClass):
         #generic and boring
         if self.number == 0:
             self.health = 5
-            self.number = 666
         elif self.number == 1 or self.number == 666:
             self.health = 40
         elif self.number == 2:
@@ -63,13 +62,13 @@ class Creep(SuperClass):
         else:
             self.health = 25
 
-        self.health = 1
-
     ## the vroom function
     #  @brief returns our calculated speed, based on various factors
     def vroom(self):
-        return (self.speed * self.speed_mod)//1000
-        #return (self.speed * 100.0)//1000
+        if self.number != 666:
+          return (self.speed * self.speed_mod)//1000
+        else:
+          return (self.speed * 100.0)//1000
 
     ## the swap_xy function
     #  @brief swaps x and y so we can move vertically
@@ -122,7 +121,7 @@ class Creep(SuperClass):
         else:
             self.speed_mod = 100.0
 
-        #"""
+        """
         print "m=", self.m
         print "b=", self.b
         print "(", self.x, ",", self.y, ")"

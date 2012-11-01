@@ -28,7 +28,7 @@ class Game(object):
         self.turrets = []
         self.creeps = []
         self.creeps.append(Creep(self.imgPlayer, 0, 240, 240, self))
-        #self.creeps.append(Creep(self.imgPlayer, 0, 140, 140, self))
+        self.creeps.append(Creep(self.imgPlayer, 0, 140, 140, self))
 
         self.load_tiles()
 
