@@ -1,4 +1,5 @@
 import pygame
+from threading import Lock
 
 class Tile(object):
     #  @param img a reference to a pygame.Surface containing the image to be used for draw calls.
@@ -12,6 +13,8 @@ class Tile(object):
         self.blocking = False
 
         self.creep_value = 999
+
+        self.mutex = Lock()
 
     def draw(self, g):
         """draw the tile to the screen"""

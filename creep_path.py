@@ -24,7 +24,7 @@ class CreepPath(object):
         self.queue = Queue.Queue(0)
 
         #start the threads, add 1 to account for source
-        for i in range(1):
+        for i in range(10):
             thread = threading.Thread(target=self.path_queue)
             thread.daemon = True
             thread.start()
@@ -41,7 +41,7 @@ class CreepPath(object):
 
         self.queue.join()
 
-        """
+        #"""
         temp = ""
         temp2 = 0
         for x2 in range(0, self.game.mapSize[0]):
@@ -51,7 +51,7 @@ class CreepPath(object):
             print temp
             temp = ""
         print temp2
-        """
+        #"""
 
         #sys.exit()
         
@@ -63,7 +63,16 @@ class CreepPath(object):
     def path_queue(self):
         while True:
             info = self.queue.get()
+            #grab mutex for tile
+            self.game.tiles[info[0]][info[1]].mutex.acquire()
+
+            #process the tile
             self.process_tile(info[0], info[1], info[2])
+
+            #release mutex
+            self.game.tiles[info[0]][info[1]].mutex.release()
+
+            #we're done
             self.queue.task_done()
 
     ## the process_tile function
