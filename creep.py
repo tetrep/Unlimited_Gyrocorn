@@ -149,7 +149,7 @@ class Creep(SuperClass):
         else:
             #calculate our next x/y coords
             self.x_next = self.x + self.speed
-            self.y_next = self.m * self.x_next + self.b + self.speed
+            self.y_next = self.m * self.x_next + self.b
 
             #update our rect
             self.rect.move_ip(self.x_next - self.x, self.y_next - self.y)
