@@ -41,7 +41,7 @@ class CreepPath(object):
 
         self.queue.join()
 
-        #"""
+        """
         temp = ""
         temp2 = 0
         for x2 in range(0, self.game.mapSize[0]):

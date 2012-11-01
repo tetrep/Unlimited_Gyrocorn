@@ -160,9 +160,9 @@ class Creep(SuperClass):
             self.x_next = self.x + self.vroom()
             self.y_next = self.m * self.x_next + self.b
 
-            #make sure we don't move too far
-            #if self.x_next > self.x_tile_next * 24 + 12 or self.y_next > self.y_tile_next * 24 + 12:
-            if self.x_next > 24 * 24 + 12 or self.y_next > 24 * 24 + 12:
+            #make sure we don't move past our destination
+            #or the final goal, this hack will be removed
+            if self.x_next > self.x_tile_next * 24 + 12 or self.y_next > self.y_tile_next * 24 + 12 or self.x_next > 24 * 24 + 12 or self.y_next > 24 * 24 + 12:
                 self.x_next = 24 * 24 + 12
                 self.y_next = 24 * 24 + 12
 
@@ -226,6 +226,7 @@ class Creep(SuperClass):
     ## the draw function
     #  @brief draws the creep to the screen, called once per frame
     #  @param screen the screen that the creep should be drawn to
+    #  @todo this should just be inherited
     def draw(self, game):
         #blit it!
         game.screen.blit(self.img, self.rect, pygame.Rect(25*2, 33 * 2, 24, 32))
