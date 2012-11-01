@@ -161,9 +161,10 @@ class Creep(SuperClass):
             self.y_next = self.m * self.x_next + self.b
 
             #make sure we don't move too far
-            if self.x_next > self.x_tile_next * 24 + 12 or self.y_next > self.y_tile_next * 24 + 12:
-                self.x_next = self.x_tile_next * 24 + 12
-                self.y_next = self.y_tile_next * 24 + 12
+            #if self.x_next > self.x_tile_next * 24 + 12 or self.y_next > self.y_tile_next * 24 + 12:
+            if self.x_next > 24 * 24 + 12 or self.y_next > 24 * 24 + 12:
+                self.x_next = 24 * 24 + 12
+                self.y_next = 24 * 24 + 12
 
             #update our rect
             self.rect.move_ip(self.x_next - self.x, self.y_next - self.y)
