@@ -187,6 +187,12 @@ class Creep(SuperClass):
 
         self.health -= damage
 
+    ## the take_damage function
+    #  @brief because bitches love wrappers
+    #  @todo this shouldn't be a wrapper
+    def take_damage(self, damage):
+        self.receive_damage(damage)
+
     ## the reap function
     #  @brief handles what to do if we are dead
     def reap(self):
