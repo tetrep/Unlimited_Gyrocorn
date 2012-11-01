@@ -92,6 +92,9 @@ class Turret(object):
             bullet.draw(g)
         #g.screen.blit(self.img, pygame.Rect(self.x, self.y, self.rect.width, self.rect.height), pygame.Rect(0, 0, self.rect.width, self.rect.height) )
     
+    ## find the target for the bullet is it about to fire
+    ## right now this only finds the closest enemy to the turret
+    # @param the list of creeps to search through
     def findTarget(self, creeps):
         min_distance = -1
         min_creep = -1

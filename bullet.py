@@ -3,8 +3,11 @@ import time
 import math
 from bullet import *
 
-
+## @class Bullet
+#  @brief this is the Bullet class
 class Bullet(object):
+    ## the Bullet constructor
+    #  @param starting attack values, point to move towards,and starting point
     def __init__(self, game, starting_attack_damage, starting_attack_area_of_effect, starting_speed, attack_point_x = 0, attack_point_y = 0, starting_x = 0, starting_y = 0):
         self.img = game.imgBasicBullet
         self.rect = self.img.get_rect()
@@ -23,11 +26,6 @@ class Bullet(object):
         #self.speed = starting_speed
         self.speed = 500.0
         self.attack_damage_type = "BASIC"
-        #self.attack_direction_x = (starting_x - attack_point_x) * -1
-        #print self.attack_direction_x    
-        #self.attack_direction_y = (starting_y - attack_point_y) * -1
-        #print self.attack_direction_y
-        #print 'end shot'
         self.attack_direction_x = attack_point_x
         self.attack_direction_y = attack_point_y
         self.distance = math.sqrt(self.attack_direction_x**2 + self.attack_direction_y**2)
@@ -44,8 +42,11 @@ class Bullet(object):
             self.x = self.rect.x
             self.y = self.rect.y
         else:
+            #dies if it has reached its initial destination
             self.dead = True
         
+        # deal damage to the creeps it collides with
+        # after colliding with creeps it dies
         for target in game.creeps:
             if self.rect.colliderect(target.rect):
                 target.take_damage(10)
