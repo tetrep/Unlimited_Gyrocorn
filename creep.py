@@ -30,8 +30,8 @@ class Creep(SuperClass):
 
         #speed
         # @todo we really shouldn't reach into game like this!
-        self.speed = 1
-        self.speed_mod = 1
+        self.speed = 10.0
+        self.speed_mod = 100.0
 
         #vector we want to move along
         self.m = 0
@@ -58,6 +58,11 @@ class Creep(SuperClass):
         else:
             self.health = 25
 
+    ## the vroom function
+    #  @brief returns our calculated speed, based on various factors
+    def vroom(self):
+        return (self.speed * self.speed_mod)//1000
+
     ## the move_vector function
     #  @brief using x/y and x/y _next for tiles, finds m and b of vector between the two tiles
     #  @todo optimize
@@ -77,9 +82,9 @@ class Creep(SuperClass):
 
         #are we charging?
         if self.m_old == self.m and self.b_old == self.b:
-            self.speed_mod += 1
+            self.speed_mod *= 1.01
         else:
-            self.speed_mod = 1
+            self.speed_mod = 100.0
 
     ## the attack function
     #  @brief use each weapon on its given tarets
@@ -152,7 +157,7 @@ class Creep(SuperClass):
         #we want to move
         else:
             #calculate our next x/y coords
-            self.x_next = self.x + self.speed * self.speed_mod
+            self.x_next = self.x + self.vroom()
             self.y_next = self.m * self.x_next + self.b
 
             #make sure we don't move too far
