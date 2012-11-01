@@ -33,3 +33,6 @@ class Tile(object):
           return 999
       else:
           return self.creep_value
+    
+    def setBlocking(self, blocking_value):
+        self.blocking = blocking_value

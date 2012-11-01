@@ -58,8 +58,21 @@ class Terrain(object):
             for item in column:
                 item.draw()
             
-    def create_surface(self):
-        pass
+            
+    def get_tile_at(self,refX,refY):
+        x = refX/self.tileSize.width
+        y = refY/self.tileSize.height
+        
+        if x >= len(self.tiles):
+            return None
+        elif x < 0:
+            return None
+        if y >= len(self.tiles):
+            return None
+        elif y < 0:
+            return None
+        
+        return self.tiles[x][y]
             
     def __getitem__(self, key):
         #Overloads the getitem function so that the terrain can be accessed by []
@@ -108,8 +121,6 @@ class Tile (object):
             self.contains = contains
         else:
             self.contains = []
-            
-        print rect
         
         self.blocking=blocking
         self.rect = rect
