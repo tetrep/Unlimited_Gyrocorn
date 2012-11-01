@@ -42,6 +42,9 @@ class Creep(SuperClass):
         self.number = number
         self.init_attributes()
 
+        #x and y are not swapped
+        self.swap = False
+
 
     ## the init_attributes function
     #  @brief generates a class of creep based on the give number
@@ -65,6 +68,27 @@ class Creep(SuperClass):
         #return (self.speed * self.speed_mod)//1000
         return (self.speed * 100.0)//1000
 
+    ## the swap_xy function
+    #  @brief swaps x and y so we can move vertically
+    def swap_xy(self):
+        #swap x/y
+        self.temp = self.x
+        self.x = self.y
+        self.y = self.temp
+
+        #swap x/y _dest
+        self.temp = self.x_dest
+        self.x_dest = self.y_dest
+        self.y_dest = self.temp
+
+        #toggle swap bool
+        if self.swap:
+            print "unswap2"
+            self.swap = False
+        else:
+            print "swap2"
+            self.swap = True
+
     ## the move_vector function
     #  @brief using x/y and x/y _next for tiles, finds m and b of vector between the two tiles
     #  @todo optimize
@@ -73,10 +97,16 @@ class Creep(SuperClass):
         self.m_old = self.m
         self.b_old = self.b
 
-        #dont want to divide by zero
+        #dont want to break on vertical movement, so swap x/y
         if self.x == self.x_dest:
-            self.m = 0
-        #calculate slope
+           #swap x and y
+           print "swap"
+           self.swap_xy()
+
+           #set slope
+           self.m = 0
+
+        #calculate the slope
         else:
             self.m = (self.y_dest - int(self.y)) / (self.x_dest - int(self.x))
 
@@ -184,6 +214,11 @@ class Creep(SuperClass):
             #calculate our next x/y coords
             self.x_next = self.x + self.vroom()
             self.y_next = self.m * self.x_next + self.b
+
+            #do we need to swap x/y back?
+            if self.swap:
+                print "unswap"
+                self.swap_xy()
 
             #update our rect
             self.rect.move_ip(self.x_next - self.x, self.y_next - self.y)
