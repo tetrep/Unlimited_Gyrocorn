@@ -1,6 +1,7 @@
 import pygame
 from superclass import *
 from node import *
+import sys
 
 ##   @class Creep
 #    @brief this is the Creep class
@@ -62,11 +63,13 @@ class Creep(SuperClass):
         else:
             self.health = 25
 
+        self.health = 1
+
     ## the vroom function
     #  @brief returns our calculated speed, based on various factors
     def vroom(self):
-        #return (self.speed * self.speed_mod)//1000
-        return (self.speed * 100.0)//1000
+        return (self.speed * self.speed_mod)//1000
+        #return (self.speed * 100.0)//1000
 
     ## the swap_xy function
     #  @brief swaps x and y so we can move vertically
@@ -101,14 +104,14 @@ class Creep(SuperClass):
         if self.x == self.x_dest:
            #swap x and y
            print "swap"
-           #self.swap_xy()
+           self.swap_xy()
 
            #set slope
            self.m = 0
 
         #calculate the slope
         else:
-            self.m = (self.y_dest - int(self.y)) / (self.x_dest - int(self.x))
+            self.m = (self.y_dest - self.y) / (self.x_dest - self.x)
 
         #calculate the y-intercept
         self.b = self.y + (-1 * self.m * self.x)
@@ -119,14 +122,14 @@ class Creep(SuperClass):
         else:
             self.speed_mod = 100.0
 
-        """
+        #"""
         print "m=", self.m
         print "b=", self.b
         print "(", self.x, ",", self.y, ")"
         print "(", self.x_dest, ",", self.y_dest, ")"
         print '[', self.x_tile, ',', self.y_tile, ']'
         print '[', self.x_tile_next, ',', self.y_tile_next, ']'
-        """
+        #"""
 
     ## the attack function
     #  @brief use each weapon on its given tarets
@@ -205,6 +208,13 @@ class Creep(SuperClass):
         if self.x == self.x_tile_next * 24 + 12 and self.y == self.y_tile_next * 24 + 12:
             self.x_next = self.x
             self.y_next = self.y
+
+            if self.swap:
+                print "unswap"
+                self.swap_xy()
+
+            sys.exit()
+
         #we want to move
         else:
             if self.number != 666:
@@ -212,12 +222,13 @@ class Creep(SuperClass):
                 pass
 
             #calculate our next x/y coords
-            self.x_next = self.x + self.vroom()
-            self.y_next = self.m * self.x_next + self.b
+            self.x_next = int(self.x + self.vroom())
+            self.y_next = int(self.m * self.x_next + self.b)
 
-            #do we need to swap x/y back?
+            print '(', self.x_next, ',', self.y_next, ')'
+
             if self.swap:
-                print "unswap"
+                print "unswap3"
                 self.swap_xy()
 
             #update our rect
