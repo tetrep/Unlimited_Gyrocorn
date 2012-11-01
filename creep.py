@@ -101,7 +101,7 @@ class Creep(SuperClass):
         if self.x == self.x_dest:
            #swap x and y
            print "swap"
-           self.swap_xy()
+           #self.swap_xy()
 
            #set slope
            self.m = 0
