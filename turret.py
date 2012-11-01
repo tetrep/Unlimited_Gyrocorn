@@ -14,27 +14,24 @@ class Turret(object):
         self.img = game.imgBasicTurret
         self.rect = self.img.get_rect()
         
-        #sets the starting position of the turret
-        #players place the base of the turret
-        self.x = starting_x - (self.rect.width / 2)
-        self.rect.x = starting_x - (self.rect.width / 2)
-        self.y = starting_y - self.rect.height
-        self.rect.y = starting_y - self.rect.height
+        tile_position_x = (starting_x - (starting_x % 24) ) / 24
+        tile_position_y = (starting_y - (starting_y % 24) ) / 24      
+        
+        self.x = (tile_position_x * 24)
+        self.rect.x = (tile_position_x * 24)
+        self.y = (tile_position_y * 24) - self.rect.height + 24
+        self.rect.y = (tile_position_y * 24) - self.rect.height + 24
+        
         
         #on placement, checks whether a tower is colliding with terrain or another tower
         #colliding towers are cleaned up at the end of update in the game class
         self.valid_placement = True
         
-        for x in range(0, game.mapSize[0]):
-            for y in range(0, game.mapSize[1]):
-                # need to construct a temporary rect for tiles in order to check collision because they do not have their own rect
-                if game.tiles[x][y].blocking == True and self.rect.colliderect( pygame.Rect( game.tiles[x][y].x, game.tiles[x][y].y, 24, 24 ) ):
-                    self.valid_placement = False
+        if game.tiles[int(tile_position_x)][int(tile_position_y)].blocking == True:
+            self.valid_placement = False
         
-        for turret in game.turrets:
-            if self.rect.colliderect( turret.rect ) and turret.valid_placement == True:
-                self.valid_placement = False
-    
+        game.tiles[int(tile_position_x)][int(tile_position_y)].setBlocking(True)  
+                
         #attacking statistics
         self.should_attack = True
         self.attack_speed = starting_attack_speed
