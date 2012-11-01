@@ -212,8 +212,6 @@ class Creep(SuperClass):
                 print "unswap"
                 self.swap_xy()
 
-            sys.exit()
-
         #we want to move
         else:
             if self.number != 666:
