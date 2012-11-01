@@ -30,7 +30,7 @@ class Creep(SuperClass):
 
         #speed
         # @todo we really shouldn't reach into game like this!
-        self.speed = 100 * self.game.clock.tick() / 1000
+        self.speed = 1
         self.speed_mod = 1
 
         #vector we want to move along
@@ -51,22 +51,20 @@ class Creep(SuperClass):
         #generic and boring
         if self.number == 0:
             self.health = 5
-            self.speed = 1
-            self.number = 666
         elif self.number == 1 or self.number == 666:
             self.health = 40
-            self.speed = 1
         elif self.number == 2:
             self.health = 10
-            self.speed = 1
         else:
             self.health = 25
-            self.speed = 1
 
     ## the move_vector function
     #  @brief using x/y and x/y _next for tiles, finds m and b of vector between the two tiles
     #  @todo optimize
     def move_vector(self):
+        #for our charging creep
+        self.m_old = self.m
+        self.b_old = self.b
         #dont want to divide by zero
         if self.x == self.x_dest:
             self.m = 0
@@ -76,6 +74,12 @@ class Creep(SuperClass):
 
         #calculate the y-intercept
         self.b = self.y + (-1 * self.m * self.x)
+
+        #are we charging?
+        if self.m_old == self.m and self.b_old == self.b:
+            self.speed_mod += 1
+        else:
+            self.speed_mod = 1
 
     ## the attack function
     #  @brief use each weapon on its given tarets
@@ -142,14 +146,19 @@ class Creep(SuperClass):
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
         #do we actually want to move?
-        if self.x_tile_next == self.x_tile and self.y_tile_next == self.y_tile:
+        if self.x == self.x_tile_next * 24 + 12 and self.y == self.y_tile_next * 24 + 12:
             self.x_next = self.x
             self.y_next = self.y
         #we want to move
         else:
             #calculate our next x/y coords
-            self.x_next = self.x + self.speed
+            self.x_next = self.x + self.speed * self.speed_mod
             self.y_next = self.m * self.x_next + self.b
+
+            #make sure we don't move too far
+            if self.x_next > self.x_tile_next * 24 + 12 or self.y_next > self.y_tile_next * 24 + 12:
+                self.x_next = self.x_tile_next * 24 + 12
+                self.y_next = self.y_tile_next * 24 + 12
 
             #update our rect
             self.rect.move_ip(self.x_next - self.x, self.y_next - self.y)
@@ -180,8 +189,9 @@ class Creep(SuperClass):
         if self.health <= 0:
             if self.number == 666:
                 #offspring!
-                self.game.spawn_creep(self.img, 1, self.x, self.y-30)
-                self.game.spawn_creep(self.img, 1, self.x-30, self.y-30)
+                #self.game.spawn_creep(self.img, 1, self.x, (self.y_tile-2)*24)
+                #self.game.spawn_creep(self.img, 1, (self.x_tile-2)*24, (self.y_tile-2)*24)
+                pass
 
             return True
         #we're not dead yet

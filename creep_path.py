@@ -14,7 +14,8 @@ class CreepPath(object):
     #  @param game the instance of the game this path is in
     def __init__(self, source, num_threads, game):
         #where we want to go, the goal
-        self.source = source
+        #self.source = source
+        self.source = (24, 24)
 
         #our game
         self.game = game
