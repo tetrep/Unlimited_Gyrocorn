@@ -20,24 +20,37 @@ class Bullet(object):
         #attacking statistics
         self.attack_damage = starting_attack_damage
         self.attack_area_of_effect = starting_attack_area_of_effect
-        self.speed = starting_speed
+        #self.speed = starting_speed
+        self.speed = 500.0
         self.attack_damage_type = "BASIC"
-        self.attack_direction_x = starting_x - attack_point_x
-        self.attack_direction_y = starting_y - attack_point_y
+        #self.attack_direction_x = (starting_x - attack_point_x) * -1
+        #print self.attack_direction_x    
+        #self.attack_direction_y = (starting_y - attack_point_y) * -1
+        #print self.attack_direction_y
+        #print 'end shot'
+        self.attack_direction_x = attack_point_x
+        self.attack_direction_y = attack_point_y
         self.distance = math.sqrt(self.attack_direction_x**2 + self.attack_direction_y**2)
         
     ## the Bullet update
     #  @param game the instance of the class Game that this Turret resides in
     def update(self, game):
         """update the bullet(per frame)"""
-        self.x += self.speed * game.deltaT / 1000.0 * self.attack_direction_x / self.distance * -1
-        self.y += self.speed * game.deltaT / 1000.0 * self.attack_direction_y / self.distance * -1
-        self.rect.move_ip( (int)(self.x - self.rect.x), (int)(self.y - self.rect.y) )
+        self.distance = math.sqrt((self.rect.x - self.attack_direction_x)**2 + (self.rect.y - self.attack_direction_y)**2)
+        if self.attack_direction_x != self.rect.x and self.attack_direction_y != self.rect.y:
+            x_movement = self.speed * game.deltaT / 1000.0 * (self.rect.x - self.attack_direction_x) / self.distance
+            y_movement = self.speed * game.deltaT / 1000.0 * (self.rect.y - self.attack_direction_y) / self.distance
+            self.rect.move_ip( -x_movement, -y_movement)
+            self.x = self.rect.x
+            self.y = self.rect.y
+        else:
+            self.dead = True
         
         for target in game.creeps:
             if self.rect.colliderect(target.rect):
                 target.take_damage(10)
                 self.dead = True
+               
     
     ## the Bullet draw
     # @param g a reference to the Game that is currently running

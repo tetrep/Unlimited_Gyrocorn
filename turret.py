@@ -61,7 +61,7 @@ class Turret(object):
             target = self.findTarget(game.creeps)
             #actually fires the bullet
             if target != 0:
-                self.projectiles.append(Bullet(game, self.attack_damage, self.attack_area_of_effect, self.attack_projectile_speed, target.x, target.y,
+                self.projectiles.append(Bullet(game, self.attack_damage, self.attack_area_of_effect, self.attack_projectile_speed, target.rect.x, target.rect.y,
                     self.rect.x + (self.rect.width / 2), self.rect.y + (self.rect.height / 2)))
         elif self.time_of_last_shot + self.attack_speed < pygame.time.get_ticks() / 1000.0:   
             self.time_of_last_shot = -1
@@ -96,13 +96,13 @@ class Turret(object):
         #g.screen.blit(self.img, pygame.Rect(self.x, self.y, self.rect.width, self.rect.height), pygame.Rect(0, 0, self.rect.width, self.rect.height) )
     
     def findTarget(self, creeps):
-        min_distance = 9999
+        min_distance = -1
         min_creep = -1
         for creep in creeps:
             x_distance = creep.x - self.x
             y_distance = creep.y - self.y
             total_distance = math.sqrt(x_distance**2 + y_distance**2)
-            if total_distance < min_distance:
+            if total_distance < min_distance or min_distance == -1:
                 min_distance = total_distance
                 min_creep = creep
         if min_creep == -1:
