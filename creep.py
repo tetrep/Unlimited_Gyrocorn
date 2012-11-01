@@ -67,16 +67,15 @@ class Creep(SuperClass):
     #  @brief using x/y and x/y _next for tiles, finds m and b of vector between the two tiles
     #  @todo optimize
     def move_vector(self):
-        #find the slope
         #dont want to divide by zero
-        if self.x_tile == self.x_tile_next:
+        if self.x == self.x_dest:
             self.m = 0
+        #calculate slope
         else:
-            self.m = (self.y_tile_next - self.y_tile) / (self.x_tile_next - self.x_tile)
+            self.m = (self.y_dest - self.y) / (self.x_dest - self.x)
 
-        #find the y-intercept
-        self.b = self.y_tile + (-1 * self.m * self.x_tile)
-
+        #calculate the y-intercept
+        self.b = self.y + (-1 * self.m * self.x)
 
     ## the attack function
     #  @brief use each weapon on its given tarets
@@ -130,6 +129,11 @@ class Creep(SuperClass):
         if self.y_tile < self.game.mapSize[1]-1 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile+1].blocking == False and self.game.tiles[self.x_tile+1][self.y_tile+1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
             self.x_tile_next = self.x_tile + 1
             self.y_tile_next = self.y_tile + 1
+
+
+        #update x/y next
+        self.x_dest = self.x_tile_next + 12
+        self.y_dest = self.y_tile_next + 12
 
         #find our line
         self.move_vector()
