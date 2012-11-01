@@ -23,7 +23,7 @@ class Tile(object):
         g.screen.blit( temp, pygame.Rect( (int)(self.x * g.zoom) + offset[0], (int)(self.y * g.zoom) + offset[1], (int)(24 * g.zoom), (int)(24 * g.zoom) ) )
         #g.screen.blit( self.img, pygame.Rect( self.x, self.y, 24, 24 ) )
 
-   ## the effective_value function
-   #  @brief returns the creep_value and any modifiers
-   def effective_value(self):
+    ## the effective_value function
+    #  @brief returns the creep_value and any modifiers
+    def effective_value(self):
       return self.creep_value

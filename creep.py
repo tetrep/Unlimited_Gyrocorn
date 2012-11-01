@@ -29,7 +29,8 @@ class Creep(SuperClass):
         self.y_tile_next = self.y_tile
 
         #speed
-        self.speed = 100 * self.game.deltaT / 1000
+        # @todo we really shouldn't reach into game like this!
+        self.speed = 100 * self.game.clock.tick() / 1000
         self.speed_mod = 1
 
         #vector we want to move along
@@ -51,6 +52,7 @@ class Creep(SuperClass):
         if self.number == 0:
             self.health = 5
             self.speed = 1
+            self.number = 666
         elif self.number == 1 or self.number == 666:
             self.health = 40
             self.speed = 1
@@ -129,16 +131,20 @@ class Creep(SuperClass):
             self.x_tile_next = self.x_tile + 1
             self.y_tile_next = self.y_tile + 1
 
-        #move rect to next spot
-        self.rect_next = self.rect.move(int(self.x_next - self.x), int(self.y_next - self.y))
+        #find our line
+        self.move_vector()
 
     ## the move function
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
-        #update our rect's position
-        self.rect = self.rect_next
+        #calculate our next x/y coords
+        self.x_next = self.x + self.speed
+        self.y_next = self.m * self.x_next + self.b
 
-        #update our actual position
+        #update our rect
+        self.rect.move_ip(self.x_next - self.x, self.y_next - self.y)
+
+        #update our x/y positon
         self.x = self.x_next
         self.y = self.y_next
 
@@ -164,8 +170,8 @@ class Creep(SuperClass):
         if self.health <= 0:
             if self.number == 666:
                 #offspring!
-                self.game.spawn_creep(self.img, 0, self.x, self.y-30)
-                self.game.spawn_creep(self.img, 0, self.x-30, self.y-30)
+                self.game.spawn_creep(self.img, 1, self.x, self.y-30)
+                self.game.spawn_creep(self.img, 1, self.x-30, self.y-30)
 
             return True
         #we're not dead yet
@@ -182,8 +188,6 @@ class Creep(SuperClass):
 
         #set our x/y movement based on our destination
         self.next_move()
-
-        self.move_vector()
 
         self.move()
 
