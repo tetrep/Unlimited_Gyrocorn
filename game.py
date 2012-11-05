@@ -2,9 +2,7 @@ import pygame, sys
 from tile import *
 from player import *
 from turret import *
-from creep import *
-from creep_path import *
-from node import *
+from gui import *
 
 #  @class Game
 #  @brief this class is the game engine. It manages game logic, input, and rendering.
@@ -20,20 +18,21 @@ class Game(object):
         self.screen = pygame.display.set_mode( self.screenSize )
         
         self.load_assets()
+        #set game mode (used for menu control)
+        self.mode = 0
 
         #game objects
         self.player = Player(self.imgPlayer)
         self.mapSize = [32, 32]
         self.tiles = []
         self.turrets = []
-        self.creeps = []
-        self.creeps.append(Creep(self.imgPlayer, 0, 240, 240, self))
-        self.creeps.append(Creep(self.imgPlayer, 0, 140, 140, self))
+        #self.creeps = []
+        self.gui = GUI( self )
 
         self.load_tiles()
 
         #drawing variables
-        self.zoom = 1.0
+        self.zoom = 2.0
         self.focus = [0, 0]     # the central point of the viewbox
         self.view = [0, 0]      # the width + height of the viewbox
         self.viewMax = [0, 0]   # the width + height of the total screen
@@ -45,10 +44,8 @@ class Game(object):
         self.imgPlayer.set_colorkey( (255, 0, 255) )
         self.imgTile = pygame.image.load("Art/tiles/tile-grass.png").convert()
         self.imgTileWall = pygame.image.load("Art/tiles/obj-wall.png").convert()
-        self.imgBasicTurret = pygame.image.load("Art/tiles/obj-guardtower.png").convert()
+        self.imgBasicTurret = pygame.image.load("Art/tiles/obj-guardtowertest3.png").convert()
         self.imgBasicTurret.set_colorkey( (255, 0, 255) )
-        self.imgBasicBullet = pygame.image.load("Art/items/itm-glaive.png").convert()
-        self.imgBasicBullet.set_colorkey( (255, 0, 255) )
 
     def load_tiles(self):
         """generate a level, and store it in tiles[][]"""
@@ -62,22 +59,13 @@ class Game(object):
                     tempTile.blocking = True
                     tempTile.img = self.imgTileWall
                 self.tiles[x].append( tempTile )
-
-        #generate path for creeps to follow
-        the_path = CreepPath((30, 30), 1, self)
-        the_path.find_path()
-
+        
     def update(self):
         """Do logic/frame"""
         self.deltaT = self.clock.tick()
 
         self.player.update(self)
         self.update_view()
-
-        #update creeps
-        for creep in self.creeps:
-            creep.update()
-            #creep.receive_damage(1)
         
         for x, turret in enumerate(self.turrets):
             if turret.valid_placement == True:
@@ -86,32 +74,36 @@ class Game(object):
                 #remove turrets that do not have valid placement
                 self.turrets.pop(x)
 
+
     def update_view(self):
         """create view and focus variables (draw control) based on the screen size and zoom level."""
         #do not attempt to understand this. Your head WILL explode. Just accept that it works and don't touch it.
         #on that note, this is targeted for clean-up to make it more understandable.
         #that being said, the math involved is not intuitive.
-        
+
+        #set the size of the viewing area
         self.view[0] = self.screenSize[0]
         self.view[1] = self.screenSize[1]
-        
+
+        #set the size of the game area bounds
         self.viewMax[0] = 24 * self.mapSize[0] * self.zoom
         self.viewMax[1] = 24 * self.mapSize[1] * self.zoom
-        
+
+        #set the focus point, or where the screen will be centered to the player's pos.
         self.focus = [(int)(self.player.x * self.zoom), (int)(self.player.y * self.zoom)]
 
-        #clamp the screen, so the focus shifts from player -> game area at the edges of the game area.
-        if self.focus[0] + self.view[0] / 2 > self.viewMax[0]:
-            self.focus[0] = (self.viewMax[0] - self.view[0] / 2)
-        elif self.focus[0] - self.view[0] / 2 < 0:
-            self.focus[0] = (0 + self.view[0] / 2)
 
-        if self.focus[1] + self.view[1] / 2 > self.viewMax[1]:
-            self.focus[1] = (self.viewMax[1] - self.view[1] / 2)
-        elif self.focus[1] - self.view[1] / 2 < 0:
+        #clamp the screen, so the focus shifts from player -> game area at the edges of the game area.        
+        if self.focus[0] - self.view[0] / 2 < 0:
+            self.focus[0] = (0 + self.view[0] / 2)
+        elif self.focus[0] + self.view[0] / 2 > self.viewMax[0]:
+            self.focus[0] = (self.viewMax[0] - self.view[0] / 2)
+
+        if self.focus[1] - self.view[1] / 2 < 0:
             self.focus[1] = (0 + self.view[1] / 2)
+        elif self.focus[1] + self.view[1] / 2 > self.viewMax[1]:
+            self.focus[1] = (self.viewMax[1] - self.view[1] / 2)
             
-        self.reap()
                 
     def get_input(self):
         """get and handle user input"""
@@ -130,6 +122,10 @@ class Game(object):
                     self.player.direction[1] += 1
                 if event.key == pygame.K_d:
                     self.player.direction[0] += 1
+                if event.key == pygame.K_p:
+                    #toggle player menu
+                    self.mode = 1
+                    pass
 
             #key released
             if event.type == pygame.KEYUP:
@@ -149,9 +145,9 @@ class Game(object):
                     #needs to be converted to give a mapping in game space.
                     #if   map = pos * zoom - (focus - view / 2)
                     #then pos = (map + (focus - view / 2) ) / zoom
-                    #currently hardcoded turret type
-                    pos = [ (event.pos[0] + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (event.pos[1] + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
-                    self.turrets.append( Turret( self, 2, 2, 2, 64, pos[0], pos[1] ) )
+                    pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
+                    
+                    self.turrets.append( Turret( self, pos[0], pos[1] ) )
                     
                 elif event.button == 4: #mouse wheel down
                     self.zoom -= .1
@@ -163,23 +159,12 @@ class Game(object):
                     if self.zoom > 4:
                         self.zoom = 4
         
-    def reap(self):
-        for x, creep in enumerate(self.creeps):
-            if creep.reap():
-                self.creeps.pop(x)
-
-    def spawn_creep(self, img, number, x, y):
-        self.creeps.append(Creep(img, number, x, y, self))
-
     def draw(self):
         """draw"""
         self.screen.fill( (0, 0, 0) ) #screen wipe
         #draw stuff, from back->front
         self.draw_tiles()
         self.player.draw( self )
-
-        for creep in self.creeps:
-            creep.draw( self )
         
         for turret in self.turrets:
             turret.draw( self )
@@ -191,13 +176,33 @@ class Game(object):
         for x in range(0, self.tiles.__len__() ):
             for y in range(0, self.tiles[x].__len__() ):
                 self.tiles[x][y].draw( self ) #[ [(0,0), (0,1), ...], [(1,0),(1,1),...], ...]
+
+    def convertGamePixelsToZoomCoorinates(self, (x, y) ):
+        #get the offset of the entire zoomed-in game subspace.
+        offset = [-1 *( self.focus[0] - self.view[0] / 2 ), -1 * ( self.focus[1] - self.view[1] / 2 ) ]
+        #apply the zoom factor and offset.
+        return ( (int)( x * self.zoom + offset[0] ), (int)( y * self.zoom + offset[1] ) )
+
+    def convertZoomCoordinatesToGamePixels(self, (x, y) ):
+        #reverse the game->zoom conversion                
+        return ( (int)( ( x + (self.focus[0] - self.view[0] / 2) ) / self.zoom ) , (int)( ( y + (self.focus[1] - self.view[1] / 2) ) / self.zoom ) )
         
     def main(self):
         """main game loop"""
         while True:
-            self.get_input()
-            self.update()
-            self.draw()
+            #build mode: controls change, GUI access opens up. (clicking on GUI brings it up, changes mode?)
+            #pause mode:
+            #on mode change, reset direction for player? (if keep)
+            #various menu modes
+            if self.mode == 0: #standard game
+                self.get_input()
+                self.update()
+                self.draw()
+            elif self.mode == 1:
+                self.gui.get_input()
+                self.gui.update()
+                self.gui.draw()
+                pygame.display.flip()
 
 g = Game()
 g.main()
