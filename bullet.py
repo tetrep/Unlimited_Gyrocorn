@@ -23,8 +23,8 @@ class Bullet(object):
         #attacking statistics
         self.attack_damage = starting_attack_damage
         self.attack_area_of_effect = starting_attack_area_of_effect
-        #self.speed = starting_speed
-        self.speed = 500.0
+        self.speed = starting_speed
+        #self.speed = 500.0
         self.attack_damage_type = "BASIC"
         self.attack_direction_x = attack_point_x
         self.attack_direction_y = attack_point_y
@@ -50,7 +50,7 @@ class Bullet(object):
         for target in game.creeps:
             if self.rect.colliderect(target.rect):
                 target.take_damage(10)
-                self.dead = True
+                #self.dead = True
                
     
     ## the Bullet draw

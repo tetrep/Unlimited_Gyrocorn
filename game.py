@@ -29,7 +29,6 @@ class Game(object):
         self.creeps = []
         self.creeps.append(Creep(self.imgPlayer, 0, 240, 240, self))
         self.creeps.append(Creep(self.imgPlayer, 0, 140, 140, self))
-
         self.load_tiles()
 
         #drawing variables
@@ -37,7 +36,10 @@ class Game(object):
         self.focus = [0, 0]     # the central point of the viewbox
         self.view = [0, 0]      # the width + height of the viewbox
         self.viewMax = [0, 0]   # the width + height of the total screen
-        # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.      
+        # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
+
+        pos = [ (180 + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (300 + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
+        self.turrets.append( Turret( self, 1, 2, 2, 100, pos[0], pos[1] ) )
         
     def load_assets(self):
         """pre-load all graphics and sound"""
@@ -151,7 +153,7 @@ class Game(object):
                     #then pos = (map + (focus - view / 2) ) / zoom
                     #currently hardcoded turret type
                     pos = [ (event.pos[0] + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (event.pos[1] + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
-                    self.turrets.append( Turret( self, 2, 2, 2, 64, pos[0], pos[1] ) )
+                    self.turrets.append( Turret( self, 4, 2, 2, 500, pos[0], pos[1] ) )
                     
                 elif event.button == 4: #mouse wheel down
                     self.zoom -= .1
