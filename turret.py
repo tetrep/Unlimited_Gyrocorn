@@ -1,6 +1,7 @@
 import pygame
 import time
-from bullet import *
+#from bullet import *
+from bulletfactory import *
 
 ## @class Turret
 #  @brief this is the Turret class
@@ -10,8 +11,8 @@ class Turret(object):
     #  @param starting_x the x coordinate that marks the middle position of the tower (defaults to 0)
     #  @param starting_y the y coordinate that marks the bottom position of the tower (defaults to 0)
     #  @todo add basics for turret animation, lock tower placement to tiles
-    def __init__(self, game, starting_attack_speed, starting_attack_damage, starting_attack_area_of_effect, starting_attack_projectile_speed, starting_x = 0, starting_y = 0):
-        self.img = game.imgBasicTurret
+    def __init__(self, game, img, type, attack_speed, starting_x = 0, starting_y = 0):
+        self.img = img
         self.rect = self.img.get_rect()
         
         tile_position_x = (starting_x - (starting_x % 24) ) / 24
@@ -32,18 +33,15 @@ class Turret(object):
         
         game.tiles[int(tile_position_x)][int(tile_position_y)].setBlocking(True)  
                 
-        #attacking statistics
-        self.should_attack = True
-        self.attack_speed = starting_attack_speed
-        self.attack_damage = starting_attack_damage
-        self.attack_area_of_effect = starting_attack_area_of_effect
-        self.attack_projectile_speed = starting_attack_projectile_speed
-        self.attack_damage_type = "BASIC"
-
+                
+        self.attack_speed = attack_speed
+        self.type = type
         
+        self.bulletFactory = BulletFactory();
         self.projectiles = []
         self.time_of_last_shot = -1
-    
+        self.target = 0
+        
     ## the Turret update
     #  @param game the instance of the class Game that this Turret resides in
     #  @todo add attacking and animation
@@ -55,14 +53,25 @@ class Turret(object):
             #keeps track of when you fired the bullet
             self.time_of_last_shot = pygame.time.get_ticks() / 1000.0
             #finds a target for the bullets you fire in this frame
-            target = self.findTarget(game.creeps)
+            self.target = self.findTarget(game.creeps)
             #actually fires the bullet
-            if target != 0:
-                self.projectiles.append(Bullet(game, self.attack_damage, self.attack_area_of_effect, self.attack_projectile_speed, target.rect.x, target.rect.y,
-                    self.rect.x + (self.rect.width / 2), self.rect.y + (self.rect.height / 2)))
+            if self.target != 0:
+                #if self.type == 1:
+                #    for creep in game.creeps:
+                #        creep_distance = math.sqrt( (self.target.x - creep.x)**2 + (self.target.y - creep.y)**2 )
+                #        if creep_distance < self.attack_area_of_effect:
+                #            creep.take_damage(10)
+                #elif self.type == 2:
+                #    self.target.take_damage(10)
+                #elif self.type == 3:
+                #self.projectiles.append(Bullet(game, self.attack_damage, self.attack_area_of_effect, self.attack_projectile_speed, self.target.rect.x, self.target.rect.y,
+                #    self.rect.x + (self.rect.width / 2), self.rect.y + (self.rect.height / 2)))
+                center_x = self.rect.x + (self.rect.width / 2)
+                center_y = self.rect.y + (self.rect.height / 2)
+                self.projectiles.append(self.bulletFactory.createBullet(game, self.type, self.target, center_x, center_y))
         elif self.time_of_last_shot + self.attack_speed < pygame.time.get_ticks() / 1000.0:   
             self.time_of_last_shot = -1
-        
+            
         #updates existing bullets
         for b, bullet in enumerate(self.projectiles):
             if bullet.dead == True:
@@ -88,6 +97,10 @@ class Turret(object):
         g.screen.blit( temp, pygame.Rect( (int)(self.x * g.zoom) + offset[0], (int)(self.y * g.zoom) + offset[1], \
             (int)(self.rect.width * g.zoom), (int)(self.rect.height * g.zoom) ) )
         
+        #if self.target != 0:
+        #    if self.target.health > 0:   
+        #        pygame.draw.line( g.screen, (255, 0, 0) , (self.rect.x + (self.rect.width / 2), self.rect.y + (self.rect.height / 2)), (self.target.x, self.target.y), 1)
+            
         for bullet in self.projectiles:
             bullet.draw(g)
         #g.screen.blit(self.img, pygame.Rect(self.x, self.y, self.rect.width, self.rect.height), pygame.Rect(0, 0, self.rect.width, self.rect.height) )
@@ -109,19 +122,4 @@ class Turret(object):
             return 0
         else:
             return min_creep
-    
-    ## set the Turret attack speed
-    # @param new_attack_speed the attack_speed the Turret will be given (default to 0)
-    def setAttackSpeed(self, new_attack_speed = 0):
-        self.attack_speed = new_attack_speed
-        
-    ## set the Turret attack damage
-    # @param new_attack_damage the attack_damage the Turret will be given (default to 0)
-    def setAttackDamage(self, new_attack_damage = 0):
-        self.attack_damage = new_attack_damage
-        
-    ## set the Turret attack damage type
-    # @param new_attack_damage_type the attack_damage_type the Turret will be given (default to "NONE")
-    def setAttackDamageType(self, new_attack_damage_type = "NONE"):
-        self.attack_damage_type = new_attack_damage_type
         

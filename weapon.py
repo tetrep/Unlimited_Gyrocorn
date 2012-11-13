@@ -6,18 +6,28 @@ import pygame
 class Weapon(object):
     ## the constructor
     #  @param owner the owner of the weapon
-    #  @param game the instance of the game this Weapon is in
-    def __init__(self, owner, game):
+    def __init__(self, owner):
         self.damage = 10;
-        self.targets = []
         self.owner = owner
-        self.game = game
 
-    def attack(self): 
-        for target in targets:
-            target.take_damage(10)
+    ## the attack function
+    #  @brief attacks the given target
+    #  @param target the target we are attacking
+    def attack(self, target): 
+        damage = self.calculate_damage(target)
+        target.take_damage(damage)
 
+    ## the cacluate_damage function
+    #  @brief determines how much damage we should attempt to do to the given target
+    #  @param target the target we are trying to damage
+    #  @todo be practical
+    def calculate_damage(self, target):
+        damage_mod = 1
 
-    def find_targets
-        pass
- 
+        #just an example for 10x damage
+        if target.x >= target.y:
+            damage_mod = 10
+
+        #calculate how much damage to do
+        return self.damage * damage_mod
+
