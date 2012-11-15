@@ -3,12 +3,14 @@ from threading import Lock
 
 class Tile(object):
     #  @param img a reference to a pygame.Surface containing the image to be used for draw calls.
-    def __init__(self, img):
+    def __init__(self, img, rect=pygame.Rect(0,0,0,0)):
         """initialize tile"""
         self.img = img
         
-        self.x = 0
-        self.y = 0
+        self.rect = rect
+        
+        self.x = rect.left
+        self.y = rect.right
 
         self.blocking = False
 

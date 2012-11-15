@@ -5,6 +5,7 @@ from turret import *
 from creep import *
 from creep_path import *
 from node import *
+from terrain import *
 
 #  @class Game
 #  @brief this class is the game engine. It manages game logic, input, and rendering.
@@ -30,7 +31,9 @@ class Game(object):
         self.creeps.append(Creep(self.imgPlayer, 0, 240, 240, self))
         self.creeps.append(Creep(self.imgPlayer, 666, 140, 140, self))
 
-        self.load_tiles()
+        self.tiles = Terrain(self,"test.txt")
+        the_path = CreepPath((30, 30), 1, self)
+        the_path.find_path()
 
         #drawing variables
         self.zoom = 1.0
@@ -175,7 +178,7 @@ class Game(object):
         """draw"""
         self.screen.fill( (0, 0, 0) ) #screen wipe
         #draw stuff, from back->front
-        self.draw_tiles()
+        self.tiles.draw()
         self.player.draw( self )
 
         for creep in self.creeps:
