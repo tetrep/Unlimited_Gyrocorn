@@ -79,6 +79,7 @@ class CreepPath(object):
     #  @param x the x coordinate of the tile
     #  @param y the y coordinate of the tile
     #  @param value the value we want to replace creep_value with
+    #  @todo optimize with tile reference instead of coords
     def process_tile(self, x, y, value):
 
         #we've found a shorter path, update
@@ -87,26 +88,27 @@ class CreepPath(object):
 
             #check up-left
             if y > 0 and x > 0:# and value + 1.4 < self.game.tiles[x-1][y-1].creep_value:
-                self.queue.put((x-1, y-1, value+1.4))
+                self.queue.put((x-1, y-1, self.game.tiles[x][y].effective_value()+1.4))
             #check up
             if y > 0:# and value + 1 < self.game.tiles[x][y-1].creep_value:
-                self.queue.put((x, y-1, value+1))
+                self.queue.put((x, y-1, self.game.tiles[x][y].effective_value()+1))
             #check up-right
             if y > 0 and x+1 < self.game.mapSize[0]:# and value + 1.4 < self.game.tiles[x+1][y-1].creep_value:
-                self.queue.put((x+1, y-1, value+1.4))
+                self.queue.put((x+1, y-1, self.game.tiles[x][y].effective_value()+1.4))
             #check right
             if x+1 < self.game.mapSize[0]:# and value + 1 < self.game.tiles[x+1][y].creep_value:
-                self.queue.put((x+1, y, value+1))
+                self.queue.put((x+1, y, self.game.tiles[x][y].effective_value()+1))
             #check right-down
             if x+1 < self.game.mapSize[0] and y+1 < self.game.mapSize[1]:# and value + 1.4 < self.game.tiles[x+1][y+1].creep_value:
-                self.queue.put((x+1, y+1, value+1.4))
+                self.queue.put((x+1, y+1, self.game.tiles[x][y].effective_value()+1.4))
             #check down
             if y+1 < self.game.mapSize[1]:# and value + 1 < self.game.tiles[x][y+1].creep_value:
-                self.queue.put((x, y+1, value+1))
+                self.queue.put((x, y+1, self.game.tiles[x][y].effective_value()+1))
             #check down-left
             if y+1 < self.game.mapSize[1] and x > 0:# and value + 1.4 < self.game.tiles[x-1][y+1].creep_value:
-                self.queue.put((x-1, y+1, value+1.4))
+                self.queue.put((x-1, y+1, self.game.tiles[x][y].effective_value()+1.4))
 
+"""
     ## the path_recursion function
     #  @brief starting at the source, it flows outward giving higher values to tiles
     #  @param x the x coordinate of the tile to be inspected
@@ -146,3 +148,4 @@ class CreepPath(object):
             #check the bottom-left
             if x > 0 and y < 31:
                 self.path_recursion(x-1, y+1, value+1.4, game)
+"""

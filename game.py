@@ -173,8 +173,8 @@ class Game(object):
             if creep.reap():
                 self.creeps.pop(x)
 
-    def spawn_creep(self, img, number, x, y):
-        self.creeps.append(Creep(img, number, x, y, self))
+    def spawn_creep(self, img, x, y, type):
+        self.creeps.append(Creep(img, x, y, type, self))
 
     def draw(self):
         """draw"""

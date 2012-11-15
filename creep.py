@@ -1,11 +1,9 @@
 import pygame
 from superclass import *
-from node import *
 import sys
 
 ##   @class Creep
 #    @brief this is the Creep class
-#    @todo attacks, deaths, animations
 class Creep(SuperClass):
     ## the constructor
     #  @param img the sprite for the creep to use
@@ -13,12 +11,9 @@ class Creep(SuperClass):
     #  @param x the x position the creep occupies
     #  @param y the y position the creep occupies
     #  @param game the instance of the game this Creep is in
-    def __init__(self, img, number, x, y, game):
-        #get x/y/rect set up
-        super(Creep, self).__init__(x, y, 1, 1, 1, 10, game)
-
-        #remember the game
-        self.game = game
+    def __init__(self, img, x, y, type = 0x1111, game)
+        #initialze super class variables
+        super(Creep, self).__init__(x, y, (type&0xF000)*10, (type&0x0F00)*10, (type&0x00F0)*10, (type&0x000F)*10, game)
 
         #set creep sprite
         self.img = img
@@ -29,10 +24,6 @@ class Creep(SuperClass):
         self.x_tile_next = self.x_tile
         self.y_tile_next = self.y_tile
 
-        #speed
-        # @todo we really shouldn't reach into game like this!
-        self.speed = 20.0
-        self.max_speed = 20.0
         self.speed_mod = 100.0
 
         #stats
@@ -52,62 +43,13 @@ class Creep(SuperClass):
         self.m = 0
         self.b = 0
 
-        #initialize our unique attributes
-        self.weapons = []
-        self.number = number
-        self.init_attributes()
-
         #x and y are not swapped
         self.swap = False
-
-
-    ## the init_attributes function
-    #  @brief generates a class of creep based on the give number
-    #  @param number determines what type of creep to generate
-    #  @todo add more creeps!
-    def init_attributes(self):
-        #generic and boring
-        if self.number == 0:
-            self.health = 5
-            self.max_health = 5
-        elif self.number == 1 or self.number == 666:
-            self.health = 40
-            self.max_health = 40
-        elif self.number == 2:
-            self.health = 10
-            self.max_health = 10
-        else:
-            self.health = 25
-            self.max_health = 25
 
     ## the vroom function
     #  @brief returns our calculated speed, based on various factors
     def vroom(self):
-        if self.number != 666:
-          return (self.speed * self.speed_mod)//1000
-        else:
           return (self.speed * 100.0)//1000
-
-    ## the swap_xy function
-    #  @brief swaps x and y so we can move vertically
-    def swap_xy(self):
-        #swap x/y
-        self.temp = self.x
-        self.x = self.y
-        self.y = self.temp
-
-        #swap x/y _dest
-        self.temp = self.x_dest
-        self.x_dest = self.y_dest
-        self.y_dest = self.temp
-
-        #toggle swap bool
-        if self.swap:
-            #print "unswap2"
-            self.swap = False
-        else:
-            #print "swap2"
-            self.swap = True
 
     ## the move_vector function
     #  @brief using x/y and x/y _next for tiles, finds m and b of vector between the two tiles
@@ -119,10 +61,6 @@ class Creep(SuperClass):
 
         #dont want to break on vertical movement, so swap x/y
         if self.x == self.x_dest:
-           #swap x and y
-           #print "swap"
-           self.swap_xy()
-
            #set slope
            self.m = 0
 
@@ -147,18 +85,6 @@ class Creep(SuperClass):
         print '[', self.x_tile, ',', self.y_tile, ']'
         print '[', self.x_tile_next, ',', self.y_tile_next, ']'
         #"""
-
-    ## the attack function
-    #  @brief use each weapon on its given tarets
-    def attack(self):
-        for weapon in weapons:
-            weapon.attack()
-
-    ## the find_targets function
-    #  @brief finds targets for each weapon
-    def find_targets(self):
-        for weapon in weapons:
-            weapon.find_targets()
 
     ## the next_move function
     #  @brief look for the next ideal tile to attempt to move to
@@ -225,17 +151,8 @@ class Creep(SuperClass):
         if self.x == self.x_tile_next * 24 + 12 and self.y == self.y_tile_next * 24 + 12:
             self.x_next = self.x
             self.y_next = self.y
-
-            if self.swap:
-                #print "unswap"
-                self.swap_xy()
-
         #we want to move
         else:
-            if self.number != 666:
-                #self.print_neighbors()
-                pass
-
             #calculate our next x/y coords
             self.x_next = int(self.x + self.vroom())
             self.y_next = int(self.m * self.x_next + self.b)
@@ -253,43 +170,15 @@ class Creep(SuperClass):
             self.x = self.x_next
             self.y = self.y_next
 
-    ## the reduce_damage function
-    #  @brief the function that will take all our defenses into account, and reduce damage accordingly
-    #  @todo should be replaced, just a placeholder for now
-    def reduce_damage(self, damage):
-        return damage
-
-    ## the receive_damage function
-    #  @brief the function to be called by whatever wants to hurt our poor creep
-    #  @todo should be replaced, just a placeholder for now
-    def receive_damage(self, damage):
-        #reduce it!
-        damage = self.reduce_damage(damage)
-
-        self.health -= damage
-
-    ## the take_damage function
-    #  @brief because bitches love wrappers
-    #  @todo this shouldn't be a wrapper
-    #def take_damage(self, damage):
-    #    self.receive_damage(damage)
-
     ## the reap function
     #  @brief handles what to do if we are dead
     def reap(self):
         #are we dead?
         if self.health <= 0:
-            if self.number == 666:
-                #offspring!
-                self.game.spawn_creep(self.img, 1, self.x, (self.y_tile-4)*24)
-                self.game.spawn_creep(self.img, 1, (self.x_tile-4)*24, (self.y_tile-4)*24)
-                #print "==================================================="
-
             return True
         #we're not dead yet
         else:
             return False
-            
 
     ## the update function
     #  @brief handles all creep operations per frame
