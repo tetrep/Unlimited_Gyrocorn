@@ -13,7 +13,7 @@ class Creep(SuperClass):
     #  @param game the instance of the game this Creep is in
     def __init__(self, img, x, y, type = 0x1111, game)
         #initialze super class variables
-        super(Creep, self).__init__(x, y, (type&0xF000)*10, (type&0x0F00)*10, (type&0x00F0)*10, (type&0x000F)*10, game)
+        super(Creep, self).__init__(x, y, ((type&0xF000)>>12)*10, ((type&0x0F00)>>8)*10, ((type&0x00F0)>>4)*10, (type&0x000F)*10, game)
 
         #set creep sprite
         self.img = img
