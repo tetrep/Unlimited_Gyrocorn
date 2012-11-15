@@ -66,20 +66,27 @@ class Terrain(object):
                 self.tiles[x][y].blocking = blocking
         self.create_img()
         
+    ## Called once per frame to update the tiles, for now doesn't do much
+    # @param self The Terrain object
+    # @param deltat How much time has passed since the last frame, scales the changes that will occur
     def update(self, deltat):
-        #Updates all tiles in the terrain. 
         for column in self.tiles:
             for item in column:
                 item.update(deltat)
             
+    ## Draws the terrain to the screen.
     def draw(self):
         #Draws the img created at the beginning
         #for column in self.tiles:
         #    for item in column:
         #        item.draw(self.engine)
-            
+        
         self.engine.screen.blit(self.img,(0,0))
-            
+           
+    ## Returns the tile at the given x and y location
+    # @param self The Terrain object
+    # @param refX The x location
+    # @param refY The y location
     def get_tile_at(self,refX,refY):
         x = refX/self.tileSize.width
         y = refY/self.tileSize.height
@@ -95,6 +102,8 @@ class Terrain(object):
         
         return self.tiles[x][y]
         
+    ## Creates the surface object that the Terrain will blit to the screen
+    # @param self The Terrain object
     def create_img(self):
         self.img = pygame.Surface((self.engine.screen.get_width(),self.engine.screen.get_height()))
         for column in self.tiles:
