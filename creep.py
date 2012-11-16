@@ -11,9 +11,9 @@ class Creep(SuperClass):
     #  @param x the x position the creep occupies
     #  @param y the y position the creep occupies
     #  @param game the instance of the game this Creep is in
-    def __init__(self, img, x, y, type = (100, 100, 100, 100), game)
+    def __init__(self, img, x, y, game, ctype = (100, 100, 100, 100)):
         #initialze super class variables
-        super(Creep, self).__init__(x, y, type[1], type[2], type[3], type[4], game)
+        super(Creep, self).__init__(x, y, game, *ctype)
 
         #set creep sprite
         self.img = img
@@ -24,12 +24,6 @@ class Creep(SuperClass):
         self.x_tile_next = self.x_tile
         self.y_tile_next = self.y_tile
 
-        #stats
-        self.defense = 100.0
-        self.max_defense = 100.0
-        self.absorbtion = 0.0
-        self.max_aborbtion = 0.0
-
         self.timeBurning = -1
         self.timeChilled = -1
         self.timeShocked = -1
@@ -38,8 +32,11 @@ class Creep(SuperClass):
         self.damage_multiplier = 1
         
         #vector we want to move along
+        self.x_move = 0.0
+        self.y_move = 0.0
+        self.x_real = self.x
+        self.y_real = self.y
         self.m = 0
-        self.b = 0
 
         #x and y are not swapped
         self.swap = False
@@ -47,7 +44,7 @@ class Creep(SuperClass):
     ## the vroom function
     #  @brief returns our calculated speed, based on various factors
     def vroom(self):
-          return (self.speed * 100.0)//1000
+          return self.speed
 
     ## the move_vector function
     #  @brief using x/y and x/y _next for tiles, finds m and b of vector between the two tiles
@@ -55,42 +52,34 @@ class Creep(SuperClass):
     def move_vector(self):
         #for our charging creep
         self.m_old = self.m
-        self.b_old = self.b
 
-        #dont want to break on vertical movement, so swap x/y
+        #horizontal?
         if self.x == self.x_dest:
-           #set slope
-           self.m = 0
+          self.x_move = 0
+          self.y_move = 100
+          #safe value, we will never move like this
+          self.m = 999
 
-        #calculate the slope
+        #we have vertical movement, find slope
         else:
-            self.m = (self.y_dest - self.y) / (self.x_dest - self.x)
+          self.m = (self.y_dest - self.y_real)/(self.x_dest - self.x_real)
 
-        #calculate the y-intercept
-        self.b = self.y + (-1 * self.m * self.x)
-
-        #are we charging?
-        if self.m_old == self.m and self.b_old == self.b:
-            self.speed_mod *= 1.01
-        else:
-            self.speed_mod = 100.0
-
-        """
-        print "m=", self.m
-        print "b=", self.b
-        print "(", self.x, ",", self.y, ")"
-        print "(", self.x_dest, ",", self.y_dest, ")"
-        print '[', self.x_tile, ',', self.y_tile, ']'
-        print '[', self.x_tile_next, ',', self.y_tile_next, ']'
-        #"""
+        self.y_move = 100 // self.m
+        self.x_move = 100 - self.y_move
 
     ## the next_move function
     #  @brief look for the next ideal tile to attempt to move to
     #  @todo optimize
     def next_move(self):
         #our default next position
-        self.x_tile_next = self.x_tile
-        self.y_tile_next = self.y_tile
+        #self.x_tile_next = self.x_tile
+        #self.y_tile_next = self.y_tile
+
+        
+        print self.x_tile, ',', self.y_tile
+        print self.x_tile_next, ',', self.y_tile_next
+        print "====="
+        
 
         #look up [][-1]
         if self.y_tile > 0 and self.game.tiles[self.x_tile][self.y_tile-1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
@@ -113,22 +102,22 @@ class Creep(SuperClass):
             self.x_tile_next = self.x_tile + 1
             self.y_tile_next = self.y_tile
         #look up-left [-1][-1]
-        if self.y_tile > 0 and self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile-1].creep_value < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and !(self.game.tiles[self.x_tile][self.y_tile-1].blocking or self.game.tiles[self.x_tile-1][self.y_tile].blocking):
+        if self.y_tile > 0 and self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile-1].creep_value < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and not (self.game.tiles[self.x_tile][self.y_tile-1].blocking or self.game.tiles[self.x_tile-1][self.y_tile].blocking):
             #print "up-left"
             self.x_tile_next = self.x_tile - 1
             self.y_tile_next = self.y_tile - 1
         #look up-right [+1][-1]
-        if self.y_tile > 0 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile-1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and !(self.game.tiles[self.x_tile][self.y_tile-1].blocking or self.game.tiles[self.x_tile+1][self.y_tile].blocking):
+        if self.y_tile > 0 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile-1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and not (self.game.tiles[self.x_tile][self.y_tile-1].blocking or self.game.tiles[self.x_tile+1][self.y_tile].blocking):
             #print "up-right"
             self.x_tile_next = self.x_tile + 1
             self.y_tile_next = self.y_tile - 1
         #look down-left [-1][+1]
-        if self.y_tile < self.game.mapSize[1]-1 and self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile+1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and !(self.game.tiles[self.x_tile][self.y_tile+1].blocking or self.game.tiles[self.x_tile-1][self.y_tile].blocking):
+        if self.y_tile < self.game.mapSize[1]-1 and self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile+1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and not (self.game.tiles[self.x_tile][self.y_tile+1].blocking or self.game.tiles[self.x_tile-1][self.y_tile].blocking):
             #print "down-left"
             self.x_tile_next = self.x_tile - 1
             self.y_tile_next = self.y_tile + 1
         #look down-right [+1][+1]
-        if self.y_tile < self.game.mapSize[1]-1 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile+1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and !(self.game.tiles[self.x_tile][self.y_tile+1].blocking or self.game.tiles[self.x_tile+1][self.y_tile].blocking):
+        if self.y_tile < self.game.mapSize[1]-1 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile+1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and not (self.game.tiles[self.x_tile][self.y_tile+1].blocking or self.game.tiles[self.x_tile+1][self.y_tile].blocking):
             #print "down-right"
             self.x_tile_next = self.x_tile + 1
             self.y_tile_next = self.y_tile + 1
@@ -152,21 +141,15 @@ class Creep(SuperClass):
         #we want to move
         else:
             #calculate our next x/y coords
-            self.x_next = int(self.x + self.vroom())
-            self.y_next = int(self.m * self.x_next + self.b)
-
-            #print '(', self.x_next, ',', self.y_next, ')'
-
-            if self.swap:
-                #print "unswap3"
-                self.swap_xy()
+            self.x_real = self.x_move * self.vroom()
+            self.y_real = self.y_move * self.vroom()
 
             #update our rect
-            self.rect.move_ip(self.x_next - self.x, self.y_next - self.y)
+            self.rect.move_ip(int(self.x_real) - self.x, int(self.y_real) - self.y)
 
             #update our x/y positon
-            self.x = self.x_next
-            self.y = self.y_next
+            self.x = int(self.x_real)
+            self.y = int(self.y_real)
 
     ## the reap function
     #  @brief handles what to do if we are dead

@@ -1,7 +1,7 @@
 import pygame
 
 class SuperClass(object):
-    def __init__(self, x, y, defense, absorbtion, health, speed, game):
+    def __init__(self, x, y, game, defense = 100, absorbtion = 100, health = 100, speed = 100):
         """Initialize the superclass object"""
         
         #where we are

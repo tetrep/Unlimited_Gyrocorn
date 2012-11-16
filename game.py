@@ -2,8 +2,11 @@ import pygame, sys
 from tile import *
 from player import *
 from turret import *
+
 from creep import *
+from chargecreep import *
 from creep_path import *
+
 from node import *
 from turretfactory import *
 
@@ -28,9 +31,9 @@ class Game(object):
         self.tiles = []
         self.turrets = []
         self.creeps = []
-        self.creeps.append(Creep(self.imgPlayer, 0, 240, 240, self))
-        self.creeps.append(Creep(self.imgPlayer, 666, 140, 140, self))
         self.load_tiles()
+        self.spawn_creep(self.imgPlayer, 240, 240)
+        self.spawn_creep(self.imgPlayer, 140, 140)
 
         #drawing variables
         self.zoom = 1.0
@@ -173,8 +176,8 @@ class Game(object):
             if creep.reap():
                 self.creeps.pop(x)
 
-    def spawn_creep(self, img, x, y, type):
-        self.creeps.append(Creep(img, x, y, type, self))
+    def spawn_creep(self, img, x, y, type = (100, 100, 100, 100)):
+        self.creeps.append(ChargeCreep(img, x, y, self, type))
 
     def draw(self):
         """draw"""
