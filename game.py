@@ -1,14 +1,15 @@
-import pygame, sys
+import pygame, sys, rand
+
 from tile import *
 from player import *
+
 from turret import *
+from turretfactory import *
 
 from creep import *
 from chargecreep import *
 from creep_path import *
-
-from node import *
-from turretfactory import *
+from creep_factory import *
 
 #  @class Game
 #  @brief this class is the game engine. It manages game logic, input, and rendering.
@@ -33,10 +34,7 @@ class Game(object):
         self.creeps = []
         self.load_tiles()
 
-        self.spawn_creep(self.imgPlayer, 240, 240)
-        self.spawn_creep(self.imgPlayer, 140, 140)
-        self.spawn_creep(self.imgPlayer, 140, 240)
-        self.spawn_creep(self.imgPlayer, 240, 140)
+        self.level = 1
 
         #drawing variables
         self.zoom = 1.0
@@ -179,8 +177,9 @@ class Game(object):
             if creep.reap():
                 self.creeps.pop(x)
 
-    def spawn_creep(self, img, x, y, type = (100, 100, 100, 100)):
-        self.creeps.append(ChargeCreep(img, x, y, self, type))
+    def spawn_creep(self, img, x, y, type = (self.level, self.level, self.level, self.level)):
+      for x in range(1, random.randint(10, 20)+self.level):
+          self.creeps.append(cfactory(random.randint(1, 5)))
 
     def draw(self):
         """draw"""
