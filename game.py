@@ -40,6 +40,8 @@ class Game(object):
         self.gui = GUI( self )
 
         self.creeps = []
+        self.cfactory = CreepFactory(self.imgPlayer, self)
+
         self.load_tiles()
 
         self.level = 1
@@ -215,9 +217,9 @@ class Game(object):
             if creep.reap():
                 self.creeps.pop(x)
 
-    def spawn_creep(self, img, x, y, type = (100, 100, 100, 100)):
+    def spawn_creep(self, img = None, x = None, y = None, type = None)
       for x in range(1, random.randint(10, 20)+self.level):
-          self.creeps.append(cfactory(random.randint(1, 5)))
+          self.creeps.append(cfactory.make(random.randint(1, 5)))
 
     def draw(self):
         """draw"""

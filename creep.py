@@ -171,10 +171,13 @@ class Creep(SuperClass):
         self.x_tile = self.rect.centerx//24
         self.y_tile = self.rect.centery//24
 
+        """
         super(Creep, self).checkBurning(game.deltaT)
         super(Creep, self).checkChilled(game.deltaT)
         super(Creep, self).checkShocked(game.deltaT)
         super(Creep, self).checkParalyzed(game.deltaT)
+        """
+        self.checkBurning(game.deltaT)
         
         #calculate where we want to move to
         self.next_move()
