@@ -31,8 +31,8 @@ class Game(object):
         self.tiles = []
         self.turrets = []
         self.creeps = []
-        self.creeps.append(Creep(self.imgPlayer, 0, 240, 240, self))
-        self.creeps.append(Creep(self.imgPlayer, 666, 140, 140, self))
+        #self.creeps.append(Creep(self.imgPlayer, 0, 240, 240, self))
+        #self.creeps.append(Creep(self.imgPlayer, 666, 140, 140, self))
         
         self.tiles = Terrain(self,"test.txt")
         the_path = CreepPath((30, 30), 1, self)
