@@ -16,15 +16,14 @@ class Player(object):
         self.collision = [False, False] #whether the x or y axes of motion are obstructed
 
         #mechanical variables
-        self.exp = 10000000
+        self.exp = 0
         self.gold = 0
         self.hp = [100.0, 100]  #hp [current, max]
-        self.baseAttack = 100   #base attack
-        self.baseDefense = 0    #base defense
-        self.baseSpeed = 0      #base speed
+        self.baseAttack = 0     #base attack
+        self.baseDefense = 100  #base defense
         
-        self.attack = 100       #total attack (cap: 1,700) (ABS CAP: 10,000)
-        self.defense = 0        #total defense (cap: 1,600)(ABS CAP: 10,000)
+        self.attack = 0         #total attack (cap: 10,000)
+        self.defense = 0        #total defense (cap: 10,000)
         self.absorbtion = 0     #damage absorbtion: applied 50% before and 50% after defense
         self.regen = 0.00       #life regen (HP / sec)
         self.lifeLeech = 0.00   #% damage stolen as life per hit
@@ -65,7 +64,6 @@ class Player(object):
         self.crit = 0.00 + self.get_stat(modEnum.MOD_CRIT)
         self.attackSpeedMultiplier = 1.0 + self.get_stat(modEnum.MOD_ATTACK_SPEED)
         self.moveSpeedMultiplier = 1.0 + self.get_stat(modEnum.MOD_MOVE_SPEEED)
-        self.speed = self.baseSpeed * self.moveSpeedMultiplier
 
 
     # @ param code the mod code of the stat
@@ -95,17 +93,11 @@ class Player(object):
         dmg -= self.absorbtion / 2.0
         #apply damage
         self.hp[0] -= dmg
-
-    def reset_movement(self):
-        """Reset the player's movement vector."""
-        self.direction = [0, 0]
     
     
     #  @param g a reference to the Game class that is currently running.    
     def update(self, g):
         """update the player (per frame), using data from game g"""
-        self.hp[0] += self.regen * g.deltaT
-        
         #collision detection
         self.collision = [False, False]
         #Needs to be floats to ensure the player doesn't get stuck in a wall (rounding errors cause this)
@@ -172,9 +164,9 @@ class Player(object):
         temp.set_colorkey( (255, 255, 0) )
         temp.blit(self.img, pygame.Rect(0, 0, 24, 32), pygame.Rect(25 * self.frameDirection, 33 * self.frame, 24, 32) )
         #make a mapping from gamespace -> view
-        pos = g.convertGamePixelsToZoomCoorinates( (self.x, self.y) )
+        offset = [-1 *( g.focus[0] - g.view[0] / 2 ), -1 * ( g.focus[1] - g.view[1] / 2 ) ]
         #zoom logic
         temp = pygame.transform.scale(temp, ( (int)(temp.get_width() * g.zoom), (int)(temp.get_height() * g.zoom) ) )
         
-        g.screen.blit(temp, pygame.Rect( pos[0], pos[1], (int)(24 * g.zoom), (int)(32 * g.zoom) ) )
+        g.screen.blit(temp, pygame.Rect( (int)(self.x * g.zoom) + offset[0], (int)(self.y * g.zoom) + offset[1], (int)(24 * g.zoom), (int)(32 * g.zoom) ) )
         #screen.blit(self.img, pygame.Rect(self.x, self.y, 24, 32), pygame.Rect(25 * self.frameDirection, 33 * self.frame, 24, 32) )

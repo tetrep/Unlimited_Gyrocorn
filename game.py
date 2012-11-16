@@ -22,9 +22,7 @@ class Game(object):
         self.mode = 0
 
         #game objects
-        self.players = [Player(self.imgPlayer), Player(self.imgPlayer), Player(self.imgPlayer), Player(self.imgPlayer)]
-        self.playerIndex = 0
-        self.player = self.players[self.playerIndex]
+        self.player = Player(self.imgPlayer)
         self.mapSize = [32, 32]
         self.tiles = []
         self.turrets = []
@@ -66,10 +64,7 @@ class Game(object):
         """Do logic/frame"""
         self.deltaT = self.clock.tick()
 
-        self.player = self.players[self.playerIndex]
-        for player in self.players:
-            player.update( self )
-            
+        self.player.update(self)
         self.update_view()
         
         for x, turret in enumerate(self.turrets):
@@ -117,40 +112,18 @@ class Game(object):
             #key pressed
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    #exit
                     pygame.quit()
                     sys.exit()
-                #PLAYER SWITCHING (Must go before movement)
-                if event.key == pygame.K_i:
-                    #+1
-                    self.player.reset_movement()
-                    self.playerIndex -= 1
-                    if self.playerIndex < 0:
-                        self.playerIndex = 3
-                if event.key == pygame.K_o:
-                    #-1
-                    self.player.reset_movement()
-                    self.playerIndex += 1
-                    if self.playerIndex > 3:
-                        self.playerIndex = 0
-                #MOVEMENT
                 if event.key == pygame.K_w:
-                    #up
                     self.player.direction[1] += -1
                 if event.key == pygame.K_a:
-                    #down
                     self.player.direction[0] += -1
                 if event.key == pygame.K_s:
-                    #left
                     self.player.direction[1] += 1
                 if event.key == pygame.K_d:
-                    #right
                     self.player.direction[0] += 1
-                # / MOVEMENT
-                #MENUS
                 if event.key == pygame.K_p:
                     #toggle player menu
-                    self.gui = GUI( self )
                     self.mode = 1
                     pass
 
@@ -191,15 +164,13 @@ class Game(object):
         self.screen.fill( (0, 0, 0) ) #screen wipe
         #draw stuff, from back->front
         self.draw_tiles()
-
-        for player in self.players:
-            player.draw( self )
+        self.player.draw( self )
         
         for turret in self.turrets:
             turret.draw( self )
         
         #actually draw it
-        #pygame.display.flip()
+        pygame.display.flip()
 
     def draw_tiles(self):
         for x in range(0, self.tiles.__len__() ):
@@ -227,11 +198,9 @@ class Game(object):
                 self.get_input()
                 self.update()
                 self.draw()
-                pygame.display.flip()
             elif self.mode == 1:
                 self.gui.get_input()
                 self.gui.update()
-                self.draw()
                 self.gui.draw()
                 pygame.display.flip()
 

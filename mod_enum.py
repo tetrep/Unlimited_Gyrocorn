@@ -1,13 +1,13 @@
 class Mod_Enum(object):
     def __init__(self):
         """initialize constants for mod code values"""
-        self.MOD_BLANK = 0
-        self.MOD_ATTACK = 1
-        self.MOD_DEFENSE = 2
-        self.MOD_HP = 3
-        self.MOD_REGEN = 4
-        self.MOD_ABSORB = 5
-        self.MOD_LEECH = 6
-        self.MOD_CRIT = 7
-        self.MOD_ATTACK_SPEED = 8
-        self.MOD_MOVE_SPEED = 9
+        MOD_BLANK = 0
+        MOD_ATTACK = 1
+        MOD_DEFENSE = 2
+        MOD_HP = 3
+        MOD_REGEN = 4
+        MOD_ABSORB = 5
+        MOD_LEECH = 6
+        MOD_CRIT = 7
+        MOD_ATTACK_SPEED = 8
+        MOD_MOVE_SPEED = 9
