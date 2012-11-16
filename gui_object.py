@@ -7,9 +7,8 @@ class GUIObject(object):
         self.rect = pygame.Rect(x, y, width, height)
         #image
         #text
-        self.text = ""
-        #how do we get the text to output lots of variables from a different class, with unknown indexes?
-        #rather than making the data and putting it in here, we could save the PID, EID, and SID, and pass them to get the text...?
+        self.text = [[""],[""]] # 2D list that stores multiple messages made up of multiple parts (strings, variables)
+        self.textIndex = 0
         
         #function: note: it must take a list of arguments
         self.f = f
@@ -21,3 +20,10 @@ class GUIObject(object):
     def function(self):
         """invoke this GUI Object's function"""
         self.f( self.args )
+
+    def get_text(self):
+        """returns a string, made by concatenating all the text in self.text stored at the current self.textIndex"""
+        txt = ""
+        for s in self.text[self.textIndex]:
+            txt += str( s )
+        return txt
