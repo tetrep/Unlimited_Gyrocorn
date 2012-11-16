@@ -11,9 +11,9 @@ class Creep(SuperClass):
     #  @param x the x position the creep occupies
     #  @param y the y position the creep occupies
     #  @param game the instance of the game this Creep is in
-    def __init__(self, img, x, y, type = 0x1111, game)
+    def __init__(self, img, x, y, type = (100, 100, 100, 100), game)
         #initialze super class variables
-        super(Creep, self).__init__(x, y, ((type&0xF000)>>12)*10, ((type&0x0F00)>>8)*10, ((type&0x00F0)>>4)*10, (type&0x000F)*10, game)
+        super(Creep, self).__init__(x, y, type[1], type[2], type[3], type[4], game)
 
         #set creep sprite
         self.img = img
@@ -23,8 +23,6 @@ class Creep(SuperClass):
         self.y_tile = self.rect.centery//24
         self.x_tile_next = self.x_tile
         self.y_tile_next = self.y_tile
-
-        self.speed_mod = 100.0
 
         #stats
         self.defense = 100.0
@@ -115,22 +113,22 @@ class Creep(SuperClass):
             self.x_tile_next = self.x_tile + 1
             self.y_tile_next = self.y_tile
         #look up-left [-1][-1]
-        if self.y_tile > 0 and self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile-1].creep_value < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
+        if self.y_tile > 0 and self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile-1].creep_value < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and !(self.game.tiles[self.x_tile][self.y_tile-1].blocking or self.game.tiles[self.x_tile-1][self.y_tile].blocking):
             #print "up-left"
             self.x_tile_next = self.x_tile - 1
             self.y_tile_next = self.y_tile - 1
         #look up-right [+1][-1]
-        if self.y_tile > 0 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile-1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
+        if self.y_tile > 0 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile-1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and !(self.game.tiles[self.x_tile][self.y_tile-1].blocking or self.game.tiles[self.x_tile+1][self.y_tile].blocking):
             #print "up-right"
             self.x_tile_next = self.x_tile + 1
             self.y_tile_next = self.y_tile - 1
         #look down-left [-1][+1]
-        if self.y_tile < self.game.mapSize[1]-1 and self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile+1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
+        if self.y_tile < self.game.mapSize[1]-1 and self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile+1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and !(self.game.tiles[self.x_tile][self.y_tile+1].blocking or self.game.tiles[self.x_tile-1][self.y_tile].blocking):
             #print "down-left"
             self.x_tile_next = self.x_tile - 1
             self.y_tile_next = self.y_tile + 1
         #look down-right [+1][+1]
-        if self.y_tile < self.game.mapSize[1]-1 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile+1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
+        if self.y_tile < self.game.mapSize[1]-1 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile+1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and !(self.game.tiles[self.x_tile][self.y_tile+1].blocking or self.game.tiles[self.x_tile+1][self.y_tile].blocking):
             #print "down-right"
             self.x_tile_next = self.x_tile + 1
             self.y_tile_next = self.y_tile + 1

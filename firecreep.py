@@ -4,7 +4,7 @@ import random
 ##  @class FireCreep
 #   @brief this is the fire-type creep class
 class FireCreep(Creep):
-    def __init__(self, img, x, y, type = 0x1111, game)
+    def __init__(self, img, x, y, type = (100, 100, 100, 100), game)
         #intitialize inherited stats
         super(FireCreep, self).__init__(x, y, type, game)
 
