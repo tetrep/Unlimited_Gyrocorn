@@ -32,8 +32,11 @@ class Game(object):
         self.turrets = []
         self.creeps = []
         self.load_tiles()
+
         self.spawn_creep(self.imgPlayer, 240, 240)
         self.spawn_creep(self.imgPlayer, 140, 140)
+        self.spawn_creep(self.imgPlayer, 140, 240)
+        self.spawn_creep(self.imgPlayer, 240, 140)
 
         #drawing variables
         self.zoom = 1.0

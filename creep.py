@@ -1,6 +1,7 @@
 import pygame
 from superclass import *
 import sys
+import math
 
 ##   @class Creep
 #    @brief this is the Creep class
@@ -51,39 +52,37 @@ class Creep(SuperClass):
     #  @todo optimize
     def move_vector(self):
         #horizontal?
-        if self.x == self.x_dest:
+        if self.x_real == self.x_dest:
             self.x_move = 0
             #up by default
-            self.y_move = 100
+            self.y_move = 1
             #whoops, we need down
-            if(self.y_dest < self.y):
-                self.y_move *= -1
+            if(self.y_dest < self.y_real):
+                self.y_move = -1
                 #negative safely unreald slope
-                self.m = -999
+                self.m = (-999,1)
             #positive safely unreal slope
             else:
-                self.m = 999
+                self.m = (999,1)
 
         #we have vertical movement, find slope
         else:
             self.m = ((self.y_dest - self.y_real), (self.x_dest - self.x_real))
 
-        self.y_move = self.m[0]/(self.m[0]+self.m[1])
+        self.y_move = self.m[0]/(abs(self.m[0])+abs(self.m[1]))
         self.x_move = 1 - self.y_move
+
+        #make sure the sign is correct
+        self.y_move = math.copysign(self.y_move, self.m[0])
+        self.x_move = math.copysign(self.x_move, self.m[1])
 
     ## the next_move function
     #  @brief look for the next ideal tile to attempt to move to
     #  @todo optimize
     def next_move(self):
         #our default next position
-        #self.x_tile_next = self.x_tile
-        #self.y_tile_next = self.y_tile
-
-        """
-        print self.x_tile, ',', self.y_tile
-        print self.x_tile_next, ',', self.y_tile_next
-        print "====="
-        #"""
+        self.x_tile_next = self.x_tile
+        self.y_tile_next = self.y_tile
 
         #look up [][-1]
         if self.y_tile > 0 and self.game.tiles[self.x_tile][self.y_tile-1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
@@ -126,11 +125,15 @@ class Creep(SuperClass):
             self.x_tile_next = self.x_tile + 1
             self.y_tile_next = self.y_tile + 1
 
-
-        #print "======"
         #update x/y next
         self.x_dest = self.x_tile_next * 24 + 12
         self.y_dest = self.y_tile_next * 24 + 12
+
+        """
+        print self.x_tile, ',', self.y_tile
+        print self.x_tile_next, ',', self.y_tile_next
+        print "====="
+        #"""
 
         #find our line
         self.move_vector()
@@ -139,10 +142,10 @@ class Creep(SuperClass):
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
         #calculate our next x/y coords
-        self.x_real = (self.x_move * self.vroom())
-        self.y_real = (self.y_move * self.vroom())
+        self.x_real += (self.x_move * self.vroom())
+        self.y_real += (self.y_move * self.vroom())
 
-        print '(', self.x_real, ',', self.y_real, ')'
+        #print '(', self.x_real, ',', self.y_real, ')'
 
         #update our rect
         self.rect.move_ip(int(self.x_real) - self.x, int(self.y_real) - self.y)
@@ -156,7 +159,6 @@ class Creep(SuperClass):
     def reap(self):
         #are we dead?
         if self.health <= 0:
-            print "woe is me!"
             return True
         #we're not dead yet
         else:
