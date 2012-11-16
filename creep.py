@@ -142,8 +142,10 @@ class Creep(SuperClass):
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
         #calculate our next x/y coords
-        self.x_real = self.x_move * self.vroom()
-        self.y_real = self.y_move * self.vroom()
+        self.x_real = (self.x_move * self.vroom())/100.0
+        self.y_real = (self.y_move * self.vroom())/100.0
+
+        print '(', self.x_real, ',', self.y_real, ')'
 
         #update our rect
         self.rect.move_ip(int(self.x_real) - self.x, int(self.y_real) - self.y)
@@ -188,16 +190,3 @@ class Creep(SuperClass):
     def draw(self, game):
         #blit it!
         game.screen.blit(self.img, self.rect, pygame.Rect(25*2, 33 * 2, 24, 32))
-
-    ## the print_neighbors function
-    #  @brief for debugging, prints the effective_values of the surrounding tiles
-    def print_neighbors(self):
-        x_tile = self.x_tile
-        y_tile = self.y_tile
-        #print up-left, and up, and up-right
-        print self.game.tiles[x_tile-1][y_tile-1].effective_value(), "=", self.game.tiles[x_tile][y_tile-1].effective_value(), '=', self.game.tiles[x_tile+1][y_tile-1].effective_value()
-        #print left, center, and right
-        print self.game.tiles[x_tile-1][y_tile].effective_value(), "=", self.game.tiles[x_tile][y_tile].effective_value(), '=', self.game.tiles[x_tile+1][y_tile].effective_value()
-        #print down-left, down, and down-right
-        print self.game.tiles[x_tile-1][y_tile+1].effective_value(), "=", self.game.tiles[x_tile][y_tile+1].effective_value(), '=', self.game.tiles[x_tile+1][y_tile+1].effective_value()
-        print "=========="
