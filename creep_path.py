@@ -24,11 +24,10 @@ class CreepPath(object):
         self.queue = Queue.Queue(0)
 
         #start the threads, add 1 to account for source
-        # @todo find out how many cores we have and set the appropriate amount of threads
-        for i in range(4):
-            thread = threading.Thread(target=self.path_queue)
-            thread.daemon = True
-            thread.start()
+        #for i in range(1, num_threads):
+        thread = threading.Thread(target=self.path_queue)
+        thread.daemon = True
+        thread.start()
 
     ## the find path function
     #  @brief gives all the tiles values, so creeps know where to go, lower is better
@@ -42,7 +41,7 @@ class CreepPath(object):
 
         self.queue.join()
 
-        """
+        
         temp = ""
         temp2 = 0
         for x2 in range(0, self.game.mapSize[0]):

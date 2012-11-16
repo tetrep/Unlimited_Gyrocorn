@@ -55,16 +55,23 @@ class Creep(SuperClass):
 
         #horizontal?
         if self.x == self.x_dest:
-          self.x_move = 0
-          self.y_move = 100
-          #safe value, we will never move like this
-          self.m = 999
+            self.x_move = 0
+            #up by default
+            self.y_move = 100
+            #whoops, we need down
+            if(self.y_dest < self.y):
+                self.y_move *= -1
+                #negative safely unreald slope
+                self.m = -999
+            #positive safely unreal slope
+            else:
+                self.m = 999
 
         #we have vertical movement, find slope
         else:
-          self.m = (self.y_dest - self.y_real)/(self.x_dest - self.x_real)
+            self.m = ((self.y_dest - self.y_real), (self.x_dest - self.x_real))
 
-        self.y_move = 100 // self.m
+        self.y_move = int((self.m[0]/(self.m[0]+self.m[1]))*100)
         self.x_move = 100 - self.y_move
 
     ## the next_move function
@@ -75,11 +82,11 @@ class Creep(SuperClass):
         #self.x_tile_next = self.x_tile
         #self.y_tile_next = self.y_tile
 
-        
+        """
         print self.x_tile, ',', self.y_tile
         print self.x_tile_next, ',', self.y_tile_next
         print "====="
-        
+        #"""
 
         #look up [][-1]
         if self.y_tile > 0 and self.game.tiles[self.x_tile][self.y_tile-1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
@@ -134,28 +141,23 @@ class Creep(SuperClass):
     ## the move function
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
-        #do we actually want to move?
-        if self.x == self.x_tile_next * 24 + 12 and self.y == self.y_tile_next * 24 + 12:
-            self.x_next = self.x
-            self.y_next = self.y
-        #we want to move
-        else:
-            #calculate our next x/y coords
-            self.x_real = self.x_move * self.vroom()
-            self.y_real = self.y_move * self.vroom()
+        #calculate our next x/y coords
+        self.x_real = self.x_move * self.vroom()
+        self.y_real = self.y_move * self.vroom()
 
-            #update our rect
-            self.rect.move_ip(int(self.x_real) - self.x, int(self.y_real) - self.y)
+        #update our rect
+        self.rect.move_ip(int(self.x_real) - self.x, int(self.y_real) - self.y)
 
-            #update our x/y positon
-            self.x = int(self.x_real)
-            self.y = int(self.y_real)
+        #update our x/y positon
+        self.x = int(self.x_real)
+        self.y = int(self.y_real)
 
     ## the reap function
     #  @brief handles what to do if we are dead
     def reap(self):
         #are we dead?
         if self.health <= 0:
+            print "woe is me!"
             return True
         #we're not dead yet
         else:
