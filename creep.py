@@ -50,9 +50,6 @@ class Creep(SuperClass):
     #  @brief using x/y and x/y _next for tiles, finds m and b of vector between the two tiles
     #  @todo optimize
     def move_vector(self):
-        #for our charging creep
-        self.m_old = self.m
-
         #horizontal?
         if self.x == self.x_dest:
             self.x_move = 0
@@ -71,8 +68,8 @@ class Creep(SuperClass):
         else:
             self.m = ((self.y_dest - self.y_real), (self.x_dest - self.x_real))
 
-        self.y_move = int((self.m[0]/(self.m[0]+self.m[1]))*100)
-        self.x_move = 100 - self.y_move
+        self.y_move = self.m[0]/(self.m[0]+self.m[1])
+        self.x_move = 1 - self.y_move
 
     ## the next_move function
     #  @brief look for the next ideal tile to attempt to move to
@@ -142,8 +139,8 @@ class Creep(SuperClass):
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
         #calculate our next x/y coords
-        self.x_real = (self.x_move * self.vroom())/100.0
-        self.y_real = (self.y_move * self.vroom())/100.0
+        self.x_real = (self.x_move * self.vroom())
+        self.y_real = (self.y_move * self.vroom())
 
         print '(', self.x_real, ',', self.y_real, ')'
 
