@@ -4,6 +4,13 @@ from player import *
 from turret import *
 from gui import *
 
+from creep import *
+from chargecreep import *
+from creep_path import *
+
+from node import *
+from turretfactory import *
+
 #  @class Game
 #  @brief this class is the game engine. It manages game logic, input, and rendering.
 class Game(object):
@@ -28,17 +35,26 @@ class Game(object):
         self.mapSize = [32, 32]
         self.tiles = []
         self.turrets = []
-        #self.creeps = []
         self.gui = GUI( self )
 
+        self.creeps = []
         self.load_tiles()
+
+        self.spawn_creep(self.imgPlayer, 240, 240)
+        self.spawn_creep(self.imgPlayer, 140, 140)
+        self.spawn_creep(self.imgPlayer, 140, 240)
+        self.spawn_creep(self.imgPlayer, 240, 140)
 
         #drawing variables
         self.zoom = 2.0
         self.focus = [0, 0]     # the central point of the viewbox
         self.view = [0, 0]      # the width + height of the viewbox
         self.viewMax = [0, 0]   # the width + height of the total screen
-        # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.      
+        # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
+
+        self.turretFactory = TurretFactory()
+        #pos = [ (180 + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (300 + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
+        #self.turrets.append( self.turretFactory.createTurret( self, 5, pos[0], pos[1] ) )
         
     def load_assets(self):
         """pre-load all graphics and sound"""
@@ -71,6 +87,11 @@ class Game(object):
             player.update( self )
             
         self.update_view()
+
+        #update creeps
+        for creep in self.creeps:
+            creep.update(self)
+            #creep.receive_damage(1)
         
         for x, turret in enumerate(self.turrets):
             if turret.valid_placement == True:
@@ -172,9 +193,12 @@ class Game(object):
                     #needs to be converted to give a mapping in game space.
                     #if   map = pos * zoom - (focus - view / 2)
                     #then pos = (map + (focus - view / 2) ) / zoom
+
                     pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
-                    
-                    self.turrets.append( Turret( self, pos[0], pos[1] ) )
+
+                    #self.turrets.append( Turret( self, 2, pos[0], pos[1] ) )
+                    self.turrets.append( self.turretFactory.createTurret( self, 6, pos[0], pos[1] ) )
+
                     
                 elif event.button == 4: #mouse wheel down
                     self.zoom -= .1
@@ -186,6 +210,15 @@ class Game(object):
                     if self.zoom > 4:
                         self.zoom = 4
         
+
+    def reap(self):
+        for x, creep in enumerate(self.creeps):
+            if creep.reap():
+                self.creeps.pop(x)
+
+    def spawn_creep(self, img, x, y, type = (100, 100, 100, 100)):
+        self.creeps.append(ChargeCreep(img, x, y, self, type))
+
     def draw(self):
         """draw"""
         self.screen.fill( (0, 0, 0) ) #screen wipe
