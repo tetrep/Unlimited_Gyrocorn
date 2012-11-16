@@ -28,6 +28,9 @@ class Terrain(object):
         #self.tileSize = pygame.Rect(0,0,self.engine.screen.get_width()/self.xSize,self.engine.screen.get_height()/self.ySize) # A rect that defines how big an individual tile on is in the gameworld
         self.tileSize = pygame.Rect(0,0,24,24)# A rect that defines how big an individual tile on is in the gameworld
         
+        self.spawns = []    # A list containing the places that creeps will spawn
+        self.target = (self.xSize-2, self.ySize-2)
+        
         for x in xrange(self.xSize):
             self.tiles.append([])
             for y in xrange(self.ySize):
@@ -58,6 +61,14 @@ class Terrain(object):
                 elif lines[y][x] == 'w':
                     img = self.waterimg
                     blocking=True
+                elif lines [y][x] == 's':
+                    self.spawns.append((x,y))
+                    img=self.grassimg
+                    blocking = False
+                elif lines[y][x] == 't':
+                    self.target = (x,y)
+                    img=self.grassimg
+                    blocking = False
                 else:
                     img=self.grassimg
                     blocking = False
@@ -109,6 +120,14 @@ class Terrain(object):
         for column in self.tiles:
             for item in column:
                 self.img.blit(item.img,item.rect)
+                
+    ## Returns the list of spawn locations (where creeps will spawn)
+    def get_spawn_locations(self):
+        return self.spawns
+        
+    ## Returns the target (where creeps will go to)
+    def get_target(self):
+        return self.target
             
     ## Overloads the getitem function so that the terrain can be accessed by []
     def __getitem__(self, key):

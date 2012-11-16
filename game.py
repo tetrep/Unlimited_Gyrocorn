@@ -16,6 +16,8 @@ class Game(object):
         pygame.init()
         self.clock = pygame.time.Clock()
         
+        self.gameState = 0  
+        
         #screen initialization
         self.screenSize = (1024, 768)
         self.screen = pygame.display.set_mode( self.screenSize )
@@ -198,9 +200,10 @@ class Game(object):
     def main(self):
         """main game loop"""
         while True:
-            self.get_input()
-            self.update()
-            self.draw()
+            if self.gameState == 0:
+                self.get_input()
+                self.update()
+                self.draw()
 
 g = Game()
 g.main()
