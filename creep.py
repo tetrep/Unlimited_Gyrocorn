@@ -15,7 +15,7 @@ class Creep(SuperClass):
     #  @param game the instance of the game this Creep is in
     def __init__(self, img, number, x, y, game):
         #get x/y/rect set up
-        super(Creep, self).__init__(x, y, 1, 1, 10, game)
+        super(Creep, self).__init__(x, y, 1, 1, 1, 10, game)
 
         #remember the game
         self.game = game
@@ -31,9 +31,23 @@ class Creep(SuperClass):
 
         #speed
         # @todo we really shouldn't reach into game like this!
-        self.speed = 10.0
+        self.speed = 20.0
+        self.max_speed = 20.0
         self.speed_mod = 100.0
 
+        #stats
+        self.defense = 100.0
+        self.max_defense = 100.0
+        self.absorbtion = 0.0
+        self.max_aborbtion = 0.0
+
+        self.timeBurning = -1
+        self.timeChilled = -1
+        self.timeShocked = -1
+        self.timeParalyzed = -1
+        self.burningCounter = 0
+        self.damage_multiplier = 1
+        
         #vector we want to move along
         self.m = 0
         self.b = 0
@@ -55,12 +69,16 @@ class Creep(SuperClass):
         #generic and boring
         if self.number == 0:
             self.health = 5
+            self.max_health = 5
         elif self.number == 1 or self.number == 666:
             self.health = 40
+            self.max_health = 40
         elif self.number == 2:
             self.health = 10
+            self.max_health = 10
         else:
             self.health = 25
+            self.max_health = 25
 
     ## the vroom function
     #  @brief returns our calculated speed, based on various factors
@@ -85,10 +103,10 @@ class Creep(SuperClass):
 
         #toggle swap bool
         if self.swap:
-            print "unswap2"
+            #print "unswap2"
             self.swap = False
         else:
-            print "swap2"
+            #print "swap2"
             self.swap = True
 
     ## the move_vector function
@@ -102,7 +120,7 @@ class Creep(SuperClass):
         #dont want to break on vertical movement, so swap x/y
         if self.x == self.x_dest:
            #swap x and y
-           print "swap"
+           #print "swap"
            self.swap_xy()
 
            #set slope
@@ -209,7 +227,7 @@ class Creep(SuperClass):
             self.y_next = self.y
 
             if self.swap:
-                print "unswap"
+                #print "unswap"
                 self.swap_xy()
 
         #we want to move
@@ -222,10 +240,10 @@ class Creep(SuperClass):
             self.x_next = int(self.x + self.vroom())
             self.y_next = int(self.m * self.x_next + self.b)
 
-            print '(', self.x_next, ',', self.y_next, ')'
+            #print '(', self.x_next, ',', self.y_next, ')'
 
             if self.swap:
-                print "unswap3"
+                #print "unswap3"
                 self.swap_xy()
 
             #update our rect
@@ -253,8 +271,8 @@ class Creep(SuperClass):
     ## the take_damage function
     #  @brief because bitches love wrappers
     #  @todo this shouldn't be a wrapper
-    def take_damage(self, damage):
-        self.receive_damage(damage)
+    #def take_damage(self, damage):
+    #    self.receive_damage(damage)
 
     ## the reap function
     #  @brief handles what to do if we are dead
@@ -275,11 +293,16 @@ class Creep(SuperClass):
 
     ## the update function
     #  @brief handles all creep operations per frame
-    def update(self):
+    def update(self, game):
         #update our current tile position (can't do this before draw)
         self.x_tile = self.rect.centerx//24
         self.y_tile = self.rect.centery//24
 
+        super(Creep, self).checkBurning(game.deltaT)
+        super(Creep, self).checkChilled(game.deltaT)
+        super(Creep, self).checkShocked(game.deltaT)
+        super(Creep, self).checkParalyzed(game.deltaT)
+        
         #calculate where we want to move to
         self.next_move()
 

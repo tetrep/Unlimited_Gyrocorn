@@ -24,7 +24,8 @@ class CreepPath(object):
         self.queue = Queue.Queue(0)
 
         #start the threads, add 1 to account for source
-        for i in range(10):
+        # @todo find out how many cores we have and set the appropriate amount of threads
+        for i in range(4):
             thread = threading.Thread(target=self.path_queue)
             thread.daemon = True
             thread.start()

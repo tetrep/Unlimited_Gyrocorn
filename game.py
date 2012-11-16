@@ -6,6 +6,7 @@ from creep import *
 from creep_path import *
 from node import *
 from terrain import *
+from turretfactory import *
 
 #  @class Game
 #  @brief this class is the game engine. It manages game logic, input, and rendering.
@@ -32,7 +33,7 @@ class Game(object):
         self.creeps = []
         self.creeps.append(Creep(self.imgPlayer, 0, 240, 240, self))
         self.creeps.append(Creep(self.imgPlayer, 666, 140, 140, self))
-
+        
         self.tiles = Terrain(self,"test.txt")
         the_path = CreepPath((30, 30), 1, self)
         the_path.find_path()
@@ -42,7 +43,11 @@ class Game(object):
         self.focus = [0, 0]     # the central point of the viewbox
         self.view = [0, 0]      # the width + height of the viewbox
         self.viewMax = [0, 0]   # the width + height of the total screen
-        # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.      
+        # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
+
+        self.turretFactory = TurretFactory()
+        #pos = [ (180 + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (300 + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
+        #self.turrets.append( self.turretFactory.createTurret( self, 5, pos[0], pos[1] ) )
         
     def load_assets(self):
         """pre-load all graphics and sound"""
@@ -81,7 +86,7 @@ class Game(object):
 
         #update creeps
         for creep in self.creeps:
-            creep.update()
+            creep.update(self)
             #creep.receive_damage(1)
         
         for x, turret in enumerate(self.turrets):
@@ -156,7 +161,8 @@ class Game(object):
                     #then pos = (map + (focus - view / 2) ) / zoom
                     #currently hardcoded turret type
                     pos = [ (event.pos[0] + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (event.pos[1] + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
-                    self.turrets.append( Turret( self, 2, 2, 2, 64, pos[0], pos[1] ) )
+                    #self.turrets.append( Turret( self, 2, pos[0], pos[1] ) )
+                    self.turrets.append( self.turretFactory.createTurret( self, 6, pos[0], pos[1] ) )
                     
                 elif event.button == 4: #mouse wheel down
                     self.zoom -= .1
