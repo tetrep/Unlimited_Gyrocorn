@@ -1,4 +1,4 @@
-import pygame, sys, rand
+import pygame, sys, random
 
 from tile import *
 from player import *
@@ -215,9 +215,10 @@ class Game(object):
             if creep.reap():
                 self.creeps.pop(x)
 
-    def spawn_creep(self, img, x, y, type = (self.level, self.level, self.level, self.level)):
+    def spawn_creep(self, img, x, y, type = (100, 100, 100, 100)):
       for x in range(1, random.randint(10, 20)+self.level):
-          self.creeps.append(cfactory(random.randint(1, 5)))
+          pass
+          #self.creeps.append(cfactory(random.randint(1, 5)))
 
     def draw(self):
         """draw"""
