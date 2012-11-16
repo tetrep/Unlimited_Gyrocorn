@@ -217,8 +217,7 @@ class Game(object):
 
     def spawn_creep(self, img, x, y, type = (100, 100, 100, 100)):
       for x in range(1, random.randint(10, 20)+self.level):
-          pass
-          #self.creeps.append(cfactory(random.randint(1, 5)))
+          self.creeps.append(cfactory(random.randint(1, 5)))
 
     def draw(self):
         """draw"""
