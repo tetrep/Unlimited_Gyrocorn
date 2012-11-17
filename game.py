@@ -189,57 +189,33 @@ class Game(object):
                     if self.zoom > 4:
                         self.zoom = 4
     
-    def guiInput(self):
-        for event in pygame.event.get():
-            #key pressed
+    def menuInput(self):
+        for event in pygame.event.get()
+            #Key presses
             if event.type == pygame.KEYDOWN:
+                #Escape key
                 if event.key == pygame.K_ESCAPE:
-                    #exit
                     pygame.quit()
                     sys.exit()
-                #PLAYER SWITCHING (Must go before movement)
-                if event.key == pygame.K_i:
-                    #+1
-                    self.player.reset_movement()
-                    self.playerIndex -= 1
-                    if self.playerIndex < 0:
-                        self.playerIndex = 3
-                if event.key == pygame.K_o:
-                    #-1
-                    self.player.reset_movement()
-                    self.playerIndex += 1
-                    if self.playerIndex > 3:
-                        self.playerIndex = 0
-                #MENUS
-                if event.key == pygame.K_p:
-                    #toggle player menu
-                    self.go_to_GUI()
-
-            #mouse controls
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1: #left click
-                    #event.pos[0] and event.pos[1] are the mouse x,y coordinates respectively relative to the game window
-                    #needs to be converted to give a mapping in game space.
-                    #if   map = pos * zoom - (focus - view / 2)
-                    #then pos = (map + (focus - view / 2) ) / zoom
-
-                    pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
-
-                    #self.turrets.append( Turret( self, 2, pos[0], pos[1] ) )
-                    self.turrets.append( self.turretFactory.createTurret( self, 6, pos[0], pos[1] ) )
-
                     
-                elif event.button == 4: #mouse wheel down
-                    self.zoom -= .1
-                    if self.zoom < 1:
-                        self.zoom = 1
-                        
-                elif event.button == 5: #mouse wheel up
-                    self.zoom += .1
-                    if self.zoom > 4:
-                        self.zoom = 4
+            
+            #Mouse
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                #Left Click
+                if event.button == 1:
+                    pass
     
+    ## Decprecated
     def reap(self):
+        for x, creep in enumerate(self.creeps):
+            if creep.reap():
+                self.creeps.pop(x)
+
+    ## Deprecated
+    def spawn_creep(self, img, x, y, type = (100, 100, 100, 100)):
+      for x in range(1, random.randint(10, 20)+self.level):
+          #self.creeps.append(cfactory(random.randint(1, 5)))
+          pass
 
     def draw(self):
         """draw"""
