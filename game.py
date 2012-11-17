@@ -7,6 +7,7 @@ from turret import *
 from turretfactory import *
 
 from gui import *
+from button import *
 
 from creep import *
 from chargecreep import *
@@ -26,13 +27,15 @@ class Game(object):
         pygame.init()
         self.clock = pygame.time.Clock()
         
-        self.gameState = 0  
         
         #screen initialization
         self.screenSize = (1024, 768)
         self.screen = pygame.display.set_mode( self.screenSize )
         
         self.load_assets()
+        
+        self.gameState=-1
+        self.go_to_MainMenu()
         
     def load_assets(self):
         """pre-load all graphics and sound"""
@@ -42,6 +45,11 @@ class Game(object):
         self.imgTileWall = pygame.image.load("Art/tiles/obj-wall.png").convert()
         self.imgBasicTurret = pygame.image.load("Art/tiles/obj-guardtowertest3.png").convert()
         self.imgBasicTurret.set_colorkey( (255, 0, 255) )
+        
+        self.imgButton = pygame.image.load("Art/ButtonBackground.png").convert()
+        self.imgButton.set_colorkey((255,0,255))
+        self.imgButton = pygame.transform.scale(self.imgButton,
+        (int(float(self.imgButton.get_width())/self.imgButton.get_height()*150),150)).convert_alpha()
 
     def load_tiles(self):
         """generate a level, and store it in tiles[][]"""
@@ -109,10 +117,12 @@ class Game(object):
             
     def get_input(self):
         """get and handle user input"""
-        if self.gameState == 0
+        if self.gameState == 0:
             self.gameInput()
-        if self.gameState == 1:
+        elif self.gameState == 1:
             self.guiInput()
+        elif self.gameState == 3:
+            self.menuInput()
             
     def gameInput(self):
         for event in pygame.event.get():
@@ -190,7 +200,7 @@ class Game(object):
                         self.zoom = 4
     
     def menuInput(self):
-        for event in pygame.event.get()
+        for event in pygame.event.get():
             #Key presses
             if event.type == pygame.KEYDOWN:
                 #Escape key
@@ -198,12 +208,16 @@ class Game(object):
                     pygame.quit()
                     sys.exit()
                     
+            elif event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
             
             #Mouse
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 #Left Click
                 if event.button == 1:
-                    pass
+                    for button in self.MenuButtons:
+                        button.click(event.pos)
     
     ## Decprecated
     def reap(self):
@@ -231,13 +245,18 @@ class Game(object):
             turret.draw( self )
         
         #actually draw it
-        pygame.display.flip()
+        #pygame.display.flip()
 
     def draw_tiles(self):
         for x in range(0, self.tiles.__len__() ):
             for y in range(0, self.tiles[x].__len__() ):
                 self.tiles[x][y].draw( self ) #[ [(0,0), (0,1), ...], [(1,0),(1,1),...], ...]
 
+    def draw_MainMenu(self):
+        for button in self.MenuButtons:
+            button.draw(self.screen)
+            
+                
     def convertGamePixelsToZoomCoorinates(self, (x, y) ):
         #get the offset of the entire zoomed-in game subspace.
         offset = [-1 *( self.focus[0] - self.view[0] / 2 ), -1 * ( self.focus[1] - self.view[1] / 2 ) ]
@@ -248,7 +267,7 @@ class Game(object):
         #reverse the game->zoom conversion                
         return ( (int)( ( x + (self.focus[0] - self.view[0] / 2) ) / self.zoom ) , (int)( ( y + (self.focus[1] - self.view[1] / 2) ) / self.zoom ) )
         
-    def go_to_Game():
+    def go_to_Game(self):
         if self.gameState != 1: #Don't reset anything if just coming back from the GUI
             #game objects
             self.players = [Player(self.imgPlayer), Player(self.imgPlayer), Player(self.imgPlayer), Player(self.imgPlayer)]
@@ -288,9 +307,17 @@ class Game(object):
         self.gameState = 1
         
     def go_to_MainMenu(self):
-        pass
+        self.MenuButtons = []
+        self.MenuButtons.append(Button("Start",32,(50,50),self.imgButton,self.go_to_Game,[]))
+        self.MenuButtons.append(Button("Select Level",32,(50,250),self.imgButton,self.go_to_LevelSelect,[]))
+        self.MenuButtons.append(Button("Save or Load",32,(50,450),self.imgButton,self.go_to_SaveLoad,[]))
+        
+        self.gameState=3
         
     def go_to_LevelSelect(self):
+        pass
+        
+    def go_to_SaveLoad(self):
         pass
         
     def main(self):
@@ -312,7 +339,7 @@ class Game(object):
             elif self.gameState == 2: #BuildPhase (Possibly unused)
                 pass
             elif self.gameState == 3: #Main menu
-                pass
+                self.draw_MainMenu()
             elif self.gameState == 4: #Level Selection
                 pass
             elif self.gameState == 5: #Save/load screen (theoretical at this point)
@@ -324,6 +351,7 @@ class Game(object):
             else:   #ABORT, ABORT
                 pygame.quit()
                 sys.exit()
+            pygame.display.flip()
 
 g = Game()
 g.main()
