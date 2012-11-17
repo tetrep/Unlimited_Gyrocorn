@@ -40,12 +40,10 @@ class SuperClass(object):
 
         #default update functions
         self.update_functions = []
-        """
         self.update_functions.append((99, self.checkBurning))
         self.update_functions.append((99, self.checkChilled))
         self.update_functions.append((99, self.checkShocked))
         self.update_functions.append((99, self.checkParalyzed))
-        #"""
         
     ## the update function
     #  @brief iterates over a list of functions and calls them, in order
