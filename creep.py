@@ -1,5 +1,8 @@
 import pygame
+
 from superclass import *
+from weapon import *
+
 import sys
 import math
 
@@ -8,11 +11,11 @@ import math
 class Creep(SuperClass):
     ## the constructor
     #  @param img the sprite for the creep to use
-    #  @param number the value used to determine the creeps attributes
     #  @param x the x position the creep occupies
     #  @param y the y position the creep occupies
     #  @param game the instance of the game this Creep is in
-    def __init__(self, img, x, y, game, ctype = (100, 100, 100, 100)):
+    #  @param ctype a tuple of creep attributes, optional
+    def __init__(self, img, x, y, game, ctype = (100, 100, 100, 24)):
         #initialze super class variables
         super(Creep, self).__init__(x, y, game, *ctype)
 
@@ -25,13 +28,6 @@ class Creep(SuperClass):
         self.x_tile_next = self.x_tile
         self.y_tile_next = self.y_tile
 
-        self.timeBurning = -1
-        self.timeChilled = -1
-        self.timeShocked = -1
-        self.timeParalyzed = -1
-        self.burningCounter = 0
-        self.damage_multiplier = 1
-        
         #vector we want to move along
         self.x_move = 0.0
         self.y_move = 0.0
@@ -39,13 +35,18 @@ class Creep(SuperClass):
         self.y_real = self.y
         self.m = 0
 
-        #x and y are not swapped
-        self.swap = False
+        #our weapon
+        self.weapon = Weapon()
 
-    ## the vroom function
-    #  @brief returns our calculated speed, based on various factors
-    def vroom(self):
-          return self.speed
+        #append our needed functions
+        self.update_functions.append((0, self.update_tile))
+        self.update_functions.append((10, self.next_move))
+        self.update_functions.append((20, self.move))
+        self.update_functions.append((30, self.attack))
+
+        #sort our wonderful list so they occur in order
+        self.update_functions = sorted(self.update_functions, key=lambda function_tuple: function_tuple[0])
+
 
     ## the move_vector function
     #  @brief using x/y and x/y _next for tiles, finds m and b of vector between the two tiles
@@ -142,8 +143,8 @@ class Creep(SuperClass):
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
         #calculate our next x/y coords
-        self.x_real += (self.x_move * self.vroom())
-        self.y_real += (self.y_move * self.vroom())
+        self.x_real += (self.x_move * self.speed) * self.game.deltaT / 1000
+        self.y_real += (self.y_move * self.speed) * self.game.deltaT / 1000
 
         #print '(', self.x_real, ',', self.y_real, ')'
 
@@ -164,28 +165,36 @@ class Creep(SuperClass):
         else:
             return False
 
-    ## the update function
-    #  @brief handles all creep operations per frame
-    def update(self, game):
-        #update our current tile position (can't do this before draw)
-        self.x_tile = self.rect.centerx//24
-        self.y_tile = self.rect.centery//24
+    ## the update tile
+    #  @brief calculates the current tile we occupy
+    def update_tile(self):
+        #update our current tile position
+        self.x_tile = self.rect.centerx // 24
+        self.y_tile = self.rect.centery // 24
 
-        super(Creep, self).checkBurning(game.deltaT)
-        super(Creep, self).checkChilled(game.deltaT)
-        super(Creep, self).checkShocked(game.deltaT)
-        super(Creep, self).checkParalyzed(game.deltaT)
-        
-        #calculate where we want to move to
-        self.next_move()
-
-        #move to our destination
-        self.move()
+        print '(', self.x_tile, ',', self.y_tile, ')'
+        print '(', self.rect.centerx, ',', self.rect.centery, ')'
 
     ## the draw function
     #  @brief draws the creep to the screen, called once per frame
-    #  @param screen the screen that the creep should be drawn to
     #  @todo this should just be inherited
-    def draw(self, game):
+    def draw(self):
         #blit it!
-        game.screen.blit(self.img, self.rect, pygame.Rect(25*2, 33 * 2, 24, 32))
+        self.game.screen.blit(self.img, self.rect, pygame.Rect(25*2, 33 * 2, 24, 32))
+
+    ## the attack function
+    #  @brief attacks all players in range
+    def attack(self):
+        #have we attacked too recently?
+        if self.attack_wait >= self.attack_speed:
+            #iterate through the players, attacking the first one that collides
+            for player in self.game.players:
+                if(self.rect.colliderect(player.rect)):
+                    #so we don't attack too quickly
+                    self.attack_wait = 0
+                    #attack the player with our weapon
+                    self.weapon.attack(player)
+                    break
+        #wait for attack_speed ms before we can attack again
+        else:
+            self.attack_wait += self.game.deltaT

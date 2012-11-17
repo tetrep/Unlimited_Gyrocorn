@@ -10,10 +10,10 @@ from gui_equipment import *
 from gui_tower_buy import *
 from gui_tower_upgrade import *
 
-from creep import *
-from chargecreep import *
 from creep_path import *
 from creep_factory import *
+
+from save_load import *
 
 #  @class Game
 #  @brief this class is the game engine. It manages game logic, input, and rendering.
@@ -52,6 +52,14 @@ class Game(object):
         
         self.gui = GUI_Equipment( self )
 
+        self.cfactory = CreepFactory(self.imgPlayer, self)
+
+        self.load_tiles()
+
+        self.level = 1
+
+        self.spawn_creep()
+
         #drawing variables
         self.zoom = 2.0
         self.focus = [0, 0]     # the central point of the viewbox
@@ -88,6 +96,9 @@ class Game(object):
                     tempTile.blocking = True
                     tempTile.img = self.imgTileWall
                 self.tiles[x].append( tempTile )
+
+        self.cp = CreepPath((24, 31), 4, self)
+        self.cp.find_path()
         
     def update(self):
         """Do logic/frame"""
@@ -100,7 +111,7 @@ class Game(object):
 
         #update creeps
         for creep in self.creeps:
-            creep.update(self)
+            creep.update()
             #creep.receive_damage(1)
 
         #update turrets
@@ -254,10 +265,13 @@ class Game(object):
             if creep.reap():
                 self.creeps.pop(x)
 
-    def spawn_creep(self, img, x, y, type = (100, 100, 100, 100)):
-      for x in range(1, random.randint(10, 20)+self.level):
-          pass
-          #self.creeps.append(cfactory(random.randint(1, 5)))
+    def spawn_creep(self, img = None, x = None, y = None, ctype = None):
+        #we want to use the factory
+        if(img == None):
+            for x in range(1, 2):#random.randint(10, 20)+self.level):
+                self.creeps.append(self.cfactory.make(random.randint(1, 5)))
+        else:
+            self.creeps.append(Creep(img, x, y, self, ctype))
 
     def game_lost(self):
         """returns true if the game has been lost"""
@@ -274,6 +288,9 @@ class Game(object):
 
         for player in self.players:
             player.draw( self )
+
+        for creep in self.creeps:
+            creep.draw()
         
         for turret in self.turrets:
             turret.draw( self )
@@ -344,4 +361,3 @@ class Game(object):
 
 g = Game()
 g.main()
-        

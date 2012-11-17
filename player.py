@@ -1,12 +1,15 @@
 import pygame
 from mod_enum import *
 from equipment import *
+from superclass import *
 
-class Player(object):
+class Player(SuperClass):
     #  @param img a reference to a pygame.Surface containing the spritesheet to be used for draw calls.
     #  @param img2 a refence to a pygame.Surface containing the spritesheet to use when the player is not active.
     def __init__(self, img, img2):
         """initialize player"""
+        super(Player, self).__init__()
+        self.update_functions = None
         self.img = img
         self.img2 = img2
         self.font = pygame.font.Font(None, 32)
