@@ -225,7 +225,7 @@ class Game(object):
     def spawn_creep(self, img = None, x = None, y = None, ctype = None):
         #we want to use the factory
         if(img == None):
-            for x in range(1, random.randint(10, 20)+self.level):
+            for x in range(1, 2):#random.randint(10, 20)+self.level):
                 self.creeps.append(self.cfactory.make(random.randint(1, 5)))
         else:
             self.creeps.append(Creep(img, x, y, self, ctype))

@@ -35,16 +35,16 @@ class SuperClass(object):
         
     def update(self, game):
         """update method"""
-        checkBurning(game.deltaT)
-        checkChilled(game.deltaT)
-        checkShocked(game.deltaT)
-        checkParalyzed(game.deltaT)
+        self.checkBurning(game.deltaT)
+        self.checkChilled(game.deltaT)
+        self.checkShocked(game.deltaT)
+        self.checkParalyzed(game.deltaT)
         
     def draw(self):
         """draw method"""
         pass
 
-    def take_damage(self, dmg, type):
+    def take_damage(self, dmg, dtype = 1):
         """applies modifiers to damage, then takes it"""
         #DR% = 1 - (100 / x). 
         damageMultiplier = 100 / self.defense
@@ -59,16 +59,17 @@ class SuperClass(object):
     def applyBurning(self):
         self.timeBurning = 0
     
+    #  @todo increment burning counter by 500 each step, instead of 1
     def checkBurning(self, deltaT):
         if self.timeBurning != -1:
-            self.timeBurning = self.timeBurning + deltaT
+            self.timeBurning += deltaT
             if self.timeBurning >= 4000:
                 self.timeBurning = -1
                 self.burningCounter = 0
             elif self.timeBurning > 500 * self.burningCounter:
                 self.burningCounter = self.burningCounter + 1
                 self.take_damage(5, 1)
-    
+
     def applyChilled(self):
         self.timeChilled = 0
         self.speed = self.max_speed * 0.5
