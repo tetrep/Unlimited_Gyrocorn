@@ -43,6 +43,9 @@ class Game(object):
         """pre-load all graphics and sound"""
         self.font = pygame.font.Font(None, 20)
         self.bigfont = pygame.font.Font(None, 32)
+        self.font = pygame.font.Font(None, 20)
+        self.bigfont = pygame.font.Font(None, 32)
+        self.imgCreep = pygame.image.load("Art/units/pikeman-red.png").convert()
         self.imgPlayer = pygame.image.load("Art/units/sprite-general-gabe.png").convert()
         self.imgPlayer.set_colorkey( (255, 0, 255) )
         self.imgPlayerAI = pygame.image.load("Art/units/sprite-general-gabe2.png").convert()
@@ -378,7 +381,7 @@ class Game(object):
             
             self.gui = GUI_Equipment( self )
 
-            self.cfactory = CreepFactory(self.imgPlayer, self)
+            self.cfactory = CreepFactory(self.imgCreep, self)
 
             self.load_tiles()
 
