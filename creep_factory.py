@@ -18,13 +18,15 @@ class CreepFactory(object):
         self.x = random.randint(30, 300)
         self.y = random.randint(30, 300)
         self.ctype = (random.randint(1, self.game.level), random.randint(1, self.game.level), random.randint(1, self.game.level), random.randint(1, self.game.level))
+
+        print "spawn at: (", self.x, ',', self.y, ')'
         if cnum == 1:
-            return Creep(img, self.x, self.y, self.game, self.ctype)
+            return Creep(self.img, self.x, self.y, self.game, self.ctype)
         elif cnum == 2:
-            return FireCreep(img, self.x, self.y, self.game, self.ctype)
+            return FireCreep(self.img, self.x, self.y, self.game, self.ctype)
         elif cnum == 3:
-            return ElectricCreep(img, self.x, self.y, self.game, self.ctype)
+            return ElectricCreep(self.img, self.x, self.y, self.game, self.ctype)
         elif cnum == 4:
-            return IceCreep(img, self.x, self.y, self.game, self.ctype)
+            return IceCreep(self.img, self.x, self.y, self.game, self.ctype)
         elif cnum == 5:
-            return ChargeCreep(img, self.x, self.y, self.game, self.ctype)
+            return ChargeCreep(self.img, self.x, self.y, self.game, self.ctype)

@@ -171,6 +171,8 @@ class Creep(SuperClass):
         self.x_tile = self.rect.centerx//24
         self.y_tile = self.rect.centery//24
 
+        #print "im at: (", self.x_tile, ',', self.y_tile, ')'
+
         """
         super(Creep, self).checkBurning(game.deltaT)
         super(Creep, self).checkChilled(game.deltaT)
@@ -187,8 +189,7 @@ class Creep(SuperClass):
 
     ## the draw function
     #  @brief draws the creep to the screen, called once per frame
-    #  @param screen the screen that the creep should be drawn to
     #  @todo this should just be inherited
-    def draw(self, game):
+    def draw(self):
         #blit it!
-        game.screen.blit(self.img, self.rect, pygame.Rect(25*2, 33 * 2, 24, 32))
+        self.game.screen.blit(self.img, self.rect, pygame.Rect(25*2, 33 * 2, 24, 32))

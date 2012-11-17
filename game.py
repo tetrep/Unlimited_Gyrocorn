@@ -46,6 +46,8 @@ class Game(object):
 
         self.level = 1
 
+        self.spawn_creep()
+
         #drawing variables
         self.zoom = 2.0
         self.focus = [0, 0]     # the central point of the viewbox
@@ -78,6 +80,9 @@ class Game(object):
                     tempTile.blocking = True
                     tempTile.img = self.imgTileWall
                 self.tiles[x].append( tempTile )
+
+        self.cp = CreepPath((24, 24), 4, self)
+        self.cp.find_path()
         
     def update(self):
         """Do logic/frame"""
@@ -217,9 +222,13 @@ class Game(object):
             if creep.reap():
                 self.creeps.pop(x)
 
-    def spawn_creep(self, img = None, x = None, y = None, type = None)
-      for x in range(1, random.randint(10, 20)+self.level):
-          self.creeps.append(cfactory.make(random.randint(1, 5)))
+    def spawn_creep(self, img = None, x = None, y = None, ctype = None):
+        #we want to use the factory
+        if(img == None):
+            for x in range(1, random.randint(10, 20)+self.level):
+                self.creeps.append(self.cfactory.make(random.randint(1, 5)))
+        else:
+            self.creeps.append(Creep(img, x, y, self, ctype))
 
     def draw(self):
         """draw"""
@@ -229,6 +238,9 @@ class Game(object):
 
         for player in self.players:
             player.draw( self )
+
+        for creep in self.creeps:
+            creep.draw()
         
         for turret in self.turrets:
             turret.draw( self )

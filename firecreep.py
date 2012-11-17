@@ -6,7 +6,7 @@ import random
 class FireCreep(Creep):
     def __init__(self, img, x, y, game, ctype = (100, 100, 100, 100)):
         #intitialize inherited stats
-        super(FireCreep, self).__init__(img, x, y, ctype, game)
+        super(FireCreep, self).__init__(img, x, y, game, ctype)
 
     #we want to explode on death and spawn smaller minions
     def reap(self):
