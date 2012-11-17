@@ -15,7 +15,7 @@ class Creep(SuperClass):
     #  @param y the y position the creep occupies
     #  @param game the instance of the game this Creep is in
     #  @param ctype a tuple of creep attributes, optional
-    def __init__(self, img, x, y, game, ctype = (100, 100, 100, 100)):
+    def __init__(self, img, x, y, game, ctype = (100, 100, 100, 24)):
         #initialze super class variables
         super(Creep, self).__init__(x, y, game, *ctype)
 
@@ -28,13 +28,6 @@ class Creep(SuperClass):
         self.x_tile_next = self.x_tile
         self.y_tile_next = self.y_tile
 
-        self.timeBurning = -1
-        self.timeChilled = -1
-        self.timeShocked = -1
-        self.timeParalyzed = -1
-        self.burningCounter = 0
-        self.damage_multiplier = 1
-        
         #vector we want to move along
         self.x_move = 0.0
         self.y_move = 0.0
@@ -44,6 +37,15 @@ class Creep(SuperClass):
 
         #our weapon
         self.weapon = Weapon()
+
+        #append our needed functions
+        self.update_functions.append((0, self.update_tile))
+        self.update_functions.append((10, self.next_move))
+        self.update_functions.append((20, self.move))
+        self.update_functions.append((30, self.attack))
+
+        #sort our wonderful list so they occur in order
+        self.update_functions = sorted(self.update_functions, key=lambda function_tuple: function_tuple[0])
 
 
     ## the move_vector function
@@ -141,8 +143,8 @@ class Creep(SuperClass):
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
         #calculate our next x/y coords
-        self.x_real += (self.x_move * self.speed)
-        self.y_real += (self.y_move * self.speed)
+        self.x_real += (self.x_move * self.speed) * self.game.deltaT / 1000
+        self.y_real += (self.y_move * self.speed) * self.game.deltaT / 1000
 
         #print '(', self.x_real, ',', self.y_real, ')'
 
@@ -163,35 +165,12 @@ class Creep(SuperClass):
         else:
             return False
 
-    ## the update function
-    #  @brief handles all creep operations per frame
-    def update(self):
-        #update our current tile position (can't do this before draw)
+    ## the update tile
+    #  @brief calculates the current tile we occupy
+    def update_tile(self):
+        #update our current tile position
         self.x_tile = self.rect.centerx//24
         self.y_tile = self.rect.centery//24
-
-        #print "im at: (", self.x_tile, ',', self.y_tile, ')'
-
-        """
-        super(Creep, self).checkBurning(game.deltaT)
-        super(Creep, self).checkChilled(game.deltaT)
-        super(Creep, self).checkShocked(game.deltaT)
-        super(Creep, self).checkParalyzed(game.deltaT)
-        """
-
-        self.checkBurning(self.game.deltaT)
-        self.checkChilled(self.game.deltaT)
-        self.checkShocked(self.game.deltaT)
-        self.checkParalyzed(self.game.deltaT)
-        
-        #calculate where we want to move to
-        self.next_move()
-
-        #move to our destination
-        self.move()
-
-        #attack!
-        self.attack()
 
     ## the draw function
     #  @brief draws the creep to the screen, called once per frame

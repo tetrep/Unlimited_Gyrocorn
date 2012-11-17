@@ -17,9 +17,9 @@ class CreepFactory(object):
     def make(self, cnum):
         self.x = random.randint(30, 300)
         self.y = random.randint(30, 300)
-        self.ctype = (random.randint(1, self.game.level), random.randint(1, self.game.level), random.randint(1, self.game.level), random.randint(1, self.game.level))
+        self.ctype = (random.randint(1, self.game.level), random.randint(1, self.game.level), random.randint(self.game.level//2, self.game.level))
 
-        print "spawn at: (", self.x, ',', self.y, ')'
+        print "spawn: (", self.x, ',', self.y, ',', cnum, ')'
         if cnum == 1:
             return Creep(self.img, self.x, self.y, self.game, self.ctype)
         elif cnum == 2:
