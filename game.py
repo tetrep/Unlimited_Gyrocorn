@@ -120,8 +120,12 @@ class Game(object):
         if self.gameState == 0:
             self.gameInput()
         elif self.gameState == 1:
-            self.guiInput()
+            self.gui.get_input()
         elif self.gameState == 3:
+            self.menuInput()
+        elif self.gameState == 4:
+            self.menuInput()
+        elif self.gameState == 5:
             self.menuInput()
             
     def gameInput(self):
@@ -252,7 +256,8 @@ class Game(object):
             for y in range(0, self.tiles[x].__len__() ):
                 self.tiles[x][y].draw( self ) #[ [(0,0), (0,1), ...], [(1,0),(1,1),...], ...]
 
-    def draw_MainMenu(self):
+    def draw_menu(self):
+        self.screen.fill((0,0,0))
         for button in self.MenuButtons:
             button.draw(self.screen)
             
@@ -314,11 +319,21 @@ class Game(object):
         
         self.gameState=3
         
+        print "Went to menu"
+        
     def go_to_LevelSelect(self):
-        pass
+        self.MenuButtons = []
+        self.MenuButtons.append(Button("Return To Menu",32,(50,50),self.imgButton,self.go_to_MainMenu,[]))
+        
+        self.gameState=4
+        print "Went to Level Select"
         
     def go_to_SaveLoad(self):
-        pass
+        self.MenuButtons = []
+        self.MenuButtons.append(Button("Return To Menu",32,(50,50),self.imgButton,self.go_to_MainMenu,[]))
+        
+        self.gameState=5
+        print "Went to Saveload"
         
     def main(self):
         """main game loop"""
@@ -328,6 +343,7 @@ class Game(object):
             #on mode change, reset direction for player? (if keep)
             #various menu modes
             self.get_input()
+            self.deltaT = self.clock.tick()
             if self.gameState == 0: #standard game
                 self.update()
                 self.draw()
@@ -339,11 +355,11 @@ class Game(object):
             elif self.gameState == 2: #BuildPhase (Possibly unused)
                 pass
             elif self.gameState == 3: #Main menu
-                self.draw_MainMenu()
+                self.draw_menu()
             elif self.gameState == 4: #Level Selection
-                pass
+                self.draw_menu()
             elif self.gameState == 5: #Save/load screen (theoretical at this point)
-                pass
+                self.draw_menu()
             elif self.gameState == 6: #Win
                 pass
             elif self.gameState == 7: #Lose
