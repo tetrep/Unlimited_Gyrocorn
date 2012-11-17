@@ -64,9 +64,9 @@ class Slot(object):
             #0.25, 0.5, 0.75, 1.0
             self.modValue = tier / 4.0
         elif code == self.modEnum.MOD_REGEN: #Regen
-            #cap: 20/sec, expected: 5/sec
-            #5/16, 10/16, 15/16, 20/16 or 5/4
-            self.modValue = tier * 5.0 / 16.0
+            #cap: 80/sec, expected: 20/sec
+            #5/4, 10/4, 15/4, 20/4 or 5
+            self.modValue = tier * 5.0 / 4.0
         elif code == self.modEnum.MOD_ABSORB: #Damage Absorbtion
             #1/2 of it is amplified by armor (@ 75% DR or 4x => this gets 3x)
             #cap: 40, expected: 10
