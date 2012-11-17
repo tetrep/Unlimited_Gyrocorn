@@ -47,7 +47,7 @@ class Turret(object):
         
         self.bulletFactory = BulletFactory();
         self.projectiles = []
-        self.time_of_last_shot = -1
+        self.time_of_last_shot = 0
         self.target = 0
         
     ## the Turret update
@@ -57,9 +57,10 @@ class Turret(object):
         """update the turret (per frame)"""
     
         #fires a bullet based on attack speed
-        if self.time_of_last_shot == -1:
+        if self.time_of_last_shot >= self.attack_speed:
             #keeps track of when you fired the bullet
-            self.time_of_last_shot = pygame.time.get_ticks() / 1000.0
+            #self.time_of_last_shot = self.time_of_last_shot + game.deltaT
+            self.time_of_last_shot = 0
             #finds a target for the bullets you fire in this frame
             self.target = self.findTarget(game.creeps)
             #actually fires the bullet
@@ -67,8 +68,11 @@ class Turret(object):
                 center_x = self.rect.x + (self.rect.width / 2)
                 center_y = self.rect.y + (self.rect.height / 2)
                 self.projectiles.append(self.bulletFactory.createBullet(game, self.type, self.attack_area_of_effect, self.attack_damage, self.attack_range, self.target, center_x, center_y))
-        elif self.time_of_last_shot + self.attack_speed < pygame.time.get_ticks() / 1000.0:   
-            self.time_of_last_shot = -1
+            #elif self.time_of_last_shot + self.attack_speed < pygame.time.get_ticks() / 1000.0:   
+            #    self.time_of_last_shot = -1
+        else:
+            self.time_of_last_shot = self.time_of_last_shot + game.deltaT
+        
             
         #updates existing bullets
         for b, bullet in enumerate(self.projectiles):
