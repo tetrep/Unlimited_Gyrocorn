@@ -189,4 +189,4 @@ class GUI_Tower_Buy(object):
 
     def exit_action(self, arg):
         """x out of the menu. Actions should not be done in parts."""
-        self.g.mode = 0
+        self.g.go_to_Game()
