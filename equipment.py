@@ -69,9 +69,9 @@ class Slot(object):
             self.modValue = tier * 5.0 / 16.0
         elif code == self.modEnum.MOD_ABSORB: #Damage Absorbtion
             #1/2 of it is amplified by armor (@ 75% DR or 4x => this gets 3x)
-            #cap: 10, expected: 2.5
-            #linear to max of: 2.5/4
-            self.modValue = tier * 2.5 / 16.0
+            #cap: 40, expected: 10
+            #linear to max of: 2.5
+            self.modValue = tier * 2.5 / 4.0
         elif code == self.modEnum.MOD_LEECH: #Life Leech
             #cap at 10% of max hp
             #cap: 10, expected: 2.5
@@ -110,8 +110,8 @@ class Slot(object):
     # @ param code the mod code of the stat to get the value of
     def get_stat(self, code):
         """get the modValue for modCode <code>"""
-        if modCode == code:
-            return modValue
+        if self.modCode == code:
+            return self.modValue
         else:
             return 0
 

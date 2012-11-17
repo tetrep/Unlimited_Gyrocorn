@@ -20,11 +20,11 @@ class Player(object):
         self.gold = 0
         self.hp = [100.0, 100]  #hp [current, max]
         self.baseAttack = 100   #base attack
-        self.baseDefense = 0    #base defense
+        self.baseDefense = 100  #base defense
         self.baseSpeed = 0      #base speed
         
         self.attack = 100       #total attack (cap: 1,700) (ABS CAP: 10,000)
-        self.defense = 0        #total defense (cap: 1,600)(ABS CAP: 10,000)
+        self.defense = 100      #total defense (cap: 1,600)(ABS CAP: 10,000)
         self.absorbtion = 0     #damage absorbtion: applied 50% before and 50% after defense
         self.regen = 0.00       #life regen (HP / sec)
         self.lifeLeech = 0.00   #% damage stolen as life per hit
@@ -58,13 +58,13 @@ class Player(object):
         modEnum = Mod_Enum()
         self.attack = self.baseAttack + self.get_stat(modEnum.MOD_ATTACK)
         self.defense = self.baseDefense + self.get_stat(modEnum.MOD_DEFENSE)
-        self.hp[1] = 100 * self.get_stat(modEnum.MOD_HP)
+        self.hp[1] = 100 * ( 1 + self.get_stat(modEnum.MOD_HP) )
         self.absorbtion = self.get_stat(modEnum.MOD_ABSORB)
         self.regen = 0.00 + self.get_stat(modEnum.MOD_REGEN)
-        self.lifeLeech = 0.00 + self.get_stat(modEnum.MOD_REGEN)
+        self.lifeLeech = 0.00 + self.get_stat(modEnum.MOD_LEECH)
         self.crit = 0.00 + self.get_stat(modEnum.MOD_CRIT)
         self.attackSpeedMultiplier = 1.0 + self.get_stat(modEnum.MOD_ATTACK_SPEED)
-        self.moveSpeedMultiplier = 1.0 + self.get_stat(modEnum.MOD_MOVE_SPEEED)
+        self.moveSpeedMultiplier = 1.0 + self.get_stat(modEnum.MOD_MOVE_SPEED)
         self.speed = self.baseSpeed * self.moveSpeedMultiplier
 
 
@@ -87,7 +87,7 @@ class Player(object):
     def take_damage(self, dmg):
         """applies modifiers to damage, then takes it"""
         #DR% = 1 - (100 / x). 
-        damageMultiplier = 100 / self.defense
+        damageMultiplier = 100.0 / float(self.defense)
         #Apply defense buffs/debuffs
         #calculate damage:
         dmg -= self.absorbtion / 2.0

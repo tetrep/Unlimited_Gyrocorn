@@ -6,7 +6,7 @@ from player import *
 from turret import *
 from turretfactory import *
 
-from gui import *
+from gui_equipment import *
 
 from creep import *
 from chargecreep import *
@@ -37,7 +37,7 @@ class Game(object):
         self.mapSize = [32, 32]
         self.tiles = []
         self.turrets = []
-        self.gui = GUI( self )
+        self.gui = GUI_Equipment( self )
 
         self.creeps = []
         self.load_tiles()
@@ -170,7 +170,7 @@ class Game(object):
                 #MENUS
                 if event.key == pygame.K_p:
                     #toggle player menu
-                    self.gui = GUI( self )
+                    self.gui = GUI_Equipment( self )
                     self.mode = 1
                     pass
 
