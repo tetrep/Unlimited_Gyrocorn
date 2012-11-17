@@ -35,7 +35,15 @@ class Turret(object):
                 
                 
         self.attack_speed = attack_speed
+        self.attack_area_of_effect = 0
+        self.attack_damage = 0
+        self.attack_range = 0
         self.type = type
+        
+        self.damage_level = 1
+        self.attack_speed_level = 1
+        self.aoe_level = 1
+        self.range_level = 1
         
         self.bulletFactory = BulletFactory();
         self.projectiles = []
@@ -56,19 +64,9 @@ class Turret(object):
             self.target = self.findTarget(game.creeps)
             #actually fires the bullet
             if self.target != 0:
-                #if self.type == 1:
-                #    for creep in game.creeps:
-                #        creep_distance = math.sqrt( (self.target.x - creep.x)**2 + (self.target.y - creep.y)**2 )
-                #        if creep_distance < self.attack_area_of_effect:
-                #            creep.take_damage(10)
-                #elif self.type == 2:
-                #    self.target.take_damage(10)
-                #elif self.type == 3:
-                #self.projectiles.append(Bullet(game, self.attack_damage, self.attack_area_of_effect, self.attack_projectile_speed, self.target.rect.x, self.target.rect.y,
-                #    self.rect.x + (self.rect.width / 2), self.rect.y + (self.rect.height / 2)))
                 center_x = self.rect.x + (self.rect.width / 2)
                 center_y = self.rect.y + (self.rect.height / 2)
-                self.projectiles.append(self.bulletFactory.createBullet(game, self.type, self.target, center_x, center_y))
+                self.projectiles.append(self.bulletFactory.createBullet(game, self.type, self.attack_area_of_effect, self.attack_damage, self.attack_range, self.target, center_x, center_y))
         elif self.time_of_last_shot + self.attack_speed < pygame.time.get_ticks() / 1000.0:   
             self.time_of_last_shot = -1
             
@@ -122,4 +120,50 @@ class Turret(object):
             return 0
         else:
             return min_creep
+            
+    def getDamageLevel(self):
+        return self.damage_level
+        
+    def getAttackSpeedLevel(self):
+        return self.attack_speed_level
+        
+    def getAoELevel(self):
+        return self.aoe_level
+        
+    def getRangeLevel(self):
+        return self.range_level
+    
+    
+    
+    def upgradeDamage(self):
+        if(self.damagelevel >= 5):
+            return False
+        else:
+            self.damage_level = self.damage_level + 1
+            self.attack_damage = self.attack_damage + 10
+            return True
+        
+    def upgradeAttackSpeed(self):
+        if(self.attack_speed_level >= 5):
+            return False
+        else:
+            self.attack_speed_leve = self.attack_speed_level + 1
+            self.attack_speed = self.attack_speed - .25
+            return True
+        
+    def upgradeAoE(self):
+        if(self.aoe_level >= 5):
+            return False
+        else:
+            self.aoe_level = self.aoe_level + 1
+            self.attack_area_of_effect = self.attack_area_of_effect + 5
+            return True
+        
+    def upgradeRange(self):
+        if(self.range_level >= 5):
+            return False
+        else:
+            self.range_level = self.range_level + 1
+            self.attack_range = self.attack_range + 0.75
+            return True
         
