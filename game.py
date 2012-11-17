@@ -6,7 +6,9 @@ from player import *
 from turret import *
 from turretfactory import *
 
-from gui import *
+from gui_equipment import *
+from gui_tower_buy import *
+from gui_tower_upgrade import *
 
 from creep import *
 from chargecreep import *
@@ -31,18 +33,24 @@ class Game(object):
         self.mode = 0
 
         #game objects
-        self.players = [Player(self.imgPlayer), Player(self.imgPlayer), Player(self.imgPlayer), Player(self.imgPlayer)]
+        self.players = [Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI), \
+                        Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI)]
         self.playerIndex = 0
         self.player = self.players[self.playerIndex]
+        self.player.activate()
+        
         self.mapSize = [32, 32]
         self.tiles = []
+        self.load_tiles()
+        self.level = 1
+        
         self.turrets = []
-        self.gui = GUI( self )
+        self.turretType = 0          #stores the turret type to build
+        self.turretCost = 1000000000 #stores cost to build a turret, impossibly high initialization cost 
 
         self.creeps = []
-        self.load_tiles()
-
-        self.level = 1
+        
+        self.gui = GUI_Equipment( self )
 
         #drawing variables
         self.zoom = 2.0
@@ -57,8 +65,12 @@ class Game(object):
         
     def load_assets(self):
         """pre-load all graphics and sound"""
+        self.font = pygame.font.Font(None, 20)
+        self.bigfont = pygame.font.Font(None, 32)
         self.imgPlayer = pygame.image.load("Art/units/sprite-general-gabe.png").convert()
         self.imgPlayer.set_colorkey( (255, 0, 255) )
+        self.imgPlayerAI = pygame.image.load("Art/units/sprite-general-gabe2.png").convert()
+        self.imgPlayerAI.set_colorkey( (255, 0, 255) )
         self.imgTile = pygame.image.load("Art/tiles/tile-grass.png").convert()
         self.imgTileWall = pygame.image.load("Art/tiles/obj-wall.png").convert()
         self.imgBasicTurret = pygame.image.load("Art/tiles/obj-guardtowertest3.png").convert()
@@ -81,23 +93,33 @@ class Game(object):
         """Do logic/frame"""
         self.deltaT = self.clock.tick()
 
+        #update players
         self.player = self.players[self.playerIndex]
         for player in self.players:
             player.update( self )
-            
-        self.update_view()
 
         #update creeps
         for creep in self.creeps:
             creep.update(self)
             #creep.receive_damage(1)
-        
+
+        #update turrets
         for x, turret in enumerate(self.turrets):
             if turret.valid_placement == True:
                 turret.update(self)
             else:
                 #remove turrets that do not have valid placement
                 self.turrets.pop(x)
+
+        #update drawing variables
+        self.update_view()
+
+        #check to see if the game has been lost
+        if self.game_lost() == True:
+            print("GAME OVER")
+            #exit
+            pygame.quit()
+            sys.exit()
 
 
     def update_view(self):
@@ -144,15 +166,19 @@ class Game(object):
                 if event.key == pygame.K_i:
                     #+1
                     self.player.reset_movement()
+                    self.player.deactivate()
                     self.playerIndex -= 1
                     if self.playerIndex < 0:
                         self.playerIndex = 3
+                    self.players[self.playerIndex].activate()
                 if event.key == pygame.K_o:
                     #-1
                     self.player.reset_movement()
+                    self.player.deactivate()
                     self.playerIndex += 1
                     if self.playerIndex > 3:
                         self.playerIndex = 0
+                    self.players[self.playerIndex].activate()
                 #MOVEMENT
                 if event.key == pygame.K_w:
                     #up
@@ -170,9 +196,14 @@ class Game(object):
                 #MENUS
                 if event.key == pygame.K_p:
                     #toggle player menu
-                    self.gui = GUI( self )
+                    self.gui = GUI_Equipment( self )
                     self.mode = 1
-                    pass
+                if event.key == pygame.K_t:
+                    #toggle build menu
+                    #TODO: rewrite/move this code
+                    self.gui = GUI_Tower_Buy( self )
+                    self.mode = 1
+                    
 
             #key released
             if event.type == pygame.KEYUP:
@@ -195,8 +226,16 @@ class Game(object):
 
                     pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
 
-                    #self.turrets.append( Turret( self, 2, pos[0], pos[1] ) )
-                    self.turrets.append( self.turretFactory.createTurret( self, 6, pos[0], pos[1] ) )
+                    #check if there's already a turret here. if so, open upgrade menu. (in build mode)
+                    for t in self.turrets:
+                        if t.x / 24 == pos[0] / 24 and t.y / 24 + 2 == pos[1] / 24:
+                            #open turret upgrade gui
+                            self.gui = GUI_Tower_Upgrade( self, t )
+                    
+                    #if there's no turret here, and it is affordable, place one. (in build mode)
+                    if self.players[self.playerIndex].gold >= self.turretCost:
+                        self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
+                        self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
 
                     
                 elif event.button == 4: #mouse wheel down
@@ -220,6 +259,13 @@ class Game(object):
           pass
           #self.creeps.append(cfactory(random.randint(1, 5)))
 
+    def game_lost(self):
+        """returns true if the game has been lost"""
+        for p in self.players:
+            if p.dead == False:
+                return False
+        return True
+
     def draw(self):
         """draw"""
         self.screen.fill( (0, 0, 0) ) #screen wipe
@@ -231,6 +277,8 @@ class Game(object):
         
         for turret in self.turrets:
             turret.draw( self )
+
+        self.draw_HUD()
         
         #actually draw it
         #pygame.display.flip()
@@ -239,6 +287,31 @@ class Game(object):
         for x in range(0, self.tiles.__len__() ):
             for y in range(0, self.tiles[x].__len__() ):
                 self.tiles[x][y].draw( self ) #[ [(0,0), (0,1), ...], [(1,0),(1,1),...], ...]
+
+    def draw_HUD(self):
+        """Draws the HUD"""
+        #xp
+        self.screen.blit( self.font.render( str(self.player.exp), 0, (255, 255, 255) ), pygame.Rect(24, 24, 256, 24) )
+        #gold
+        self.screen.blit( self.font.render( str(self.player.gold), 0, (255, 255, 255) ), pygame.Rect(24, 48, 256, 24) )
+        
+        #party faces
+        #HP/MP bars
+
+        #Active player: HP/MP bars
+        #skills
+        
+        #HP bars over players
+        for p in self.players:
+            barbg = pygame.Surface( (int(26 * self.zoom), 8) ).convert()
+            barbg.fill( (0, 0, 0) )
+            barfg = pygame.Surface( ( (int( 26 * self.zoom * float( p.hp[0] ) / float( p.hp[1] ) ) - 2), 6) ).convert()
+            barfg.fill( (0, 255, 0) )
+            pos = self.convertGamePixelsToZoomCoorinates( (p.x, p.y) )
+            self.screen.blit( barbg, pygame.Rect( pos[0] - 1,     pos[1] + 32 * self.zoom,     barbg.get_width(), barbg.get_height() ) )
+            self.screen.blit( barfg, pygame.Rect( pos[0] - 1 + 1, pos[1] + 32 * self.zoom + 1, barfg.get_width(), barfg.get_height() ) )
+        
+        
 
     def convertGamePixelsToZoomCoorinates(self, (x, y) ):
         #get the offset of the entire zoomed-in game subspace.

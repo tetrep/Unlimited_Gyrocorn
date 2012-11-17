@@ -4,9 +4,12 @@ from equipment import *
 
 class Player(object):
     #  @param img a reference to a pygame.Surface containing the spritesheet to be used for draw calls.
-    def __init__(self, img):
+    #  @param img2 a refence to a pygame.Surface containing the spritesheet to use when the player is not active.
+    def __init__(self, img, img2):
         """initialize player"""
         self.img = img
+        self.img2 = img2
+        self.font = pygame.font.Font(None, 32)
         
         self.x = 0 #position in pixels
         self.y = 0 #position in pixels
@@ -16,15 +19,20 @@ class Player(object):
         self.collision = [False, False] #whether the x or y axes of motion are obstructed
 
         #mechanical variables
+        self.active = False
+        self.dead = False
+        self.deadt = 0
+        self.reviveTime = 30
+        
         self.exp = 10000000
-        self.gold = 0
+        self.gold = 1000
         self.hp = [100.0, 100]  #hp [current, max]
         self.baseAttack = 100   #base attack
-        self.baseDefense = 0    #base defense
-        self.baseSpeed = 0      #base speed
+        self.baseDefense = 100  #base defense
+        self.baseSpeed = 64.0   #base speed
         
         self.attack = 100       #total attack (cap: 1,700) (ABS CAP: 10,000)
-        self.defense = 0        #total defense (cap: 1,600)(ABS CAP: 10,000)
+        self.defense = 100      #total defense (cap: 1,600)(ABS CAP: 10,000)
         self.absorbtion = 0     #damage absorbtion: applied 50% before and 50% after defense
         self.regen = 0.00       #life regen (HP / sec)
         self.lifeLeech = 0.00   #% damage stolen as life per hit
@@ -43,28 +51,18 @@ class Player(object):
         self.frameTimer = 0     #ms spent in current frame
         self.frameDelay = 100   #time between frames in ms
 
-    # path generation to dest.
-    #rules: adjacent motion allowed if non-blocking
-    #diagonal motion allowed if both cardinal directions are unblocking:
-    # 000    000    000
-    # 0X0 => 1X0 => 1X0
-    # 000    000    010
-    #should do this recursively? (careful for infinite looping) PF generation?
-    
-    # in update, follow path.
-
     def update_stats(self):
         """updates stats used for calculations based on equipment"""
         modEnum = Mod_Enum()
         self.attack = self.baseAttack + self.get_stat(modEnum.MOD_ATTACK)
         self.defense = self.baseDefense + self.get_stat(modEnum.MOD_DEFENSE)
-        self.hp[1] = 100 * self.get_stat(modEnum.MOD_HP)
+        self.hp[1] = 100 * ( 1 + self.get_stat(modEnum.MOD_HP) )
         self.absorbtion = self.get_stat(modEnum.MOD_ABSORB)
         self.regen = 0.00 + self.get_stat(modEnum.MOD_REGEN)
-        self.lifeLeech = 0.00 + self.get_stat(modEnum.MOD_REGEN)
+        self.lifeLeech = 0.00 + self.get_stat(modEnum.MOD_LEECH)
         self.crit = 0.00 + self.get_stat(modEnum.MOD_CRIT)
         self.attackSpeedMultiplier = 1.0 + self.get_stat(modEnum.MOD_ATTACK_SPEED)
-        self.moveSpeedMultiplier = 1.0 + self.get_stat(modEnum.MOD_MOVE_SPEEED)
+        self.moveSpeedMultiplier = 1.0 + self.get_stat(modEnum.MOD_MOVE_SPEED)
         self.speed = self.baseSpeed * self.moveSpeedMultiplier
 
 
@@ -87,7 +85,7 @@ class Player(object):
     def take_damage(self, dmg):
         """applies modifiers to damage, then takes it"""
         #DR% = 1 - (100 / x). 
-        damageMultiplier = 100 / self.defense
+        damageMultiplier = 100.0 / float(self.defense)
         #Apply defense buffs/debuffs
         #calculate damage:
         dmg -= self.absorbtion / 2.0
@@ -99,12 +97,36 @@ class Player(object):
     def reset_movement(self):
         """Reset the player's movement vector."""
         self.direction = [0, 0]
+
+    def activate(self):
+        """give player control over this unit"""
+        self.active = True
+        
+    def deactivate(self):
+        """give AI control over this unit"""
+        self.active = False
     
     
     #  @param g a reference to the Game class that is currently running.    
     def update(self, g):
         """update the player (per frame), using data from game g"""
-        self.hp[0] += self.regen * g.deltaT
+        #if the player is dead, KILL THEM
+        if self.hp[0] <= 0 and self.dead == False:
+            self.dead = True
+            self.deadt = 0
+            #clear debuffs
+
+        if self.dead == True:
+            self.deadt += g.deltaT / 1000.0
+            if self.deadt > self.reviveTime: #recussitate after 30 seconds
+                self.dead = False
+                self.hp[0] = self.hp[1]
+            return #if dead, ignore input and all other updates
+                
+        elif self.dead == False:
+            self.hp[0] += self.regen * g.deltaT / 1000.0
+            if self.hp[0] > self.hp[1]:
+                self.hp[0] = self.hp[1]
         
         #collision detection
         self.collision = [False, False]
@@ -165,12 +187,21 @@ class Player(object):
     #  @param g a reference to the Game class that is currently running.        
     def draw(self, g):
         """draw the player to the screen"""
+        #if the player is dead, show the revive counter
+        if self.dead == True:
+            pos = g.convertGamePixelsToZoomCoorinates( (self.x, self.y) )
+            g.screen.blit(self.font.render( str( int( self.reviveTime - self.deadt ) ), 0, (255, 255, 255) ), pygame.Rect( pos[0], pos[1], 64, 32 ) )
+            return #don't draw them if they died.
+        
         #make a temporary surface to perform transformations on. (DO NOT TRANSFORM the img reference!)
         temp = pygame.Surface( (24, 32) ).convert()
         #transparency
         temp.fill( (255, 255, 0) )
         temp.set_colorkey( (255, 255, 0) )
-        temp.blit(self.img, pygame.Rect(0, 0, 24, 32), pygame.Rect(25 * self.frameDirection, 33 * self.frame, 24, 32) )
+        if self.active == True:
+            temp.blit(self.img, pygame.Rect(0, 0, 24, 32), pygame.Rect(25 * self.frameDirection, 33 * self.frame, 24, 32) )
+        else:
+            temp.blit(self.img2, pygame.Rect(0, 0, 24, 32), pygame.Rect(25 * self.frameDirection, 33 * self.frame, 24, 32) )
         #make a mapping from gamespace -> view
         pos = g.convertGamePixelsToZoomCoorinates( (self.x, self.y) )
         #zoom logic

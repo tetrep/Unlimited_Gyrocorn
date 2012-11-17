@@ -47,7 +47,7 @@ class SuperClass(object):
     def take_damage(self, dmg, type):
         """applies modifiers to damage, then takes it"""
         #DR% = 1 - (100 / x). 
-        damageMultiplier = 100 / self.defense
+        damageMultiplier = 100.0 / float(self.defense)
         #Apply defense buffs/debuffs
         #calculate damage:
         dmg -= self.absorbtion / 2.0
