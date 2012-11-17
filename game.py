@@ -95,6 +95,9 @@ class Game(object):
                 #remove turrets that do not have valid placement
                 self.turrets.pop(x)
 
+        #kill creeps
+        self.reap()
+
         #update drawing variables
         self.update_view()
 
@@ -259,13 +262,19 @@ class Game(object):
                     for button in self.MenuButtons:
                         button.click(event.pos)
     
-    ## Decprecated
+    ## the reap function
+    #  @brief iterates over the creeps and culls the dead ones
     def reap(self):
         for x, creep in enumerate(self.creeps):
             if creep.reap():
                 self.creeps.pop(x)
 
-    ## Deprecated
+    ## the spawn creep function
+    #  @brief spawns creeps, if no parameters are passed it uses the creep factory
+    #  @param img the image the creep will use, optional
+    #  @param x the x pixel position of the creep, optional
+    #  @param y the y pixel position of the creep, optional
+    #  @param ctype the attributes of the creep, optional
     def spawn_creep(self, img = None, x = None, y = None, ctype = None):
         #we want to use the factory
         if(img == None):
