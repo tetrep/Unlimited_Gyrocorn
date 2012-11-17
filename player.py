@@ -1,11 +1,13 @@
 import pygame
 from mod_enum import *
 from equipment import *
+from superclass import *
 
-class Player(object):
+class Player(SuperClass):
     #  @param img a reference to a pygame.Surface containing the spritesheet to be used for draw calls.
     def __init__(self, img):
         """initialize player"""
+        super(Player, self).__init__()
         self.img = img
         
         self.x = 0 #position in pixels
@@ -87,7 +89,7 @@ class Player(object):
     def take_damage(self, dmg):
         """applies modifiers to damage, then takes it"""
         #DR% = 1 - (100 / x). 
-        damageMultiplier = 100 / self.defense
+        damageMultiplier = 100 / (self.defense + 1)
         #Apply defense buffs/debuffs
         #calculate damage:
         dmg -= self.absorbtion / 2.0

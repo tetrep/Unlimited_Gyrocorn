@@ -1,5 +1,8 @@
 import pygame
+
 from superclass import *
+from weapon import *
+
 import sys
 import math
 

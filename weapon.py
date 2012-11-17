@@ -7,7 +7,7 @@ class Weapon(object):
     ## the constructor
     #  @param damage the amount of health to deduct from the target, optional
     #  @param target the target, optional
-    def __init__(self, damage = 10, target = None)
+    def __init__(self, damage = 10, target = None):
         self.damage = damage
         self.target = target
 
@@ -22,7 +22,7 @@ class Weapon(object):
         self.apply_effects()
 
         #calculate how much damage will we do
-        damage = self.calculate_damage(target)
+        damage = self.calculate_damage()
 
         #damage the target
         target.take_damage(damage)

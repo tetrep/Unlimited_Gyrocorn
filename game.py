@@ -96,7 +96,7 @@ class Game(object):
 
         #update creeps
         for creep in self.creeps:
-            creep.update(self)
+            creep.update()
             #creep.receive_damage(1)
         
         for x, turret in enumerate(self.turrets):
