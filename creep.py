@@ -169,8 +169,11 @@ class Creep(SuperClass):
     #  @brief calculates the current tile we occupy
     def update_tile(self):
         #update our current tile position
-        self.x_tile = self.rect.centerx//24
-        self.y_tile = self.rect.centery//24
+        self.x_tile = self.rect.centerx // 24
+        self.y_tile = self.rect.centery // 24
+
+        print '(', self.x_tile, ',', self.y_tile, ')'
+        print '(', self.rect.centerx, ',', self.rect.centery, ')'
 
     ## the draw function
     #  @brief draws the creep to the screen, called once per frame

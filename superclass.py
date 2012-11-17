@@ -5,14 +5,12 @@ class SuperClass(object):
         """Initialize the superclass object"""
         
         #where we are
-        self.x = x
-        self.y = y
-        self.rect = pygame.Rect(self.x, self.y, 24, 32)
+        self.rect = pygame.Rect(x, y, 24, 32)
 
-        #where we want to move to next
-        self.x_next = x
-        self.y_next = y
-        
+        #get our coordinates from center
+        self.x = self.x_next = self.rect.centerx
+        self.y = self.y_next = self.rect.centery
+
         #stats
         self.defense = defense
         self.max_defense = defense
@@ -40,15 +38,16 @@ class SuperClass(object):
 
         #default update functions
         self.update_functions = []
+        #"""
         self.update_functions.append((99, self.checkBurning))
         self.update_functions.append((99, self.checkChilled))
         self.update_functions.append((99, self.checkShocked))
         self.update_functions.append((99, self.checkParalyzed))
+        #"""
         
     ## the update function
     #  @brief iterates over a list of functions and calls them, in order
     def update(self):
-        return None
         #call all the functions
         for function_tuple in self.update_functions:
             function_tuple[1]()

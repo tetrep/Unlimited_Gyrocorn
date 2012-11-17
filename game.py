@@ -81,7 +81,7 @@ class Game(object):
                     tempTile.img = self.imgTileWall
                 self.tiles[x].append( tempTile )
 
-        self.cp = CreepPath((24, 24), 4, self)
+        self.cp = CreepPath((24, 31), 4, self)
         self.cp.find_path()
         
     def update(self):
@@ -283,6 +283,4 @@ class Game(object):
                 pygame.display.flip()
 
 g = Game()
-#g.main()
-sl = SaveLoad()
-sl.save_object("test.save", g)
+g.main()
