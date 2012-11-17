@@ -10,4 +10,4 @@ class ElectricCreep(Creep):
         super(ElectricCreep, self).__init__(img, x, y, game, (ctype[0]*5, ctype[1]*12.5, ctype[2]*5, 40))
 
         #use an electric weapon
-        self.weapon = ElectricWeapon
+        self.weapon = ElectricWeapon()
