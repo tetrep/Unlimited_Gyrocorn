@@ -57,7 +57,7 @@ class Turret(object):
         """update the turret (per frame)"""
     
         #fires a bullet based on attack speed
-        if self.time_of_last_shot >= self.attack_speed:
+        if self.time_of_last_shot >= self.attack_speed * 1000.0:
             #keeps track of when you fired the bullet
             #self.time_of_last_shot = self.time_of_last_shot + game.deltaT
             self.time_of_last_shot = 0
@@ -140,13 +140,13 @@ class Turret(object):
     
     
     def upgradeDamage(self):
-        if(self.damage)level >= 5):
+        if(self.damage_level >= 5):
             return False
         else:
             self.damage_level = self.damage_level + 1
             self.attack_damage = self.attack_damage + 10
             return True
-    
+        
     def upgradeAttackSpeed(self):
         if(self.attack_speed_level >= 5):
             return False
