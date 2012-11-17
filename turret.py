@@ -140,18 +140,18 @@ class Turret(object):
     
     
     def upgradeDamage(self):
-        if(self.damagelevel >= 5):
+        if(self.damage)level >= 5):
             return False
         else:
             self.damage_level = self.damage_level + 1
             self.attack_damage = self.attack_damage + 10
             return True
-        
+    
     def upgradeAttackSpeed(self):
         if(self.attack_speed_level >= 5):
             return False
         else:
-            self.attack_speed_leve = self.attack_speed_level + 1
+            self.attack_speed_level = self.attack_speed_level + 1
             self.attack_speed = self.attack_speed - .25
             return True
         
