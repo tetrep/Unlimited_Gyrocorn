@@ -33,39 +33,6 @@ class Game(object):
         self.screen = pygame.display.set_mode( self.screenSize )
         
         self.load_assets()
-        #set game mode (used for menu control)
-
-        #game objects
-        self.players = [Player(self.imgPlayer), Player(self.imgPlayer), Player(self.imgPlayer), Player(self.imgPlayer)]
-        self.playerIndex = 0
-        self.player = self.players[self.playerIndex]
-        self.mapSize = [32, 32]
-        self.tiles = []
-        self.turrets = []
-        self.gui = GUI( self )
-
-        self.creeps = []
-        
-        self.creeps.append(Creep(self.imgPlayer, 10, 10, self))
-        self.creeps.append(Creep(self.imgPlayer, 10, 10, self))
-        
-        
-        self.tiles = Terrain(self,"test.txt")
-        the_path = CreepPath((30, 30), 1, self)
-        the_path.find_path()
-
-        self.level = 1
-
-        #drawing variables
-        self.zoom = 1.0
-        self.focus = [0, 0]     # the central point of the viewbox
-        self.view = [0, 0]      # the width + height of the viewbox
-        self.viewMax = [0, 0]   # the width + height of the total screen
-        # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
-
-        self.turretFactory = TurretFactory()
-        #pos = [ (180 + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (300 + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
-        #self.turrets.append( self.turretFactory.createTurret( self, 5, pos[0], pos[1] ) )
         
     def load_assets(self):
         """pre-load all graphics and sound"""
@@ -111,7 +78,6 @@ class Game(object):
                 #remove turrets that do not have valid placement
                 self.turrets.pop(x)
 
-
     def update_view(self):
         """create view and focus variables (draw control) based on the screen size and zoom level."""
         #do not attempt to understand this. Your head WILL explode. Just accept that it works and don't touch it.
@@ -141,10 +107,14 @@ class Game(object):
         elif self.focus[1] + self.view[1] / 2 > self.viewMax[1]:
             self.focus[1] = (self.viewMax[1] - self.view[1] / 2)
             
-                
     def get_input(self):
         """get and handle user input"""
-        #exit on esc
+        if self.gameState == 0
+            self.gameInput()
+        if self.gameState == 1:
+            self.guiInput()
+            
+    def gameInput(self):
         for event in pygame.event.get():
             #key pressed
             if event.type == pygame.KEYDOWN:
@@ -182,9 +152,7 @@ class Game(object):
                 #MENUS
                 if event.key == pygame.K_p:
                     #toggle player menu
-                    self.gui = GUI( self )
-                    self.gameState = 1
-                    pass
+                    self.go_to_GUI()
 
             #key released
             if event.type == pygame.KEYUP:
@@ -220,17 +188,58 @@ class Game(object):
                     self.zoom += .1
                     if self.zoom > 4:
                         self.zoom = 4
-        
+    
+    def guiInput(self):
+        for event in pygame.event.get():
+            #key pressed
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    #exit
+                    pygame.quit()
+                    sys.exit()
+                #PLAYER SWITCHING (Must go before movement)
+                if event.key == pygame.K_i:
+                    #+1
+                    self.player.reset_movement()
+                    self.playerIndex -= 1
+                    if self.playerIndex < 0:
+                        self.playerIndex = 3
+                if event.key == pygame.K_o:
+                    #-1
+                    self.player.reset_movement()
+                    self.playerIndex += 1
+                    if self.playerIndex > 3:
+                        self.playerIndex = 0
+                #MENUS
+                if event.key == pygame.K_p:
+                    #toggle player menu
+                    self.go_to_GUI()
 
+            #mouse controls
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1: #left click
+                    #event.pos[0] and event.pos[1] are the mouse x,y coordinates respectively relative to the game window
+                    #needs to be converted to give a mapping in game space.
+                    #if   map = pos * zoom - (focus - view / 2)
+                    #then pos = (map + (focus - view / 2) ) / zoom
+
+                    pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
+
+                    #self.turrets.append( Turret( self, 2, pos[0], pos[1] ) )
+                    self.turrets.append( self.turretFactory.createTurret( self, 6, pos[0], pos[1] ) )
+
+                    
+                elif event.button == 4: #mouse wheel down
+                    self.zoom -= .1
+                    if self.zoom < 1:
+                        self.zoom = 1
+                        
+                elif event.button == 5: #mouse wheel up
+                    self.zoom += .1
+                    if self.zoom > 4:
+                        self.zoom = 4
+    
     def reap(self):
-        for x, creep in enumerate(self.creeps):
-            if creep.reap():
-                self.creeps.pop(x)
-
-    def spawn_creep(self, img, x, y, type = (100, 100, 100, 100)):
-      for x in range(1, random.randint(10, 20)+self.level):
-          pass
-          #self.creeps.append(cfactory(random.randint(1, 5)))
 
     def draw(self):
         """draw"""
@@ -246,7 +255,7 @@ class Game(object):
             turret.draw( self )
         
         #actually draw it
-        #pygame.display.flip()
+        pygame.display.flip()
 
     def draw_tiles(self):
         for x in range(0, self.tiles.__len__() ):
@@ -263,28 +272,82 @@ class Game(object):
         #reverse the game->zoom conversion                
         return ( (int)( ( x + (self.focus[0] - self.view[0] / 2) ) / self.zoom ) , (int)( ( y + (self.focus[1] - self.view[1] / 2) ) / self.zoom ) )
         
+    def go_to_Game():
+        if self.gameState != 1: #Don't reset anything if just coming back from the GUI
+            #game objects
+            self.players = [Player(self.imgPlayer), Player(self.imgPlayer), Player(self.imgPlayer), Player(self.imgPlayer)]
+            self.playerIndex = 0
+            self.player = self.players[self.playerIndex]
+            self.mapSize = [32, 32]
+            self.tiles = []
+            self.turrets = []
+            self.gui = GUI( self )
+
+            self.creeps = []
+            
+            #self.creeps.append(Creep(self.imgPlayer, 100, 100, self))
+            #self.creeps.append(Creep(self.imgPlayer, 100, 100, self))
+            
+            self.tiles = Terrain(self,"test.txt")
+            the_path = CreepPath((30, 30), 1, self)
+            the_path.find_path()
+
+            self.level = 1
+
+            #drawing variables
+            self.zoom = 1.0
+            self.focus = [0, 0]     # the central point of the viewbox
+            self.view = [0, 0]      # the width + height of the viewbox
+            self.viewMax = [0, 0]   # the width + height of the total screen
+            # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
+
+            self.turretFactory = TurretFactory()
+            #pos = [ (180 + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (300 + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
+            #self.turrets.append( self.turretFactory.createTurret( self, 5, pos[0], pos[1] ) )
+            
+        self.gameState = 0
+        
+    def go_to_GUI(self):
+        self.gui = GUI( self )
+        self.gameState = 1
+        
+    def go_to_MainMenu(self):
+        pass
+        
+    def go_to_LevelSelect(self):
+        pass
+        
     def main(self):
         """main game loop"""
         while True:
-            if self.gameState == 0:
-                self.get_input()
-                self.update()
-                self.draw()
             #build mode: controls change, GUI access opens up. (clicking on GUI brings it up, changes mode?)
             #pause mode:
             #on mode change, reset direction for player? (if keep)
             #various menu modes
+            self.get_input()
             if self.gameState == 0: #standard game
-                self.get_input()
                 self.update()
                 self.draw()
-                pygame.display.flip()
-            elif self.gameState == 1:
+            elif self.gameState == 1: #In game player menu
                 self.gui.get_input()
                 self.gui.update()
                 self.draw()
                 self.gui.draw()
-                pygame.display.flip()
+            elif self.gameState == 2: #BuildPhase (Possibly unused)
+                pass
+            elif self.gameState == 3: #Main menu
+                pass
+            elif self.gameState == 4: #Level Selection
+                pass
+            elif self.gameState == 5: #Save/load screen (theoretical at this point)
+                pass
+            elif self.gameState == 6: #Win
+                pass
+            elif self.gameState == 7: #Lose
+                pass
+            else:   #ABORT, ABORT
+                pygame.quit()
+                sys.exit()
 
 g = Game()
 g.main()
