@@ -203,6 +203,16 @@ class Creep(SuperClass):
     ## the attack function
     #  @brief attacks all players in range
     def attack(self):
-        for player in self.game.players:
-            if(self.rect.colliderect(player.rect)):
-                self.weapon.attack(player)
+        #have we attacked too recently?
+        if self.attack_wait >= self.attack_speed:
+            #iterate through the players, attacking the first one that collides
+            for player in self.game.players:
+                if(self.rect.colliderect(player.rect)):
+                    #so we don't attack too quickly
+                    self.attack_wait = 0
+                    #attack the player with our weapon
+                    self.weapon.attack(player)
+                    break
+        #wait for attack_speed ms before we can attack again
+        else:
+            self.attack_wait += self.game.deltaT

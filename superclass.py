@@ -32,6 +32,11 @@ class SuperClass(object):
         self.timeParalyzed = -1
         self.burningCounter = 0
         self.damage_multiplier = 1
+
+        #our attack speed in ms
+        self.attack_speed = 1000
+        #how long we've been waiting to attack, stops increment when >= attack_speed
+        self.attack_wait = 0
         
     def update(self, game):
         """update method"""
@@ -102,17 +107,3 @@ class SuperClass(object):
             if self.timeParalyzed >= 2000:
                 self.timeParalyzed = -1
                 self.speed = self.max_speed
-            
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
