@@ -152,7 +152,7 @@ class GUI_Tower_Upgrade(object):
         """for GUI Objects that do nothing when clicked"""
         pass
 
-    def upgrade_rof(self):
+    def upgrade_rof(self, junk):
         """upgrades the turret's rate of fire"""
         player = self.g.players[self.g.playerIndex]
         cost = self.get_cost( self.turret.getAttackSpeedLevel() )
@@ -163,7 +163,7 @@ class GUI_Tower_Upgrade(object):
                 del self.objects[:]
                 self.generate_GUI_objects()
         
-    def upgrade_damage(self):
+    def upgrade_damage(self, junk):
         """upgrades the turret's damage"""
         player = self.g.players[self.g.playerIndex]
         cost = self.get_cost( self.turret.getDamageLevel() )
@@ -174,7 +174,7 @@ class GUI_Tower_Upgrade(object):
                 del self.objects[:]
                 self.generate_GUI_objects()
         
-    def upgrade_range(self):
+    def upgrade_range(self, junk):
         """upgrades the turret's range"""
         player = self.g.players[self.g.playerIndex]
         cost = self.get_cost( self.turret.getRangeLevel() )
@@ -185,7 +185,7 @@ class GUI_Tower_Upgrade(object):
                 del self.objects[:]
                 self.generate_GUI_objects()
         
-    def upgrade_aoe(self):
+    def upgrade_aoe(self, junk):
         """upgrades the turret's aoe"""
         player = self.g.players[self.g.playerIndex]
         cost = self.get_cost( self.turret.getAoELevel() )

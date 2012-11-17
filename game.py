@@ -242,6 +242,7 @@ class Game(object):
                         if t.x / 24 == pos[0] / 24 and t.y / 24 + 2 == pos[1] / 24:
                             #open turret upgrade gui
                             self.gui = GUI_Tower_Upgrade( self, t )
+                            self.mode = 1
                     
                     #if there's no turret here, and it is affordable, place one. (in build mode)
                     if self.players[self.playerIndex].gold >= self.turretCost:
