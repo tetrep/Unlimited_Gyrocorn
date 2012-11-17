@@ -8,6 +8,7 @@ class Player(SuperClass):
     def __init__(self, img):
         """initialize player"""
         super(Player, self).__init__()
+        self.update_functions = None
         self.img = img
         
         self.x = 0 #position in pixels
