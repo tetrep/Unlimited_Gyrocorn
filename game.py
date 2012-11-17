@@ -8,8 +8,6 @@ from turretfactory import *
 
 from gui import *
 
-from creep import *
-from chargecreep import *
 from creep_path import *
 from creep_factory import *
 
@@ -287,5 +285,4 @@ class Game(object):
 g = Game()
 #g.main()
 sl = SaveLoad()
-sl.save_object(game)
-        
+sl.save_object("test.save", g)
