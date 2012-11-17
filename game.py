@@ -13,6 +13,8 @@ from chargecreep import *
 from creep_path import *
 from creep_factory import *
 
+from save_load import *
+
 #  @class Game
 #  @brief this class is the game engine. It manages game logic, input, and rendering.
 class Game(object):
@@ -283,5 +285,7 @@ class Game(object):
                 pygame.display.flip()
 
 g = Game()
-g.main()
+#g.main()
+sl = SaveLoad()
+sl.save_object(game)
         
