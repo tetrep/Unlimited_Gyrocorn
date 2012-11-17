@@ -30,7 +30,7 @@ class Tile(object):
     #  @brief returns the creep_value and any modifiers
     def effective_value(self):
       if self.blocking:
-          return 999
+          return self.creep_value + 999
       else:
           return self.creep_value
     
