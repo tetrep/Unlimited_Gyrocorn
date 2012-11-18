@@ -518,7 +518,7 @@ class Game(object):
         #creeps
         self.cfactory = CreepFactory(self.imgCreep, self)
         self.creeps = []
-        self.cp = CreepPath((24, 31), 4, self)
+        self.cp = CreepPath(self.tiles.target, 4, self)
         self.cp.find_path()
         self.level = 1 
 
