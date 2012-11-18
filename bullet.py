@@ -18,6 +18,8 @@ class Bullet(object):
         self.rect.x = starting_x
         self.y = starting_y
         self.rect.y = starting_y
+        self.x_real = starting_x
+        self.y_real = starting_y
         self.dead = False
     
         #attacking statistics
@@ -45,11 +47,16 @@ class Bullet(object):
         #if self.attack_direction_x != self.rect.x and self.attack_direction_y != self.rect.y:
         self.moving = self.moving + game.deltaT
         if self.moving <= self.attack_range * 1000.0:
-            #x_movement = self.speed * game.deltaT / 1000.0 * (self.rect.x - self.attack_direction_x) / self.distance
-            #y_movement = self.speed * game.deltaT / 1000.0 * (self.rect.y - self.attack_direction_y) / self.distance
-            self.rect.move_ip( - (self.x_movement * game.deltaT / 1000.0), -(self.y_movement * game.deltaT / 1000.0))
-            self.x = self.rect.x
-            self.y = self.rect.y
+            #calculate our next x/y coords
+            self.x_real += -(self.x_movement * game.deltaT / 1000.0)
+            self.y_real += -(self.y_movement * game.deltaT / 1000.0)
+
+            #update our rect
+            self.rect.move_ip(int(self.x_real) - self.x, int(self.y_real) - self.y)
+
+            #update our x/y positon
+            self.x = int(self.x_real)
+            self.y = int(self.y_real)
         else:
             #dies if it has reached its initial destination
             self.dead = True
