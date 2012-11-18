@@ -24,6 +24,7 @@ class Terrain(object):
         self.rockimg = pygame.image.load("Art/tiles/rockmap.png") # The 16x1 collection of 24x24 tile imgs for use when the tile is a wall. 
         self.grassimg = pygame.image.load("Art/tiles/tile-grass.png").convert() # The single img for a grasstile
         self.waterimg = pygame.image.load("Art/tiles/tile-water.png").convert() # The single tile for a watertile
+        self.spawnimg = pygame.image.load("Art/tiles/tile-spawn.png").convert()
         
         #self.tileSize = pygame.Rect(0,0,self.engine.screen.get_width()/self.xSize,self.engine.screen.get_height()/self.ySize) # A rect that defines how big an individual tile on is in the gameworld
         self.tileSize = pygame.Rect(0,0,24,24)# A rect that defines how big an individual tile on is in the gameworld
@@ -67,7 +68,7 @@ class Terrain(object):
                     blocking = False
                 elif lines[y][x] == 't':
                     self.target = (x,y)
-                    img=self.grassimg
+                    img=self.spawnimg
                     blocking = False
                 else:
                     img=self.grassimg
