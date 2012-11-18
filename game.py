@@ -34,7 +34,7 @@ class Game(object):
         
         
         #screen initialization
-        self.screenSize = (1024, 768)
+        self.screenSize = (768, 768)
         self.screen = pygame.display.set_mode( self.screenSize )
         
         self.maps = []
@@ -257,7 +257,10 @@ class Game(object):
                     if self.players[self.playerIndex].gold >= self.turretCost:
                         self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
                         self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
-
+                        
+                elif event.button == 3: #right mouse click
+                    pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
+                    self.players[self.playerIndex].use_skill(self, 0, pos[0], pos[1])
                     
                 elif event.button == 4: #mouse wheel down
                     self.zoom -= .1
@@ -477,7 +480,8 @@ class Game(object):
         for p in self.players:
             barbg = pygame.Surface( (int(26 * self.zoom), 8) ).convert()
             barbg.fill( (0, 0, 0) )
-            barfg = pygame.Surface( ( (int( 26 * self.zoom * float( p.hp[0] ) / float( p.hp[1] ) ) - 2), 6) ).convert()
+            width = [(int( 26 * self.zoom * float( p.hp[0] ) / float( p.hp[1] ) ) - 2), 0]
+            barfg = pygame.Surface( (max( width ), 6) ).convert()
             barfg.fill( (0, 255, 0) )
             pos = self.convertGamePixelsToZoomCoorinates( (p.x, p.y) )
             self.screen.blit( barbg, pygame.Rect( pos[0] - 1,     pos[1] + 32 * self.zoom,     barbg.get_width(), barbg.get_height() ) )
@@ -521,8 +525,7 @@ class Game(object):
         self.creeps = []
         self.cp = CreepPath((24, 31), 4, self)
         self.cp.find_path()
-        self.level = 1 #?
-        self.spawn_creep()
+        self.level = 1 
 
         #gui
         self.gui = GUI_Equipment( self )
@@ -539,7 +542,6 @@ class Game(object):
         # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
 
         self.turretFactory = TurretFactory()
-        
         
     def go_to_Game(self,targetLevel=0):
         self.battle_background_sound.play(loops = -1)
@@ -572,10 +574,14 @@ class Game(object):
         if self.gameState != 0 and self.gameState != 1 and self.gameState !=2:  #Coming back from an ingame state, so don't reset
             self.start_game(targetLevel)
             
+<<<<<<< HEAD
         if self.gameState == 0 or self.gameState == 3:
             self.build_background_sound.play(loops = -1)
             self.battle_background_sound.stop()
             self.menu_background_sound.stop()
+=======
+        if self.gameState == 0 or self.gameState == 3 or self.gameState == 4:
+>>>>>>> cf4fa0f76104e4163899df5bb79f6560cbea4689
             self.MenuButtons = []
             self.MenuButtons.append(Button("Start!",32,(self.screen.get_width()-100,self.screen.get_height()-100),None,self.go_to_Game,[]))
             
