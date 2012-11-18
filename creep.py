@@ -180,7 +180,14 @@ class Creep(SuperClass):
     #  @todo this should just be inherited
     def draw(self):
         #blit it!
-        self.game.screen.blit(self.img, self.rect, pygame.Rect(25*2, 33 * 2, 24, 32))
+        #zoom logic
+        pos = self.game.convertGamePixelsToZoomCoorinates( (self.rect.x, self.rect.y) )
+        temp = pygame.Surface( ( 24, 32 ) )
+        temp.fill( (255, 0, 255) )
+        temp.set_colorkey( (255, 0, 255) )
+        temp.blit( self.img, pygame.Rect(0, 0, 24, 32), pygame.Rect(0, 0, 24, 32) )
+        temp = pygame.transform.scale(temp, ( (int)(temp.get_width() * self.game.zoom), (int)(temp.get_height() * self.game.zoom) ) )
+        self.game.screen.blit(temp, pygame.Rect( pos[0], pos[1], int(self.rect.width * self.game.zoom), int(self.rect.height * self.game.zoom) ) )
 
     ## the attack function
     #  @brief attacks all players in range
