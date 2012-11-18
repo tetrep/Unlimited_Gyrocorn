@@ -90,7 +90,7 @@ class Game(object):
                     tempTile.img = self.imgTileWall
                 self.tiles[x].append( tempTile )
 
-        self.cp = CreepPath((24, 31), 4, self)
+        self.cp = CreepPath(self.tiles.target, 4, self)
         self.cp.find_path()
         
     def update(self):
@@ -352,6 +352,9 @@ class Game(object):
                     if self.players[self.playerIndex].gold >= self.turretCost:
                         self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
                         self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
+                        
+                    for button in self.MenuButtons:
+                        button.click(pos)
 
                 elif event.button == 3: #right mouse click
                     pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
@@ -647,7 +650,9 @@ def main():
     g = Game()
     g.main()
 
+#don't profile:
+main()
 #profile the game
-profile.run('main()','profile results')
-p = pstats.Stats('profile results')
-p.sort_stats('cumulative').print_stats()
+#profile.run('main()','profile results')
+#p = pstats.Stats('profile results')
+#p.sort_stats('cumulative').print_stats()
