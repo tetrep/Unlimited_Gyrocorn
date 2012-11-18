@@ -77,6 +77,7 @@ class Game(object):
         self.fire_skill_sound = pygame.mixer.Sound("Music/fire.ogg")
         self.fire_skill_sound.set_volume(.7)
         self.ice_skill_sound = pygame.mixer.Sound("Music/ice.ogg")
+        self.ice_skill_sound.set_volume(.9)
         self.lightning_skill_sound = pygame.mixer.Sound("Music/lightning.ogg")
         self.poison_skill_sound = pygame.mixer.Sound("Music/poison.ogg")
         self.missile_sound = pygame.mixer.Sound("Music/turretattack.ogg")
@@ -558,7 +559,7 @@ class Game(object):
         self.gameState = 1
 
     def go_to_SkillGUI(self):
-        self.gui = GUI_Skill( self )
+        self.gui = GUI_Skill( self, self.playerIndex )
         self.gameState = 1
         
     def go_to_Build(self,targetLevel=0):
