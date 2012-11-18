@@ -250,7 +250,10 @@ class Game(object):
                     if self.players[self.playerIndex].gold >= self.turretCost:
                         self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
                         self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
-
+                        
+                elif event.button == 3: #right mouse click
+                    pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
+                    self.players[self.playerIndex].use_skill(self, 0, pos[0], pos[1])
                     
                 elif event.button == 4: #mouse wheel down
                     self.zoom -= .1
