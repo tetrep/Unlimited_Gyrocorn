@@ -515,8 +515,7 @@ class Game(object):
         self.creeps = []
         self.cp = CreepPath((24, 31), 4, self)
         self.cp.find_path()
-        self.level = 1 #?
-        self.spawn_creep()
+        self.level = 1 
 
         #gui
         self.gui = GUI_Equipment( self )
@@ -529,7 +528,6 @@ class Game(object):
         # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
 
         self.turretFactory = TurretFactory()
-        
         
     def go_to_Game(self,targetLevel=0):
         if self.gameState == 2:     #Returning from the build Phase, just spawn more creeps
