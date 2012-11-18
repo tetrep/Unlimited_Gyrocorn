@@ -482,82 +482,40 @@ class Game(object):
     def convertZoomCoordinatesToGamePixels(self, (x, y) ):
         #reverse the game->zoom conversion                
         return ( (int)( ( x + (self.focus[0] - self.view[0] / 2) ) / self.zoom ) , (int)( ( y + (self.focus[1] - self.view[1] / 2) ) / self.zoom ) )
-#<<<<<<< HEAD
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #State Machine
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------        
-    def go_to_Game(self):
-        if self.gameState != 1: #Don't reset anything if just coming back from the GUI
 
-            #game objects
-            #players
-            self.players = [Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI), \
-                            Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI)]
-            self.playerIndex = 0
-            self.player = self.players[self.playerIndex]
-            self.player.activate()
-
-            #map
-            self.mapSize = [32, 32]
-            self.tiles = Terrain(self,"test.txt")
-            self.load_tiles()
-
-            #turrets
-            self.turrets = []
-            self.turretType = 0          #stores the turret type to build
-            self.turretCost = 1000000000 #stores cost to build a turret, impossibly high initialization cost
-            self.bullets = []
-
-            #creeps
-            self.cfactory = CreepFactory(self.imgCreep, self)
-            self.creeps = []
-            self.cp = CreepPath((24, 31), 4, self)
-            self.cp.find_path()
-            self.level = 1 #?
-            self.spawn_creep()
-
-            #gui
-            self.gui = GUI_Equipment( self )
-
-            #drawing variables
-            self.zoom = 1.0
-            self.focus = [0, 0]     # the central point of the viewbox
-            self.view = [0, 0]      # the width + height of the viewbox
-            self.viewMax = [0, 0]   # the width + height of the total screen
-            # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
-
-            self.turretFactory = TurretFactory()
-            #pos = [ (180 + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (300 + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
-            #self.turrets.append( self.turretFactory.createTurret( self, 5, pos[0], pos[1] ) )
-#=======
-        
     def start_game(self,targetLevel=0):
-        #game objects
-        self.players = [Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI),
+        #players
+        self.players = [Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI), \
                         Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI)]
         self.playerIndex = 0
         self.player = self.players[self.playerIndex]
         self.player.activate()
-        
+
+        #map
         self.mapSize = [32, 32]
-        
+        self.tiles = self.maps[targetLevel]
+        self.selectedLevel = targetLevel
+
+        #turrets
         self.turrets = []
         self.turretType = 0          #stores the turret type to build
-        self.turretCost = 1000000000 #stores cost to build a turret, impossibly high initialization cost 
+        self.turretCost = 1000000000 #stores cost to build a turret, impossibly high initialization cost
+        self.bullets = []
 
+        #creeps
+        self.cfactory = CreepFactory(self.imgCreep, self)
         self.creeps = []
-        
-        self.tiles=self.maps[targetLevel]
-        self.selectedLevel = targetLevel
         self.cp = CreepPath((24, 31), 4, self)
         self.cp.find_path()
-        
+        self.level = 1 #?
+        self.spawn_creep()
+
+        #gui
         self.gui = GUI_Equipment( self )
-
-        self.cfactory = CreepFactory(self.imgPlayer, self)
-
-        self.level = 1
 
         #drawing variables
         self.zoom = 1.0
@@ -567,15 +525,11 @@ class Game(object):
         # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
 
         self.turretFactory = TurretFactory()
-        #pos = [ (180 + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (300 + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
-        #self.turrets.append( self.turretFactory.createTurret( self, 5, pos[0], pos[1] ) )
         
         
     def go_to_Game(self,targetLevel=0):
         if self.gameState == 2:     #Returning from the build Phase, just spawn more creeps
             self.spawn_creep()
-    
-#>>>>>>> a6a9d0f9fd73cd70c9c1e0ec61dfdc7926bb39e3
             
         self.MenuButtons = [] 
         self.gameState = 0
