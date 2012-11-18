@@ -73,6 +73,7 @@ class Turret(object):
             if self.target != 0:
                 center_x = self.rect.x + (self.rect.width / 2)
                 center_y = self.rect.y + (self.rect.height / 2)
+                game.missile_sound.play()
                 self.projectiles.append(self.bulletFactory.createBullet(game, self.type, self.attack_area_of_effect, self.attack_damage, self.attack_range, self.target, center_x, center_y))
             #elif self.time_of_last_shot + self.attack_speed < pygame.time.get_ticks() / 1000.0:   
             #    self.time_of_last_shot = -1
