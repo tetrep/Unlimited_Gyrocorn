@@ -172,6 +172,10 @@ class Creep(SuperClass):
         self.x_tile = self.rect.centerx // 24
         self.y_tile = self.rect.centery // 24
 
+        #have we arrived?
+        if (self.x_tile, self.y_tile) == self.game.tiles.target:
+            self.health = 0
+
         #print '(', self.x_tile, ',', self.y_tile, ')'
         #print '(', self.rect.centerx, ',', self.rect.centery, ')'
 

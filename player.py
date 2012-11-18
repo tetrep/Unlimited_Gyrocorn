@@ -191,6 +191,9 @@ class Player(SuperClass):
     #  @param g a reference to the Game class that is currently running.    
     def update(self, g):
         """update the player (per frame), using data from game g"""
+        
+        self.game = g
+        
         #if the player is dead, KILL THEM
         if self.hp[0] <= 0 and self.dead == False:
             self.dead = True
