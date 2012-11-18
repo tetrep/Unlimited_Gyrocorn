@@ -47,8 +47,11 @@ class Turret(object):
         
         self.bulletFactory = BulletFactory();
         self.projectiles = []
-        self.time_of_last_shot = 0
+        self.time_of_last_shot = attack_speed
         self.target = 0
+        
+        buy_sound = pygame.mixer.Sound("Music/cash.ogg")
+        buy_sound.play()
         
     ## the Turret update
     #  @param game the instance of the class Game that this Turret resides in

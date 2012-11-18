@@ -15,7 +15,6 @@ class GUI_Tower_Buy(object):
 
         self.generate_GUI_objects()
 
-
     def generate_GUI_objects(self):
         """builds the GUI"""
         #Turrets
@@ -175,7 +174,7 @@ class GUI_Tower_Buy(object):
         # @ param arg[0] = the turret's type (acts like enumerated int)
         # @ param arg[1] = the turret's cost
         g = self.g #enable shorthand
-
+        
         #if the player can afford this tower
         if g.players[g.playerIndex].gold >= arg[1]:
             #in game, set mode to tower placement.

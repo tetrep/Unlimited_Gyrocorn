@@ -10,11 +10,15 @@ class Weapon(object):
     def __init__(self, damage = 10, target = None):
         self.damage = damage
         self.target = target
+        self.attack_sound = pygame.mixer.Sound("Music/enemyattack.ogg")
+        self.attack_sound.set_volume(.7)
 
     ## the attack function
     #  @brief attacks the given target
     #  @param target the target we are attacking
     def attack(self, target): 
+        self.attack_sound.play()
+        
         #set target
         self.target = target
 

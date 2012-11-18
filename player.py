@@ -53,6 +53,9 @@ class Player(SuperClass):
         self.frameDirection = 0 #parsed player facing
         self.frameTimer = 0     #ms spent in current frame
         self.frameDelay = 100   #time between frames in ms
+        
+        self.hit_sound = pygame.mixer.Sound("Music/playerhit.ogg")
+        self.hit_sound.set_volume(.7)
 
     def update_stats(self):
         """updates stats used for calculations based on equipment"""
@@ -87,6 +90,8 @@ class Player(SuperClass):
     
     def take_damage(self, dmg):
         """applies modifiers to damage, then takes it"""
+        self.hit_sound.play()
+        
         #DR% = 1 - (100 / x). 
         damageMultiplier = 100.0 / float(self.defense)
         #Apply defense buffs/debuffs

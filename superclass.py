@@ -45,6 +45,9 @@ class SuperClass(object):
         self.update_functions.append((99, self.checkParalyzed))
         #"""
         
+        self.hit_sound = pygame.mixer.Sound("Music/enemyhit.ogg")
+        self.hit_sound.set_volume(.4)
+        
     ## the update function
     #  @brief iterates over a list of functions and calls them, in order
     def update(self):
@@ -58,6 +61,8 @@ class SuperClass(object):
 
     def take_damage(self, dmg, dtype = 1):
         """applies modifiers to damage, then takes it"""
+        self.hit_sound.play()
+        
         #DR% = 1 - (100 / x). 
         damageMultiplier = 100.0 / float(self.defense)
         #Apply defense buffs/debuffs

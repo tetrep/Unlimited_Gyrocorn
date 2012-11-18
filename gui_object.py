@@ -17,9 +17,12 @@ class GUIObject(object):
         #special? (enabled, hidden, slide out)
         self.hover = False #true if currently being hovered over.
         
+        #self.click_sound = pygame.mixer.Sound("Music/button.ogg")
+        
     def function(self):
         """invoke this GUI Object's function"""
         self.f( self.args )
+        #self.click_sound.play()
 
     def get_text(self):
         """returns a string, made by concatenating all the text in self.text stored at the current self.textIndex"""

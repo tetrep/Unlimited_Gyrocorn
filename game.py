@@ -59,7 +59,14 @@ class Game(object):
         self.imgButton.set_colorkey((255,0,255))
         self.imgButton = pygame.transform.scale(self.imgButton,
         (int(float(self.imgButton.get_width())/self.imgButton.get_height()*150),150)).convert_alpha()
-
+        
+        self.menu_background_sound = pygame.mixer.Sound("Music/menumusic.ogg")
+        self.menu_background_sound.set_volume(.7)
+        self.battle_background_sound = pygame.mixer.Sound("Music/battlemusic.ogg")
+        self.battle_background_sound.set_volume(.7)
+        self.build_background_sound = pygame.mixer.Sound("Music/buildmusic.ogg")
+        self.build_background_sound.set_volume(.7)
+        
     def load_tiles(self):
         """generate a level, and store it in tiles[][]"""
         for x in range(0, self.mapSize[0]):
@@ -341,7 +348,7 @@ class Game(object):
         for p in self.players:
             barbg = pygame.Surface( (int(26 * self.zoom), 8) ).convert()
             barbg.fill( (0, 0, 0) )
-            barfg = pygame.Surface( ( (int( 26 * self.zoom * float( p.hp[0] ) / float( p.hp[1] ) ) - 2), 6) ).convert()
+            barfg = pygame.Surface( ( max((int( 26 * self.zoom * float( p.hp[0] ) / float( p.hp[1] ) ) - 2), 0), 6) ).convert()
             barfg.fill( (0, 255, 0) )
             pos = self.convertGamePixelsToZoomCoorinates( (p.x, p.y) )
             self.screen.blit( barbg, pygame.Rect( pos[0] - 1,     pos[1] + 32 * self.zoom,     barbg.get_width(), barbg.get_height() ) )
@@ -359,7 +366,11 @@ class Game(object):
         
     def go_to_Game(self):
         if self.gameState != 1: #Don't reset anything if just coming back from the GUI
-
+            
+            self.menu_background_sound.stop()
+            self.build_background_sound.play(loops = -1)
+            self.battle_background_sound.stop()
+        
             #game objects
             self.players = [Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI), \
                             Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI)]
@@ -415,6 +426,10 @@ class Game(object):
         self.MenuButtons.append(Button("Start",32,(50,50),self.imgButton,self.go_to_Game,[]))
         self.MenuButtons.append(Button("Select Level",32,(50,250),self.imgButton,self.go_to_LevelSelect,[]))
         self.MenuButtons.append(Button("Save or Load",32,(50,450),self.imgButton,self.go_to_SaveLoad,[]))
+        
+        self.menu_background_sound.play(loops = -1)
+        self.battle_background_sound.stop()
+        self.build_background_sound.stop()
         
         self.gameState=3
         
