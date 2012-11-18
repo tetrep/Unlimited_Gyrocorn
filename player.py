@@ -1,7 +1,7 @@
 import pygame
 from mod_enum import *
 from equipment import *
-#from skill import *
+from skill import *
 from superclass import *
 from bulletfactory import *
 from target import *
