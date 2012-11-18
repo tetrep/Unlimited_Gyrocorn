@@ -47,6 +47,9 @@ class Game(object):
         """pre-load all graphics and sound"""
         self.font = pygame.font.Font(None, 20)
         self.bigfont = pygame.font.Font(None, 32)
+        self.font = pygame.font.Font(None, 20)
+        self.bigfont = pygame.font.Font(None, 32)
+        self.imgCreep = pygame.image.load("Art/units/pikeman-red.png").convert()
         self.imgPlayer = pygame.image.load("Art/units/sprite-general-gabe.png").convert()
         self.imgPlayer.set_colorkey( (255, 0, 255) )
         self.imgPlayerAI = pygame.image.load("Art/units/sprite-general-gabe2.png").convert()
@@ -101,6 +104,9 @@ class Game(object):
             else:
                 #remove turrets that do not have valid placement
                 self.turrets.pop(x)
+
+        #kill creeps
+        self.reap()
 
         #update drawing variables
         self.update_view()
@@ -360,14 +366,20 @@ class Game(object):
                 if event.button == 1:
                     for button in self.MenuButtons:
                         button.click(event.pos)
-    
-    ## Kills dead creeps
+
+    ## the reap function
+    #  @brief iterates over the creeps and culls the dead ones
     def reap(self):
         for x, creep in enumerate(self.creeps):
             if creep.reap():
                 self.creeps.pop(x)
 
-    ## Spawns creep
+    ## the spawn creep function
+    #  @brief spawns creeps, if no parameters are passed it uses the creep factory
+    #  @param img the image the creep will use, optional
+    #  @param x the x pixel position of the creep, optional
+    #  @param y the y pixel position of the creep, optional
+    #  @param ctype the attributes of the creep, optional
     def spawn_creep(self, img = None, x = None, y = None, ctype = None):
         #we want to use the factory
         if(img == None):
@@ -473,8 +485,6 @@ class Game(object):
         self.gui = GUI_Equipment( self )
 
         self.cfactory = CreepFactory(self.imgPlayer, self)
-
-        self.load_tiles()
 
         self.level = 1
 
