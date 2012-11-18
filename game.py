@@ -34,7 +34,7 @@ class Game(object):
         
         
         #screen initialization
-        self.screenSize = (1024, 768)
+        self.screenSize = (768, 768)
         self.screen = pygame.display.set_mode( self.screenSize )
         
         self.maps = []
@@ -558,7 +558,7 @@ class Game(object):
         if self.gameState != 0 and self.gameState != 1 and self.gameState !=2:  #Coming back from an ingame state, so don't reset
             self.start_game(targetLevel)
             
-        if self.gameState == 0 or self.gameState == 3:
+        if self.gameState == 0 or self.gameState == 3 or self.gameState == 4:
             self.MenuButtons = []
             self.MenuButtons.append(Button("Start!",32,(self.screen.get_width()-100,self.screen.get_height()-100),None,self.go_to_Game,[]))
             
