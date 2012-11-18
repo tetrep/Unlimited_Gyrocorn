@@ -336,6 +336,8 @@ class Game(object):
                         self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
                         self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
 
+                    for button in self.MenuButtons:
+                        button.click(pos)
                     
                 elif event.button == 4: #mouse wheel down
                     self.zoom -= .1
@@ -415,6 +417,9 @@ class Game(object):
         
         for turret in self.turrets:
             turret.draw( self )
+            
+        for button in self.MenuButtons:
+            button.draw(self.screen)
 
         self.draw_HUD()
         
@@ -501,11 +506,11 @@ class Game(object):
         
         
     def go_to_Game(self,targetLevel=0):
-        print "going to game from ",str(targetLevel)
         if self.gameState == 2:     #Returning from the build Phase, just spawn more creeps
             self.spawn_creep()
     
             
+        self.MenuButtons = [] 
         self.gameState = 0
         
     def go_to_GUI(self):
@@ -521,7 +526,9 @@ class Game(object):
         if self.gameState != 0 and self.gameState != 1 and self.gameState !=2:  #Coming back from an ingame state, so don't reset
             self.start_game(targetLevel)
             
-        
+        if self.gameState == 0 or self.gameState == 3:
+            self.MenuButtons = []
+            self.MenuButtons.append(Button("Start!",32,(self.screen.get_width()-100,self.screen.get_height()-100),None,self.go_to_Game,[]))
             
         self.gameState = 2
     
