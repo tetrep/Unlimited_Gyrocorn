@@ -8,7 +8,7 @@ from bullet import *
 class Bullet(object):
     ## the Bullet constructor
     #  @param starting attack values, point to move towards,and starting point
-    def __init__(self, game, img, sound, starting_area_of_effect, starting_attack_damage, starting_attack_range, starting_attack_damage_type, target, starting_x = 0, starting_y = 0):
+    def __init__(self, game, img, starting_area_of_effect, starting_attack_damage, starting_attack_range, starting_attack_damage_type, target, starting_x = 0, starting_y = 0):
         self.img = img
         self.rect = self.img.get_rect()
         
@@ -28,16 +28,14 @@ class Bullet(object):
         self.attack_range = starting_attack_range
         self.attack_area_of_effect = starting_area_of_effect
         self.attack_damage_type = starting_attack_damage_type
-        self.attack_direction_x = target.x + target.rect.width/2
-        self.attack_direction_y = target.y + target.rect.height/2
+        self.attack_direction_x = target.rect.x + target.rect.width/2
+        self.attack_direction_y = target.rect.y + target.rect.height/2
         self.moving = 0
 
         
         self.distance = math.sqrt((self.rect.x - self.attack_direction_x)**2 + (self.rect.y - self.attack_direction_y)**2)
         self.x_movement = self.speed * (self.rect.x - self.attack_direction_x ) / self.distance
         self.y_movement = self.speed * (self.rect.y - self.attack_direction_y) / self.distance
-        
-        sound.play()
         
     ## the Bullet update
     #  @param game the instance of the class Game that this Turret resides in

@@ -137,6 +137,16 @@ class Player(SuperClass):
             print("attack on CD")
             return
         
+        if self.skill[i].skillAttr == 0:
+            g.fire_skill_sound.play()
+        elif self.skill[i].skillAttr == 1:
+            g.ice_skill_sound.play()
+        elif self.skill[i].skillAttr == 2:
+            g.lightning_skill_sound.play()
+        elif self.skill[i].skillAttr == 3:
+            g.poison_skill_sound.play()
+        
+        
         if self.skill[i].skillKey == 0: #Aura
             #turn the aura on/off
             if self.skill[i].active == False:

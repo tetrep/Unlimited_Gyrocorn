@@ -68,11 +68,19 @@ class Game(object):
         (int(float(self.imgButton.get_width())/self.imgButton.get_height()*150),150)).convert_alpha()
         
         self.menu_background_sound = pygame.mixer.Sound("Music/menumusic.ogg")
-        self.menu_background_sound.set_volume(.7)
+        self.menu_background_sound.set_volume(.4)
         self.battle_background_sound = pygame.mixer.Sound("Music/battlemusic.ogg")
-        self.battle_background_sound.set_volume(.7)
+        self.battle_background_sound.set_volume(.4)
         self.build_background_sound = pygame.mixer.Sound("Music/buildmusic.ogg")
-        self.build_background_sound.set_volume(.7)
+        self.build_background_sound.set_volume(.4)
+        
+        self.fire_skill_sound = pygame.mixer.Sound("Music/fire.ogg")
+        self.fire_skill_sound.set_volume(.7)
+        self.ice_skill_sound = pygame.mixer.Sound("Music/ice.ogg")
+        self.lightning_skill_sound = pygame.mixer.Sound("Music/lightning.ogg")
+        self.poison_skill_sound = pygame.mixer.Sound("Music/poison.ogg")
+        self.missile_sound = pygame.mixer.Sound("Music/turretattack.ogg")
+        self.missile_sound.set_volume(.7)
         
         for map in os.listdir("Levels"):
             self.maps.append(Terrain(self,"Levels/"+map))
@@ -530,10 +538,6 @@ class Game(object):
         #gui
         self.gui = GUI_Equipment( self )
 
-        self.cfactory = CreepFactory(self.imgCreep, self)
-
-        self.level = 1
-
         #drawing variables
         self.zoom = 1.0
         self.focus = [0, 0]     # the central point of the viewbox
@@ -578,7 +582,6 @@ class Game(object):
             self.build_background_sound.play(loops = -1)
             self.battle_background_sound.stop()
             self.menu_background_sound.stop()
-        if self.gameState == 0 or self.gameState == 3
             self.MenuButtons = []
             self.MenuButtons.append(Button("Start!",32,(self.screen.get_width()-100,self.screen.get_height()-100),None,self.go_to_Game,[]))
             
