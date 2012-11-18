@@ -3,6 +3,8 @@ from mod_enum import *
 from equipment import *
 from skill import *
 from superclass import *
+from bulletfactory import *
+from target import *
 
 class Player(SuperClass):
     #  @param img a reference to a pygame.Surface containing the spritesheet to be used for draw calls.
@@ -27,10 +29,15 @@ class Player(SuperClass):
         self.dead = False
         self.deadt = 0
         self.reviveTime = 30
+
+        self.bulletFactory = BulletFactory()
+        self.attackTimer = 0
+        self.attackDelay = 1.0
         
         self.exp = 10000000
         self.gold = 1000
         self.hp = [100.0, 100]  #hp [current, max]
+        self.mana = [100.0, 100]#mana [current, max]
         self.baseAttack = 100   #base attack
         self.baseDefense = 100  #base defense
         self.baseSpeed = 64.0   #base speed
@@ -47,6 +54,7 @@ class Player(SuperClass):
 
         self.buffs = []
         self.equipment = [Equipment(), Equipment(), Equipment(), Equipment()]
+        self.skill = [Skill(), Skill(), Skill(), Skill()]
 
         #animation variables
         self.frame = 0          #current frame in animation
@@ -67,6 +75,10 @@ class Player(SuperClass):
         self.crit = 0.00 + self.get_stat(modEnum.MOD_CRIT)
         self.attackSpeedMultiplier = 1.0 + self.get_stat(modEnum.MOD_ATTACK_SPEED)
         self.moveSpeedMultiplier = 1.0 + self.get_stat(modEnum.MOD_MOVE_SPEED)
+        #cap move speed
+        if self.moveSpeedMultiplier > 4.0:
+            self.moveSpeedMultiplier = 4.0
+        
         self.speed = self.baseSpeed * self.moveSpeedMultiplier
 
 
@@ -109,6 +121,56 @@ class Player(SuperClass):
     def deactivate(self):
         """give AI control over this unit"""
         self.active = False
+
+    def use_skill(self, g, i, x, y):
+        """uses the player's ith skill"""
+        # @ param g a reference to the game engine
+        # @ param i the index of the skill (basically what skill)
+        # @ param x the x target coordinate in game pixels
+        # @ param y the y target coordinate in game pixels
+        if self.attackTimer < self.attackDelay:
+            print("attack on CD")
+            return
+        
+        if self.skill[i].skillKey == 0: #Aura
+            #turn the aura on/off
+            if self.skill[i].active == False:
+                print("aura on")
+                self.skill[i].active = True
+            else:
+                self.skill[i].active = False
+                print("aura off")
+        
+        elif self.skill[i].skillKey == 1: #Missile
+            if self.mana[0] > self.skill[i].skillCost:
+                self.mana[0] -= self.skill[i].skillCost
+                self.attackTimer = 0
+                target = Target(x, y)
+                center_x = self.rect.x + (self.rect.width / 2)
+                center_y = self.rect.y + (self.rect.height / 2)
+                #bullet types: fire 5, ice 6, lightning 7
+                #skill types: fire 0, ice 1, lightning 2
+                g.bullets.append(self.bulletFactory.createBullet(g, self.skill[i].skillAttr + 5, 0, self.attack, 1024, target, center_x, center_y))
+                print("missile")
+
+        elif self.skill[i].skillKey == 2: #Breath
+            #for each creep in the AoE cone, do damage.
+            if self.mana[0] > self.skill[i].skillCost:
+                self.mana[0] -= self.skill[i].skillCost
+                self.attackTimer = 0
+                #get low and high angle (-45 degrees and +45 degrees from player -> point angle)
+                lowAngle = math.atan2(y - self.rect.centery, x - self.rect.centerx)  - 3.1415 / 2.0
+                highAngle = math.atan2(y - self.rect.centery, x - self.rect.centerx) + 3.1415 / 2.0
+                for creep in g.creeps:
+                    #get angle to creep
+                    creepAngle = math.atan2(creep.rect.centery - self.rect.centery, creep.rect.centerx - self.rect.centerx)
+                
+                    #if angle to the creep is between the two angles
+                    if creepAngle > lowAngle and creepAngle < highAngle:
+                        #and the distance to the creep is below the skill's range
+                        if ( (creep.rect.centerx - self.rect.centerx) ** 2 + (creep.rect.centery - self.rect.centery) ** 2 ) ** 0.5 < 4 * 24:
+                            creep.take_damage( self.attack )
+                            print("breath")
     
     
     #  @param g a reference to the Game class that is currently running.    
@@ -131,6 +193,21 @@ class Player(SuperClass):
             self.hp[0] += self.regen * g.deltaT / 1000.0
             if self.hp[0] > self.hp[1]:
                 self.hp[0] = self.hp[1]
+            self.mana[0] += g.deltaT / 1000.0
+            if self.mana[0] > self.mana[1]:
+                self.mana[0] = self.mana[1]
+            self.attackTimer += self.attackSpeedMultiplier * g.deltaT / 1000.0
+
+        #AURA
+        for skill in self.skill:
+            if skill.skillKey == 0 and skill.active == True: #aura is on
+                #damage all creeps in AoE
+                for creep in g.creeps:
+                    if ( (creep.rect.centerx - self.rect.centerx) ** 2 + (creep.rect.centery - self.rect.centery) ** 2 ) ** 0.5 < 4 * 24:
+                        creep.take_damage( self.attack * g.deltaT / 1000.0 ) #THIS SHOULD IGNORE ABSORBTION?
+                #buff all players in AoE
+                #take mana
+                self.mana[0] -= float(skill.skillCost) * g.deltaT / 1000.0
         
         #collision detection
         self.collision = [False, False]
