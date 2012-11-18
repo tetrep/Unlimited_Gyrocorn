@@ -1,4 +1,4 @@
-import pygame, sys, random
+import pygame, sys, random, os
 
 from tile import *
 from player import *
@@ -34,10 +34,14 @@ class Game(object):
         self.screenSize = (1024, 768)
         self.screen = pygame.display.set_mode( self.screenSize )
         
+        self.maps = []
+        
         self.load_assets()
         
         self.gameState=-1
         self.go_to_MainMenu()
+        
+        self.selectedLevel = 0
         
     def load_assets(self):
         """pre-load all graphics and sound"""
@@ -67,6 +71,9 @@ class Game(object):
         self.build_background_sound = pygame.mixer.Sound("Music/buildmusic.ogg")
         self.build_background_sound.set_volume(.7)
         
+        for map in os.listdir("Levels"):
+            self.maps.append(Terrain(self,"Levels/"+map))
+
     def load_tiles(self):
         """generate a level, and store it in tiles[][]"""
         for x in range(0, self.mapSize[0]):
@@ -117,6 +124,9 @@ class Game(object):
             #exit
             pygame.quit()
             sys.exit()
+            
+        if self.gameState != 2:
+            self.check_level_over()
 
     def update_view(self):
         """create view and focus variables (draw control) based on the screen size and zoom level."""
@@ -153,6 +163,8 @@ class Game(object):
             self.gameInput()
         elif self.gameState == 1:
             self.gui.get_input()
+        elif self.gameState == 2:
+            self.buildInput()
         elif self.gameState == 3:
             self.menuInput()
         elif self.gameState == 4:
@@ -161,6 +173,96 @@ class Game(object):
             self.menuInput()
             
     def gameInput(self):
+        for event in pygame.event.get():
+            #key pressed
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    #exit
+                    pygame.quit()
+                    sys.exit()
+                #PLAYER SWITCHING (Must go before movement)
+                if event.key == pygame.K_i:
+                    #+1
+                    self.player.reset_movement()
+                    self.player.deactivate()
+                    self.playerIndex -= 1
+                    if self.playerIndex < 0:
+                        self.playerIndex = 3
+                    self.players[self.playerIndex].activate()
+                if event.key == pygame.K_o:
+                    #-1
+                    self.player.reset_movement()
+                    self.player.deactivate()
+                    self.playerIndex += 1
+                    if self.playerIndex > 3:
+                        self.playerIndex = 0
+                    self.players[self.playerIndex].activate()
+                #MOVEMENT
+                if event.key == pygame.K_w:
+                    #up
+                    self.player.direction[1] += -1
+                if event.key == pygame.K_a:
+                    #down
+                    self.player.direction[0] += -1
+                if event.key == pygame.K_s:
+                    #left
+                    self.player.direction[1] += 1
+                if event.key == pygame.K_d:
+                    #right
+                    self.player.direction[0] += 1
+                # / MOVEMENT
+                #MENUS
+                
+                #CAN WE UPDATE PLAYERS IN THE MIDDLE OF COMBAT?
+                #if event.key == pygame.K_p:
+                #    #toggle player menu
+                #    self.go_to_GUI()
+                    
+            #key released
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_w:
+                    self.player.direction[1] += 1
+                if event.key == pygame.K_a:
+                    self.player.direction[0] += 1
+                if event.key == pygame.K_s:
+                    self.player.direction[1] += -1
+                if event.key == pygame.K_d:
+                    self.player.direction[0] += -1
+
+            #mouse controls
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1: #left click
+                    #event.pos[0] and event.pos[1] are the mouse x,y coordinates respectively relative to the game window
+                    #needs to be converted to give a mapping in game space.
+                    #if   map = pos * zoom - (focus - view / 2)
+                    #then pos = (map + (focus - view / 2) ) / zoom
+
+                    pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
+
+                    #check if there's already a turret here. if so, open upgrade menu. (in build mode)
+                    for t in self.turrets:
+                        if t.x / 24 == pos[0] / 24 and t.y / 24 + 2 == pos[1] / 24:
+                            #open turret upgrade gui
+                            self.gui = GUI_Tower_Upgrade( self, t )
+                            self.mode = 1
+                    
+                    #if there's no turret here, and it is affordable, place one. (in build mode)
+                    if self.players[self.playerIndex].gold >= self.turretCost:
+                        self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
+                        self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
+
+                    
+                elif event.button == 4: #mouse wheel down
+                    self.zoom -= .1
+                    if self.zoom < 1:
+                        self.zoom = 1
+                        
+                elif event.button == 5: #mouse wheel up
+                    self.zoom += .1
+                    if self.zoom > 4:
+                        self.zoom = 4
+                        
+    def buildInput(self):
         for event in pygame.event.get():
             #key pressed
             if event.type == pygame.KEYDOWN:
@@ -241,6 +343,8 @@ class Game(object):
                         self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
                         self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
 
+                    for button in self.MenuButtons:
+                        button.click(pos)
                     
                 elif event.button == 4: #mouse wheel down
                     self.zoom -= .1
@@ -271,7 +375,7 @@ class Game(object):
                 if event.button == 1:
                     for button in self.MenuButtons:
                         button.click(event.pos)
-    
+
     ## the reap function
     #  @brief iterates over the creeps and culls the dead ones
     def reap(self):
@@ -300,6 +404,11 @@ class Game(object):
                 return False
         return True
 
+    def check_level_over(self):
+        if len(self.creeps) == 0:
+            self.level+=1
+            self.go_to_Build()
+        
     def draw(self):
         """draw"""
         self.screen.fill( (0, 0, 0) ) #screen wipe
@@ -315,12 +424,12 @@ class Game(object):
         
         for turret in self.turrets:
             turret.draw( self )
+            
+        for button in self.MenuButtons:
+            button.draw(self.screen)
 
         self.draw_HUD()
         
-        #actually draw it
-        #pygame.display.flip()
-
     def draw_tiles(self):
         for x in range(0, self.tiles.__len__() ):
             for y in range(0, self.tiles[x].__len__() ):
@@ -348,7 +457,7 @@ class Game(object):
         for p in self.players:
             barbg = pygame.Surface( (int(26 * self.zoom), 8) ).convert()
             barbg.fill( (0, 0, 0) )
-            barfg = pygame.Surface( ( max((int( 26 * self.zoom * float( p.hp[0] ) / float( p.hp[1] ) ) - 2), 0), 6) ).convert()
+            barfg = pygame.Surface( ( (int( 26 * self.zoom * float( p.hp[0] ) / float( p.hp[1] ) ) - 2), 6) ).convert()
             barfg.fill( (0, 255, 0) )
             pos = self.convertGamePixelsToZoomCoorinates( (p.x, p.y) )
             self.screen.blit( barbg, pygame.Rect( pos[0] - 1,     pos[1] + 32 * self.zoom,     barbg.get_width(), barbg.get_height() ) )
@@ -364,53 +473,55 @@ class Game(object):
         #reverse the game->zoom conversion                
         return ( (int)( ( x + (self.focus[0] - self.view[0] / 2) ) / self.zoom ) , (int)( ( y + (self.focus[1] - self.view[1] / 2) ) / self.zoom ) )
         
-    def go_to_Game(self):
-        if self.gameState != 1: #Don't reset anything if just coming back from the GUI
-            
-            self.menu_background_sound.stop()
-            self.build_background_sound.play(loops = -1)
-            self.battle_background_sound.stop()
+    def start_game(self,targetLevel=0):
+        #game objects
+        self.players = [Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI),
+                        Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI)]
+        self.playerIndex = 0
+        self.player = self.players[self.playerIndex]
+        self.player.activate()
         
-            #game objects
-            self.players = [Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI), \
-                            Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI)]
-            self.playerIndex = 0
-            self.player = self.players[self.playerIndex]
-            self.player.activate()
-            
-            self.mapSize = [32, 32]
-            
-            self.turrets = []
-            self.turretType = 0          #stores the turret type to build
-            self.turretCost = 1000000000 #stores cost to build a turret, impossibly high initialization cost 
+        self.mapSize = [32, 32]
+        
+        self.turrets = []
+        self.turretType = 0          #stores the turret type to build
+        self.turretCost = 1000000000 #stores cost to build a turret, impossibly high initialization cost 
 
-            self.creeps = []
-            
-            self.tiles=Terrain(self,"test.txt")
-            self.cp = CreepPath((24, 31), 4, self)
-            self.cp.find_path()
-            
-            self.gui = GUI_Equipment( self )
+        self.creeps = []
+        
+        self.tiles=self.maps[targetLevel]
+        self.selectedLevel = targetLevel
+        self.cp = CreepPath((24, 31), 4, self)
+        self.cp.find_path()
+        
+        self.gui = GUI_Equipment( self )
 
-            self.cfactory = CreepFactory(self.imgCreep, self)
+        self.cfactory = CreepFactory(self.imgCreep, self)
 
-            self.load_tiles()
+        self.level = 1
 
-            self.level = 1
+        #drawing variables
+        self.zoom = 1.0
+        self.focus = [0, 0]     # the central point of the viewbox
+        self.view = [0, 0]      # the width + height of the viewbox
+        self.viewMax = [0, 0]   # the width + height of the total screen
+        # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
 
+        self.turretFactory = TurretFactory()
+        #pos = [ (180 + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (300 + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
+        #self.turrets.append( self.turretFactory.createTurret( self, 5, pos[0], pos[1] ) )
+        
+        
+    def go_to_Game(self,targetLevel=0):
+        self.battle_background_sound.play(loops = -1)
+        self.menu_background_sound.stop()
+        self.build_background_sound.stop()
+        
+        if self.gameState == 2:     #Returning from the build Phase, just spawn more creeps
             self.spawn_creep()
-
-            #drawing variables
-            self.zoom = 1.0
-            self.focus = [0, 0]     # the central point of the viewbox
-            self.view = [0, 0]      # the width + height of the viewbox
-            self.viewMax = [0, 0]   # the width + height of the total screen
-            # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
-
-            self.turretFactory = TurretFactory()
-            #pos = [ (180 + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (300 + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
-            #self.turrets.append( self.turretFactory.createTurret( self, 5, pos[0], pos[1] ) )
+    
             
+        self.MenuButtons = [] 
         self.gameState = 0
         
     def go_to_GUI(self):
@@ -421,33 +532,48 @@ class Game(object):
         self.gui = GUI_Tower_Buy( self )
         self.gameState = 1
         
+    def go_to_Build(self,targetLevel=0):
+        if self.gameState != 0 and self.gameState != 1 and self.gameState !=2:  #Coming back from an ingame state, so don't reset
+            self.start_game(targetLevel)
+            
+        if self.gameState == 0 or self.gameState == 3:
+            self.build_background_sound.play(loops = -1)
+            self.battle_background_sound.stop()
+            self.menu_background_sound.stop()
+            self.MenuButtons = []
+            self.MenuButtons.append(Button("Start!",32,(self.screen.get_width()-100,self.screen.get_height()-100),None,self.go_to_Game,[]))
+            
+        self.gameState = 2
+    
     def go_to_MainMenu(self):
-        self.MenuButtons = []
-        self.MenuButtons.append(Button("Start",32,(50,50),self.imgButton,self.go_to_Game,[]))
-        self.MenuButtons.append(Button("Select Level",32,(50,250),self.imgButton,self.go_to_LevelSelect,[]))
-        self.MenuButtons.append(Button("Save or Load",32,(50,450),self.imgButton,self.go_to_SaveLoad,[]))
-        
         self.menu_background_sound.play(loops = -1)
         self.battle_background_sound.stop()
         self.build_background_sound.stop()
         
+        self.MenuButtons = [] 
+        self.MenuButtons.append(Button("Start",32,(50,50),self.imgButton,self.go_to_Build,[]))
+        self.MenuButtons.append(Button("Select Level",32,(50,250),self.imgButton,self.go_to_LevelSelect,[]))
+        self.MenuButtons.append(Button("Save or Load",32,(50,450),self.imgButton,self.go_to_SaveLoad,[]))
+        
         self.gameState=3
         
-        print "Went to menu"
-        
+    ## Sets gameState to the Level Select state, creating the appropriate buttons
     def go_to_LevelSelect(self):
         self.MenuButtons = []
         self.MenuButtons.append(Button("Return To Menu",32,(50,50),self.imgButton,self.go_to_MainMenu,[]))
+        for i in xrange(len(self.maps)):
+            self.MenuButtons.append(Button("",32,
+            ((i*265)%(self.screen.get_width()-265)+100,(215+(i/4)*265)),
+            pygame.transform.scale(self.maps[i].img,(250,250)),self.go_to_Build,[i]))
         
         self.gameState=4
-        print "Went to Level Select"
         
+    ## Sets gameState to the Save/Load state, creating the appropriate buttons
     def go_to_SaveLoad(self):
         self.MenuButtons = []
         self.MenuButtons.append(Button("Return To Menu",32,(50,50),self.imgButton,self.go_to_MainMenu,[]))
         
         self.gameState=5
-        print "Went to Saveload"
         
     def main(self):
         """main game loop"""
@@ -465,8 +591,9 @@ class Game(object):
                 self.gui.update()
                 self.draw()
                 self.gui.draw()
-            elif self.gameState == 2: #BuildPhase (Possibly unused)
-                pass
+            elif self.gameState == 2: #BuildPhase
+                self.update()
+                self.draw()
             elif self.gameState == 3: #Main menu
                 self.draw_menu()
             elif self.gameState == 4: #Level Selection

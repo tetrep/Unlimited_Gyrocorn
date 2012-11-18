@@ -134,6 +134,7 @@ class Terrain(object):
         if not isinstance(key,int):
             raise TypeError
         if key > len(self.tiles):
+            print key
             raise IndexError
         return self.tiles[key]
         

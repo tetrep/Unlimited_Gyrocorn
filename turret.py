@@ -28,10 +28,13 @@ class Turret(object):
         #colliding towers are cleaned up at the end of update in the game class
         self.valid_placement = True
         
-        if game.tiles[int(tile_position_x)][int(tile_position_y)].blocking == True:
+        if int(tile_position_x) >= 32 or int(tile_position_y) >= 32:
+            self.valid_placement = False
+        elif game.tiles[int(tile_position_x)][int(tile_position_y)].blocking == True:
             self.valid_placement = False
         
-        game.tiles[int(tile_position_x)][int(tile_position_y)].setBlocking(True)  
+        if self.valid_placement == True:
+            game.tiles[int(tile_position_x)][int(tile_position_y)].setBlocking(True)  
                 
                 
         self.attack_speed = attack_speed
@@ -117,8 +120,10 @@ class Turret(object):
         min_distance = -1
         min_creep = -1
         for creep in creeps:
-            x_distance = creep.x - self.x
-            y_distance = creep.y - self.y
+            #x_distance = creep.x - self.x
+            x_distance = creep.x - (self.rect.x + (self.rect.width / 2))
+            #y_distance = creep.y - self.y
+            y_distance = creep.y - (self.rect.y + (self.rect.height / 2))
             total_distance = math.sqrt(x_distance**2 + y_distance**2)
             if total_distance < min_distance or min_distance == -1:
                 min_distance = total_distance

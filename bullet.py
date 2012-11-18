@@ -26,15 +26,14 @@ class Bullet(object):
         self.attack_range = starting_attack_range
         self.attack_area_of_effect = starting_area_of_effect
         self.attack_damage_type = starting_attack_damage_type
-        self.attack_direction_x = target.rect.x
-        self.attack_direction_y = target.rect.y
+        self.attack_direction_x = target.x + target.rect.width/2
+        self.attack_direction_y = target.y + target.rect.height/2
         self.moving = 0
 
         
         self.distance = math.sqrt((self.rect.x - self.attack_direction_x)**2 + (self.rect.y - self.attack_direction_y)**2)
         self.x_movement = self.speed * (self.rect.x - self.attack_direction_x ) / self.distance
         self.y_movement = self.speed * (self.rect.y - self.attack_direction_y) / self.distance
-        self.distance = math.sqrt(self.attack_direction_x**2 + self.attack_direction_y**2)
         
         sound.play()
         

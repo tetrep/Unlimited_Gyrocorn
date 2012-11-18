@@ -51,6 +51,7 @@ class SuperClass(object):
     ## the update function
     #  @brief iterates over a list of functions and calls them, in order
     def update(self):
+        #print self.health
         #call all the functions
         for function_tuple in self.update_functions:
             function_tuple[1]()

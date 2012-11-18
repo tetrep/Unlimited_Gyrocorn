@@ -1,6 +1,7 @@
 import pygame
 from mod_enum import *
 from equipment import *
+#from skill import *
 from superclass import *
 
 class Player(SuperClass):
@@ -150,17 +151,18 @@ class Player(SuperClass):
             #cannot move in y
             self.collision[1] = True
             
-        #tile collision (brute force now, OPTIMIZE THIS LATER)
-        for x in range(0, g.mapSize[0]):
-            for y in range(0, g.mapSize[1]):
-                if g.tiles[x][y].blocking == True:
-                    #test if you would be in them (24 x 24 area, cut off head top)
-                    if self.futurex >= x * 24 and self.futurex <= x * 24 + 24 or \
-                    self.futurex + 24 >= x * 24 and self.futurex + 24 <= x * 24 + 24:
-                        if self.futurey + 8 >= y * 24 and self.futurey + 8 <= y * 24 + 24 or \
-                        self.futurey + 24 + 8 >= y * 24 and self.futurey + 24 + 8 <= y * 24 + 24:
-                            self.collision[0] = True
-                            self.collision[1] = True
+        #tile collision
+        for x in range( int(self.x / 24) - 1, int(self.x / 24) + 2):
+            for y in range( int( (self.y + 8) / 24) - 1, int( (self.y + 8) / 24) + 2):
+                if x > -1 and x < g.mapSize[0] and y > -1 and y < g.mapSize[1]:
+                    if g.tiles[x][y].blocking == True:
+                        #test if you would be in them (24 x 24 area, cut off head top)
+                        if self.futurex >= x * 24 and self.futurex <= x * 24 + 24 or \
+                        self.futurex + 24 >= x * 24 and self.futurex + 24 <= x * 24 + 24:
+                            if self.futurey + 8 >= y * 24 and self.futurey + 8 <= y * 24 + 24 or \
+                            self.futurey + 24 + 8 >= y * 24 and self.futurey + 24 + 8 <= y * 24 + 24:
+                                self.collision[0] = True
+                                self.collision[1] = True
                     
             
         #move (or don't)
