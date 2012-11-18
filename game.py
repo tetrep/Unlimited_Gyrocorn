@@ -470,7 +470,8 @@ class Game(object):
         for p in self.players:
             barbg = pygame.Surface( (int(26 * self.zoom), 8) ).convert()
             barbg.fill( (0, 0, 0) )
-            barfg = pygame.Surface( ( (int( 26 * self.zoom * float( p.hp[0] ) / float( p.hp[1] ) ) - 2), 6) ).convert()
+            width = [(int( 26 * self.zoom * float( p.hp[0] ) / float( p.hp[1] ) ) - 2), 0]
+            barfg = pygame.Surface( (max( width ), 6) ).convert()
             barfg.fill( (0, 255, 0) )
             pos = self.convertGamePixelsToZoomCoorinates( (p.x, p.y) )
             self.screen.blit( barbg, pygame.Rect( pos[0] - 1,     pos[1] + 32 * self.zoom,     barbg.get_width(), barbg.get_height() ) )
