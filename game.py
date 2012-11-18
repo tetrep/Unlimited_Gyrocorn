@@ -574,14 +574,11 @@ class Game(object):
         if self.gameState != 0 and self.gameState != 1 and self.gameState !=2:  #Coming back from an ingame state, so don't reset
             self.start_game(targetLevel)
             
-<<<<<<< HEAD
-        if self.gameState == 0 or self.gameState == 3:
+        if self.gameState == 0 or self.gameState == 3 or self.gameState == 4:
             self.build_background_sound.play(loops = -1)
             self.battle_background_sound.stop()
             self.menu_background_sound.stop()
-=======
-        if self.gameState == 0 or self.gameState == 3 or self.gameState == 4:
->>>>>>> cf4fa0f76104e4163899df5bb79f6560cbea4689
+        if self.gameState == 0 or self.gameState == 3
             self.MenuButtons = []
             self.MenuButtons.append(Button("Start!",32,(self.screen.get_width()-100,self.screen.get_height()-100),None,self.go_to_Game,[]))
             
