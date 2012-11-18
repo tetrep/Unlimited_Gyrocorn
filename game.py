@@ -558,7 +558,7 @@ class Game(object):
         self.gameState = 1
 
     def go_to_SkillGUI(self):
-        self.gui = GUI_Skill( self )
+        self.gui = GUI_Skill( self, self.playerIndex )
         self.gameState = 1
         
     def go_to_Build(self,targetLevel=0):

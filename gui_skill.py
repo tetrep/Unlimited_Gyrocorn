@@ -3,7 +3,7 @@ from gui_object import *
 
 class GUI_Skill(object):
     # @ param g a reference to the game class. Created at initialization because it will be used ALOT.
-    def __init__(self, g):
+    def __init__(self, g, PID):
         """Initialize the GUI object"""
         super(GUI_Skill, self).__init__()
         self.img = pygame.image.load("Art/GUI.png").convert()
@@ -13,7 +13,7 @@ class GUI_Skill(object):
         self.objects = []
         self.g = g #stores a reference to the game engine
         
-        self.PID = 0        #saves the player to modify
+        self.PID = PID      #saves the player to modify
         self.SID = 0        #saves the skill slot #
         self.skillKey = 0   #saves the skill type
         self.skillAttr  = 0 #saves the element modifier/etc.
