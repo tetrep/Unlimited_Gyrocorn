@@ -10,6 +10,7 @@ from button import *
 from gui_equipment import *
 from gui_tower_buy import *
 from gui_tower_upgrade import *
+from gui_skill import *
 
 from creep_path import *
 
@@ -19,6 +20,8 @@ from turretfactory import *
 from creep_factory import *
 
 from save_load import *
+
+import profile, pstats #DEBUG LINE
 
 #  @class Game
 #  @brief this class is the game engine. It manages game logic, input, and rendering.
@@ -111,6 +114,10 @@ class Game(object):
             else:
                 #remove turrets that do not have valid placement
                 self.turrets.pop(x)
+
+        #update bullets
+        for bullet in self.bullets:
+            bullet.update( self )
 
         #kill creeps
         self.reap()
@@ -309,6 +316,9 @@ class Game(object):
                     #toggle build menu
                     #TODO: rewrite/move this code
                     self.go_to_TowerBuy()
+                if event.key == pygame.K_k:
+                    #open skill menu
+                    self.go_to_SkillGUI()
                     
             #key released
             if event.type == pygame.KEYUP:
@@ -336,23 +346,26 @@ class Game(object):
                         if t.x / 24 == pos[0] / 24 and t.y / 24 + 2 == pos[1] / 24:
                             #open turret upgrade gui
                             self.gui = GUI_Tower_Upgrade( self, t )
-                            self.mode = 1
+                            self.go_to_TowerUpgrade()
                     
                     #if there's no turret here, and it is affordable, place one. (in build mode)
                     if self.players[self.playerIndex].gold >= self.turretCost:
                         self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
                         self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
 
+                elif event.button == 3: #right mouse click
+                    pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
+                    self.players[self.playerIndex].use_skill(self, 0, pos[0], pos[1])
                     for button in self.MenuButtons:
                         button.click(pos)
                     
                 elif event.button == 4: #mouse wheel down
-                    self.zoom -= .1
+                    self.zoom -= .125
                     if self.zoom < 1:
                         self.zoom = 1
                         
                 elif event.button == 5: #mouse wheel up
-                    self.zoom += .1
+                    self.zoom += .125
                     if self.zoom > 4:
                         self.zoom = 4
     
@@ -428,6 +441,9 @@ class Game(object):
         for button in self.MenuButtons:
             button.draw(self.screen)
 
+        for bullet in self.bullets:
+            bullet.draw( self )
+
         self.draw_HUD()
         
     def draw_tiles(self):
@@ -453,6 +469,7 @@ class Game(object):
         #Active player: HP/MP bars
         #skills
         
+        
         #HP bars over players
         for p in self.players:
             barbg = pygame.Surface( (int(26 * self.zoom), 8) ).convert()
@@ -472,28 +489,39 @@ class Game(object):
     def convertZoomCoordinatesToGamePixels(self, (x, y) ):
         #reverse the game->zoom conversion                
         return ( (int)( ( x + (self.focus[0] - self.view[0] / 2) ) / self.zoom ) , (int)( ( y + (self.focus[1] - self.view[1] / 2) ) / self.zoom ) )
-        
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#State Machine
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------        
+
     def start_game(self,targetLevel=0):
-        #game objects
-        self.players = [Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI),
+        #players
+        self.players = [Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI), \
                         Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI)]
         self.playerIndex = 0
         self.player = self.players[self.playerIndex]
         self.player.activate()
-        
+
+        #map
         self.mapSize = [32, 32]
-        
+        self.tiles = self.maps[targetLevel]
+        self.selectedLevel = targetLevel
+
+        #turrets
         self.turrets = []
         self.turretType = 0          #stores the turret type to build
-        self.turretCost = 1000000000 #stores cost to build a turret, impossibly high initialization cost 
+        self.turretCost = 1000000000 #stores cost to build a turret, impossibly high initialization cost
+        self.bullets = []
 
+        #creeps
+        self.cfactory = CreepFactory(self.imgCreep, self)
         self.creeps = []
-        
-        self.tiles=self.maps[targetLevel]
-        self.selectedLevel = targetLevel
         self.cp = CreepPath((24, 31), 4, self)
         self.cp.find_path()
-        
+        self.level = 1 #?
+        self.spawn_creep()
+
+        #gui
         self.gui = GUI_Equipment( self )
 
         self.cfactory = CreepFactory(self.imgCreep, self)
@@ -508,8 +536,6 @@ class Game(object):
         # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
 
         self.turretFactory = TurretFactory()
-        #pos = [ (180 + (self.focus[0] - self.view[0] / 2) ) / self.zoom , (300 + (self.focus[1] - self.view[1] / 2) ) / self.zoom]
-        #self.turrets.append( self.turretFactory.createTurret( self, 5, pos[0], pos[1] ) )
         
         
     def go_to_Game(self,targetLevel=0):
@@ -519,7 +545,6 @@ class Game(object):
         
         if self.gameState == 2:     #Returning from the build Phase, just spawn more creeps
             self.spawn_creep()
-    
             
         self.MenuButtons = [] 
         self.gameState = 0
@@ -530,6 +555,14 @@ class Game(object):
         
     def go_to_TowerBuy(self):
         self.gui = GUI_Tower_Buy( self )
+        self.gameState = 1
+
+    def go_to_TowerUpgrade(self):
+        #gui requires a reference to a turret. Created elsewhere.
+        self.gameState = 1
+
+    def go_to_SkillGUI(self):
+        self.gui = GUI_Skill( self )
         self.gameState = 1
         
     def go_to_Build(self,targetLevel=0):
@@ -609,5 +642,12 @@ class Game(object):
                 sys.exit()
             pygame.display.flip()
 
-g = Game()
-g.main()
+#main only exists so the profiler can call it
+def main():
+    g = Game()
+    g.main()
+
+#profile the game
+profile.run('main()','profile results')
+p = pstats.Stats('profile results')
+p.sort_stats('cumulative').print_stats()
