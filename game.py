@@ -186,6 +186,10 @@ class Game(object):
             self.menuInput()
         elif self.gameState == 5:
             self.menuInput()
+        elif self.gameState == 6:
+            self.menuInput()
+        elif self.gameState == 7:
+            self.menuInput()
             
     def gameInput(self):
         for event in pygame.event.get():
@@ -193,8 +197,7 @@ class Game(object):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     #exit
-                    pygame.quit()
-                    sys.exit()
+                    self.go_to_InGameMenu()
                 #PLAYER SWITCHING (Must go before movement)
                 if event.key == pygame.K_i:
                     #+1
@@ -246,27 +249,8 @@ class Game(object):
 
             #mouse controls
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1: #left click
-                    #event.pos[0] and event.pos[1] are the mouse x,y coordinates respectively relative to the game window
-                    #needs to be converted to give a mapping in game space.
-                    #if   map = pos * zoom - (focus - view / 2)
-                    #then pos = (map + (focus - view / 2) ) / zoom
-
-                    pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
-
-                    #check if there's already a turret here. if so, open upgrade menu. (in build mode)
-                    for t in self.turrets:
-                        if t.x / 24 == pos[0] / 24 and t.y / 24 + 2 == pos[1] / 24:
-                            #open turret upgrade gui
-                            self.gui = GUI_Tower_Upgrade( self, t )
-                            self.mode = 1
-                    
-                    #if there's no turret here, and it is affordable, place one. (in build mode)
-                    if self.players[self.playerIndex].gold >= self.turretCost:
-                        self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
-                        self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
                         
-                elif event.button == 3: #right mouse click
+                if event.button == 3: #right mouse click
                     pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
                     self.players[self.playerIndex].use_skill(self, 0, pos[0], pos[1])
                     
@@ -286,8 +270,7 @@ class Game(object):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     #exit
-                    pygame.quit()
-                    sys.exit()
+                    self.go_to_BuildMenu()
                 #PLAYER SWITCHING (Must go before movement)
                 if event.key == pygame.K_i:
                     #+1
@@ -505,6 +488,10 @@ class Game(object):
         #reverse the game->zoom conversion                
         return ( (int)( ( x + (self.focus[0] - self.view[0] / 2) ) / self.zoom ) , (int)( ( y + (self.focus[1] - self.view[1] / 2) ) / self.zoom ) )
 
+    def game_exit(self):
+        pygame.quit()
+        sys.exit()
+        
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #State Machine
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------        
@@ -575,10 +562,10 @@ class Game(object):
         self.gameState = 1
         
     def go_to_Build(self,targetLevel=0):
-        if self.gameState != 0 and self.gameState != 1 and self.gameState !=2:  #Coming back from an ingame state, so don't reset
+        if self.gameState != 0 and self.gameState != 1 and self.gameState !=2 and self.gameState != 7:  #Not coming back from an ingame state, so reset
             self.start_game(targetLevel)
             
-        if self.gameState == 0 or self.gameState == 3 or self.gameState == 4:
+        if self.gameState == 0 or self.gameState == 3 or self.gameState == 4 or self.gameState == 7:
             self.build_background_sound.play(loops = -1)
             self.battle_background_sound.stop()
             self.menu_background_sound.stop()
@@ -593,9 +580,10 @@ class Game(object):
         self.build_background_sound.stop()
         
         self.MenuButtons = [] 
-        self.MenuButtons.append(Button("Start",32,(50,50),self.imgButton,self.go_to_Build,[]))
-        self.MenuButtons.append(Button("Select Level",32,(50,250),self.imgButton,self.go_to_LevelSelect,[]))
-        self.MenuButtons.append(Button("Save or Load",32,(50,450),self.imgButton,self.go_to_SaveLoad,[]))
+        self.MenuButtons.append(Button("Start",32,(25,25),self.imgButton,self.go_to_Build,[]))
+        self.MenuButtons.append(Button("Select Level",32,(25,200),self.imgButton,self.go_to_LevelSelect,[]))
+        self.MenuButtons.append(Button("Save or Load",32,(25,375),self.imgButton,self.go_to_SaveLoad,[]))
+        self.MenuButtons.append(Button("Exit Game",32,(25,550),self.imgButton,self.game_exit,[]))
         
         self.gameState=3
         
@@ -605,7 +593,7 @@ class Game(object):
         self.MenuButtons.append(Button("Return To Menu",32,(50,50),self.imgButton,self.go_to_MainMenu,[]))
         for i in xrange(len(self.maps)):
             self.MenuButtons.append(Button("",32,
-            ((i*265)%(self.screen.get_width()-265)+100,(215+(i/4)*265)),
+            ((i*265)%(self.screen.get_width()-265)+100,(215+(i/2)*265)),
             pygame.transform.scale(self.maps[i].img,(250,250)),self.go_to_Build,[i]))
         
         self.gameState=4
@@ -613,9 +601,26 @@ class Game(object):
     ## Sets gameState to the Save/Load state, creating the appropriate buttons
     def go_to_SaveLoad(self):
         self.MenuButtons = []
-        self.MenuButtons.append(Button("Return To Menu",32,(50,50),self.imgButton,self.go_to_MainMenu,[]))
+        self.MenuButtons.append(Button("Return To Menu",32,(25,25),self.imgButton,self.go_to_MainMenu,[]))
         
         self.gameState=5
+        
+    def go_to_InGameMenu(self):
+        self.MenuButtons = []
+        self.MenuButtons.append(Button("Return To Menu", 32, (25,25), self.imgButton, self.go_to_MainMenu,[]))
+        self.MenuButtons.append(Button("Return To Game", 32, (25,200), self.imgButton, self.go_to_Game,[]))
+        self.MenuButtons.append(Button("Exit Game",32,(25,375),self.imgButton,self.game_exit,[]))
+    
+        self.gameState=6
+        
+    def go_to_BuildMenu(self):
+        self.MenuButtons = []
+        self.MenuButtons.append(Button("Go To Menu", 32, (25,25), self.imgButton, self.go_to_MainMenu,[]))
+        self.MenuButtons.append(Button("Return To Game", 32, (25,200), self.imgButton, self.go_to_Build,[]))
+        self.MenuButtons.append(Button("Save",32,(25,375),self.imgButton,None,[]))
+        self.MenuButtons.append(Button("Exit Game",32,(25,550),self.imgButton,self.game_exit,[]))
+    
+        self.gameState=7
         
     def main(self):
         """main game loop"""
@@ -642,10 +647,12 @@ class Game(object):
                 self.draw_menu()
             elif self.gameState == 5: #Save/load screen (theoretical at this point)
                 self.draw_menu()
-            elif self.gameState == 6: #Win
-                pass
-            elif self.gameState == 7: #Lose
-                pass
+            elif self.gameState == 6: #InGame Menu
+                self.draw()
+                self.draw_menu()
+            elif self.gameState == 7: #BuildPhase Menu
+                self.draw()
+                self.draw_menu()
             else:   #ABORT, ABORT
                 pygame.quit()
                 sys.exit()

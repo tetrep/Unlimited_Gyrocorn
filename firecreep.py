@@ -18,7 +18,7 @@ class FireCreep(Creep):
         if self.health <= 0:
             #spawn many little minions
             for x in range(1, self.max_health//10):
-                self.game.spawn_creep(self.img, random.randint(-24, 24) + self.x, random.randint(-24, 24), ctype)
+                self.game.spawn_creep(self.img, random.randint(-24, 24) + self.x, random.randint(-24, 24) + self.y, (10,10,10,10))
             return True
         else:
             return False
