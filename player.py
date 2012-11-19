@@ -101,7 +101,7 @@ class Player(SuperClass):
         #EFFECTS: DoT, buffs: (attack, defense, move speed), knockback, stun
         pass    
     
-    def take_damage(self, dmg):
+    def take_damage(self, dmg, dtype = 1):
         """applies modifiers to damage, then takes it"""
         self.hit_sound.play()
         

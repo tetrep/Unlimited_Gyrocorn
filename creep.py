@@ -142,10 +142,6 @@ class Creep(SuperClass):
     ## the move function
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
-        if self.x_tile == self.x_tile_next and self.y_tile == self.y_tile_next:
-            self.print_neighbors()
-            self.health = -1
-            return None
         #calculate our next x/y coords
         self.x_real += (self.x_move * self.speed) * self.game.deltaT / 1000
         self.y_real += (self.y_move * self.speed) * self.game.deltaT / 1000
@@ -182,6 +178,7 @@ class Creep(SuperClass):
 
         #have we arrived?
         if (self.x_tile, self.y_tile) == self.game.tiles.target:
+            self.game.creep_won()
             self.health = 0
 
         #print '(', self.x_tile, ',', self.y_tile, ')'

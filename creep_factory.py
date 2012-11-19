@@ -23,7 +23,7 @@ class CreepFactory(object):
             x = random.randint(30, 300)
             y = random.randint(30, 300)
 
-        ctype = (random.randint(self.game.level//2, self.game.level), random.randint(self.game.level//2, self.game.level), random.randint(self.game.level//2, self.game.level))
+        ctype = (random.randint(self.game.level//2, self.game.level)+1, random.randint(self.game.level//2, self.game.level)+1, random.randint(self.game.level//2, self.game.level)+1)
 
         #print "spawn: (", self.x, ',', self.y, ',', cnum, ')'
         if cnum == 1:

@@ -45,6 +45,9 @@ class Game(object):
         self.go_to_MainMenu()
         
         self.selectedLevel = 0
+
+        self.creep_wins = 0
+        self.max_creep_wins = 2
         
     def load_assets(self):
         """pre-load all graphics and sound"""
@@ -110,6 +113,12 @@ class Game(object):
 
         self.cp = CreepPath(self.tiles.target, 4, self)
         self.cp.find_path()
+
+    def creep_won(self):
+        self.creep_wins += 1
+
+        if(self.creep_wins > self.max_creep_wins):
+            self.go_to_MainMenu()
         
     def update(self):
         """Do logic/frame"""
@@ -412,7 +421,7 @@ class Game(object):
     def spawn_creep(self, img = None, x = None, y = None, ctype = None):
         #we want to use the factory
         if(img == None):
-            for x in range(1, 2):#random.randint(10, 20)+self.level):
+            for x in range(1, random.randint(self.level//2, self.level) + 10):#random.randint(10, 20)+self.level):
                 self.creeps.append(self.cfactory.make(random.randint(1, 5)))
         else:
             self.creeps.append(Creep(img, x, y, self, ctype))
