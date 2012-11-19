@@ -417,6 +417,18 @@ class Game(object):
         else:
             self.creeps.append(Creep(img, x, y, self, ctype))
 
+    def give_xp(self, amt):
+        """give the players amt xp"""
+        for p in self.players:
+            p.xp += amt
+            
+
+    def give_gold(self, amt):
+        """give the players amt gold"""
+        for p in self.players:
+            p.gold += amt
+        
+
     def game_lost(self):
         """returns true if the game has been lost"""
         for p in self.players:
