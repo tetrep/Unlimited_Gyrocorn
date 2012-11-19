@@ -74,7 +74,7 @@ class SuperClass(object):
         dmg -= self.absorbtion
         dmg *= damageMultiplier * self.damage_multiplier
         #apply damage
-        if > 0:
+        if dmg > 0:
           self.health -= dmg
         
     def applyBurning(self):
