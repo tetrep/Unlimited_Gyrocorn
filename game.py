@@ -118,6 +118,7 @@ class Game(object):
         self.creep_wins += 1
 
         if(self.creep_wins > self.max_creep_wins):
+            print "YOU LOST HAHAHAHA"
             self.go_to_MainMenu()
         
     def update(self):
@@ -159,7 +160,7 @@ class Game(object):
             pygame.quit()
             sys.exit()
             
-        if self.gameState != 2:
+        if self.gameState == 0:
             self.check_level_over()
 
     def update_view(self):
@@ -426,7 +427,7 @@ class Game(object):
     def spawn_creep(self, img = None, x = None, y = None, ctype = None):
         #we want to use the factory
         if(img == None):
-            for x in range(1, random.randint(self.level//2, self.level) + 10):#random.randint(10, 20)+self.level):
+            for x in range(1, 4):#random.randint(self.level//2, self.level) + 10):#random.randint(10, 20)+self.level):
                 self.creeps.append(self.cfactory.make(random.randint(1, 5)))
         else:
             self.creeps.append(Creep(img, x, y, self, ctype))
