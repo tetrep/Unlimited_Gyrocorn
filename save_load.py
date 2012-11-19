@@ -70,27 +70,32 @@ class SaveLoad(object):
     #  @param game the game to save from
     #  @param filename the name of the save files, optional
     def save_game(self, game, filename = "test"):
-        #save the players
-        for player in game.players:
-          player.game = None
-        self.save_object(filename+"-players.save", game.players)
-        for player in game.players:
-          player.game = game
+        try:
+           #save the players
+            for player in game.players:
+                player.game = None
+                self.save_object(filename+"-players.save", game.players)
+            for player in game.players:
+                    player.game = game
 
-        #save the towers
-        self.save_object(filename+"-towers.save", game.turrets)
+            #save the towers
+            self.save_object(filename+"-towers.save", game.turrets)
 
-        #save the maps
-        self.save_object(filename+"-tiles.save", game.tiles)
+            #save the maps
+            self.save_object(filename+"-tiles.save", game.tiles)
 
-        #save the round and level name
-        self.save_level(filename+"-level.save", game)
+            #save the round and level name
+            self.save_level(filename+"-level.save", game)
+        except Exception as e:
+            print e
 
+####DO NOT CALL THIS FUNCTION####
     ## the load game function
     #  @brief loads the game
     #  @param game the game to load to
     #  @param filename the name of the save files, optional
     def load_game(self, game, filename = "test"):
+        return None
         #load the players
         self.load_object(game.players, filename+"-players.save")
 
