@@ -18,8 +18,8 @@ class SuperClass(object):
         self.max_aborbtion = absorbtion
         self.health = health
         self.max_health = health
-        self.speed = speed
-        self.max_speed = speed*3
+        self.speed = speed * 3
+        self.max_speed = speed * 3
         
         #instance of game we are in
         self.game = game
