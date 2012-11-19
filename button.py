@@ -26,6 +26,9 @@ class Button(object):
     def click(self, mousePos=(0,0)):
         if self.rect.collidepoint(mousePos):
             self.function(*self.args)
+            return True
+        else:
+            return False
             
     def draw(self,drawImg):
         drawImg.blit(self.img, (self.rect.left,self.rect.top))

@@ -345,20 +345,25 @@ class Game(object):
 
                     pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
 
-                    #check if there's already a turret here. if so, open upgrade menu. (in build mode)
-                    for t in self.turrets:
-                        if t.x / 24 == pos[0] / 24 and t.y / 24 + 2 == pos[1] / 24:
-                            #open turret upgrade gui
-                            self.gui = GUI_Tower_Upgrade( self, t )
-                            self.go_to_TowerUpgrade()
+                    game_starting = False
                     
-                    #if there's no turret here, and it is affordable, place one. (in build mode)
-                    if self.players[self.playerIndex].gold >= self.turretCost:
-                        self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
-                        self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
-                        
                     for button in self.MenuButtons:
-                        button.click(pos)
+                        game_starting = button.click(pos)
+                           
+                    if game_starting == False:
+                        #check if there's already a turret here. if so, open upgrade menu. (in build mode)
+                        for t in self.turrets:
+                            if t.x / 24 == pos[0] / 24 and t.y / 24 + 2 == pos[1] / 24:
+                                #open turret upgrade gui
+                                self.gui = GUI_Tower_Upgrade( self, t )
+                                self.go_to_TowerUpgrade()
+                        
+                        #if there's no turret here, and it is affordable, place one. (in build mode)
+                        if self.players[self.playerIndex].gold >= self.turretCost:
+                            self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
+                            self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
+                        
+
 
                 elif event.button == 3: #right mouse click
                     pos = self.convertZoomCoordinatesToGamePixels( (event.pos[0], event.pos[1]) )
