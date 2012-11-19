@@ -15,7 +15,7 @@ class Creep(SuperClass):
     #  @param y the y position the creep occupies
     #  @param game the instance of the game this Creep is in
     #  @param ctype a tuple of creep attributes, optional
-    def __init__(self, img, x, y, game, ctype = (100, 100, 100, 24)):
+    def __init__(self, img, x, y, game, ctype = (100, 25, 100, 24)):
         #initialze super class variables
         super(Creep, self).__init__(x, y, game, *ctype)
 
