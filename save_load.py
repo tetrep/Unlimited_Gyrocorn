@@ -71,16 +71,16 @@ class SaveLoad(object):
     #  @param filename the name of the save files, optional
     def save_game(self, game, filename = "test"):
         #save the players
-        save_object(filename+"-players.save", game.players)
+        self.save_object(filename+"-players.save", game.players)
 
         #save the towers
-        save_object(filename+"-towers.save", game.turrets)
+        self.save_object(filename+"-towers.save", game.turrets)
 
         #save the maps
-        save_object(filename+"-maps.save", game.maps)
+        self.save_object(filename+"-maps.save", game.maps)
 
         #save the round and level name
-        save_level(filename+"-level.save", game)
+        self.save_level(filename+"-level.save", game)
 
     ## the load game function
     #  @brief loads the game
@@ -88,13 +88,13 @@ class SaveLoad(object):
     #  @param filename the name of the save files, optional
     def load_game(self, game, filename = "test"):
         #load the players
-        load_object(game.players, filename+"-players.save")
+        self.load_object(game.players, filename+"-players.save")
 
         #load the towers
-        load_object(game.turrets, filename+"-towers.save")
+        self.load_object(game.turrets, filename+"-towers.save")
 
         #load the maps
-        load_object(game.maps, filename+"-maps.save")
+        self.load_object(game.maps, filename+"-maps.save")
 
         #load the round and level
-        load_level(game, filename+"-level.save")
+        self.load_level(game, filename+"-level.save")

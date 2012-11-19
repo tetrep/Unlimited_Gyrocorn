@@ -80,7 +80,7 @@ class Player(SuperClass):
         self.moveSpeedMultiplier = 1.0 + self.get_stat(modEnum.MOD_MOVE_SPEED)
         #cap move speed
         if self.moveSpeedMultiplier > 4.0:
-            self.moveSpeedMultiplier = 4.0
+            self.moveSpeedMultiplier = 4.0 + 0.25 * (self.moveSpeedMultiplier - 4.0)
         
         self.speed = self.baseSpeed * self.moveSpeedMultiplier
 

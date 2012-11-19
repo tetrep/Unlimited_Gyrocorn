@@ -49,6 +49,8 @@ class Game(object):
         self.creep_wins = 0
         self.max_creep_wins = 2
         
+        self.saver = SaveLoad()
+        
     def load_assets(self):
         """pre-load all graphics and sound"""
         self.font = pygame.font.Font(None, 20)
@@ -636,7 +638,7 @@ class Game(object):
         self.MenuButtons = [] 
         self.MenuButtons.append(Button("Start",32,(25,25),self.imgButton,self.go_to_Build,[]))
         self.MenuButtons.append(Button("Select Level",32,(25,200),self.imgButton,self.go_to_LevelSelect,[]))
-        self.MenuButtons.append(Button("Save or Load",32,(25,375),self.imgButton,self.go_to_SaveLoad,[]))
+        self.MenuButtons.append(Button("Load",32,(25,375),self.imgButton,self.go_to_Load,[]))
         self.MenuButtons.append(Button("Exit Game",32,(25,550),self.imgButton,self.game_exit,[]))
         
         self.gameState=3
@@ -653,9 +655,10 @@ class Game(object):
         self.gameState=4
         
     ## Sets gameState to the Save/Load state, creating the appropriate buttons
-    def go_to_SaveLoad(self):
+    def go_to_Load(self):
         self.MenuButtons = []
         self.MenuButtons.append(Button("Return To Menu",32,(25,25),self.imgButton,self.go_to_MainMenu,[]))
+        self.MenuButtons.append(Button("Load", 32, (25,200), self.imgButton, self.saver.load_game,[self]))
         
         self.gameState=5
         
@@ -671,7 +674,7 @@ class Game(object):
         self.MenuButtons = []
         self.MenuButtons.append(Button("Go To Menu", 32, (25,25), self.imgButton, self.go_to_MainMenu,[]))
         self.MenuButtons.append(Button("Return To Game", 32, (25,200), self.imgButton, self.go_to_Build,[]))
-        self.MenuButtons.append(Button("Save",32,(25,375),self.imgButton,None,[]))
+        self.MenuButtons.append(Button("Save",32,(25,375),self.imgButton,self.saver.save_game,[self]))
         self.MenuButtons.append(Button("Exit Game",32,(25,550),self.imgButton,self.game_exit,[]))
     
         self.gameState=7
@@ -699,7 +702,7 @@ class Game(object):
                 self.draw_menu()
             elif self.gameState == 4: #Level Selection
                 self.draw_menu()
-            elif self.gameState == 5: #Save/load screen (theoretical at this point)
+            elif self.gameState == 5: #Load screen (theoretical at this point)
                 self.draw_menu()
             elif self.gameState == 6: #InGame Menu
                 self.draw()
