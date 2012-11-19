@@ -26,7 +26,7 @@ class SuperClass(object):
 
         self.timeBurning = -1
         self.timeChilled = -1
-        self.timeShocked = -1g
+        self.timeShocked = -1
         self.timeParalyzed = -1
         self.burningCounter = 0
         self.damage_multiplier = 1
@@ -74,7 +74,7 @@ class SuperClass(object):
         dmg -= self.absorbtion
         dmg *= damageMultiplier * self.damage_multiplier
         #apply damage
-        if > 0:
+        if dmg > 0:
           self.health -= dmg
         
     def applyBurning(self):
