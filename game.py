@@ -96,6 +96,9 @@ class Game(object):
         self.poison_skill_sound = pygame.mixer.Sound("Music/poison.ogg")
         self.missile_sound = pygame.mixer.Sound("Music/turretattack.ogg")
         self.missile_sound.set_volume(.7)
+        self.buy_sound = pygame.mixer.Sound("Music/cash.ogg")
+        self.hit_sound = pygame.mixer.Sound("Music/playerhit.ogg")
+        self.hit_sound.set_volume(.7)
         
         for map in os.listdir("Levels"):
             self.maps.append(Terrain(self,"Levels/"+map))
@@ -556,10 +559,10 @@ class Game(object):
         
         
         #players
-        self.players = [Player(self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height)),
-                        Player(self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height)), \
-                        Player(self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height)), 
-                        Player(self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height))]
+        self.players = [Player(self, self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height)),
+                        Player(self, self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height)), \
+                        Player(self, self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height)), 
+                        Player(self, self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height))]
         self.playerIndex = 0
         self.player = self.players[self.playerIndex]
         self.player.activate()
