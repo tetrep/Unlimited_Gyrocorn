@@ -39,3 +39,4 @@ class SaveLoad(object):
     ## the save game function
     #  @brief saves the game
     def save_game(self, game, filename = "test"):
+        pass
