@@ -224,8 +224,11 @@ class Game(object):
             
     def gameInput(self):
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
             #key pressed
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     #exit
                     self.go_to_InGameMenu()
@@ -297,8 +300,11 @@ class Game(object):
                         
     def buildInput(self):
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
             #key pressed
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     #exit
                     self.go_to_BuildMenu()
@@ -344,6 +350,10 @@ class Game(object):
                 if event.key == pygame.K_k:
                     #open skill menu
                     self.go_to_SkillGUI()
+                    
+                #Start Level
+                if event.key == pygame.K_RETURN:
+                    self.go_to_Game()
                     
             #key released
             if event.type == pygame.KEYUP:
@@ -730,8 +740,11 @@ def main():
     g.main()
 
 #don't profile:
-main()
+#main()
 #profile the game
-#profile.run('main()','profile results')
-#p = pstats.Stats('profile results')
-#p.sort_stats('cumulative').print_stats()
+main()
+"""
+profile.run('main()','profile results')
+p = pstats.Stats('profile results')
+p.sort_stats('cumulative').print_stats()
+#"""
