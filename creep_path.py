@@ -23,10 +23,10 @@ class CreepPath(object):
         self.queue = Queue.Queue(0)
 
         #start the threads, add 1 to account for source
-        for i in range(0, num_threads):
-            thread = threading.Thread(target=self.path_queue)
-            thread.daemon = True
-            thread.start()
+        #for i in range(0, num_threads):
+        thread = threading.Thread(target=self.path_queue)
+        thread.daemon = True
+        thread.start()
 
     ## the find path function
     #  @brief gives all the tiles values, so creeps know where to go, lower is better
@@ -61,13 +61,13 @@ class CreepPath(object):
         while True:
             info = self.queue.get()
             #grab mutex for tile
-            self.game.tiles[info[0]][info[1]].mutex.acquire()
+            #self.game.tiles[info[0]][info[1]].mutex.acquire()
 
             #process the tile
             self.process_tile(info[0], info[1], info[2])
 
             #release mutex
-            self.game.tiles[info[0]][info[1]].mutex.release()
+            #self.game.tiles[info[0]][info[1]].mutex.release()
 
             #we're done
             self.queue.task_done()

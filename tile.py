@@ -17,7 +17,7 @@ class Tile(object):
 
         self.creep_value = 999
 
-        self.mutex = Lock()
+        #self.mutex = Lock()
 
     ## draws the tile to the screen
     # @param g The game engine(WHO NAMED THIS g?!!?)

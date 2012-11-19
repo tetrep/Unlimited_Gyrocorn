@@ -77,7 +77,7 @@ class SaveLoad(object):
         self.save_object(filename+"-towers.save", game.turrets)
 
         #save the maps
-        self.save_object(filename+"-maps.save", game.maps)
+        self.save_object(filename+"-tiles.save", game.tiles)
 
         #save the round and level name
         self.save_level(filename+"-level.save", game)
@@ -94,7 +94,7 @@ class SaveLoad(object):
         self.load_object(game.turrets, filename+"-towers.save")
 
         #load the maps
-        self.load_object(game.maps, filename+"-maps.save")
+        self.load_object(game.tiles, filename+"-tiles.save")
 
         #load the round and level
         self.load_level(game, filename+"-level.save")
