@@ -736,8 +736,10 @@ def main():
     g.main()
 
 #don't profile:
-main()
+#main()
 #profile the game
-#profile.run('main()','profile results')
-#p = pstats.Stats('profile results')
-#p.sort_stats('cumulative').print_stats()
+main() """
+profile.run('main()','profile results')
+p = pstats.Stats('profile results')
+p.sort_stats('cumulative').print_stats()
+#"""

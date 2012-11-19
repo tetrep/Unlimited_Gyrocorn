@@ -9,7 +9,7 @@ from target import *
 class Player(SuperClass):
     #  @param img a reference to a pygame.Surface containing the spritesheet to be used for draw calls.
     #  @param img2 a refence to a pygame.Surface containing the spritesheet to use when the player is not active.
-    def __init__(self, game, img, img2,pos=(0,0)):
+    def __init__(self, game, img, img2, pos=(0,0)):
         """initialize player"""
         super(Player, self).__init__()
         self.game = game
@@ -183,6 +183,33 @@ class Player(SuperClass):
                         if ( (creep.rect.centerx - self.rect.centerx) ** 2 + (creep.rect.centery - self.rect.centery) ** 2 ) ** 0.5 < 4 * 24:
                             creep.take_damage( self.attack )
                             print("breath")
+
+    def do_ai(self):
+        """perform AI actions"""
+        skillID = []
+        for i in range(0, self.skill.__len__() ):
+            #1: if the player has less than 10% mana, deactivate all auras
+            #   else, activate all auras
+            if self.skill[i].skillKey == 0: #Aura
+                if self.mana[0] < 0.1 * self.mana[1]:
+                    self.skill[i].active = False
+                else:
+                    self.skill[i].active = True
+            else: #non-aura
+                #aim it at the nearest creep
+                mindist = 9999
+                x = 0
+                y = 0
+                for creep in self.game.creeps:
+                    dist = ( (creep.rect.centerx - self.rect.centerx) ** 2 + (creep.rect.centery - self.rect.centery) ** 2 ) ** 0.5
+                    if dist < mindist:
+                        mindist = dist
+                        x = creep.rect.centerx
+                        y = creep.rect.centery
+                #if a target was found, use the skill
+                if mindist < 9999:
+                    self.use_skill( self.game, i, x, y )
+                
     
     
     #  @param g a reference to the Game class that is currently running.    
@@ -229,6 +256,10 @@ class Player(SuperClass):
                 #buff all players in AoE
                 #take mana
                 self.mana[0] -= float(skill.skillCost) * g.deltaT / 1000.0
+
+        #AI
+        if self.active == False and self.attackTimer >= self.attackSpeedMultiplier:
+            self.do_ai()
         
         #collision detection
         self.collision = [False, False]
