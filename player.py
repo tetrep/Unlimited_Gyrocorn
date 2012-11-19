@@ -109,9 +109,8 @@ class Player(SuperClass):
         damageMultiplier = 100.0 / float(self.defense)
         #Apply defense buffs/debuffs
         #calculate damage:
-        dmg -= self.absorbtion / 2.0
+        dmg -= self.absorbtion
         dmg *= damageMultiplier
-        dmg -= self.absorbtion / 2.0
         #apply damage
         self.hp[0] -= dmg
 
