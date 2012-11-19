@@ -471,6 +471,7 @@ class Game(object):
         for creep in self.creeps:
             creep.draw()
         
+        self.turrets = sorted(self.turrets, key = lambda turret: turret.y)
         for turret in self.turrets:
             turret.draw( self )
             
