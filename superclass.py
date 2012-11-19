@@ -19,7 +19,7 @@ class SuperClass(object):
         self.health = health
         self.max_health = health
         self.speed = speed
-        self.max_speed = speed
+        self.max_speed = speed*3
         
         #instance of game we are in
         self.game = game
