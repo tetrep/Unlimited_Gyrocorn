@@ -471,6 +471,7 @@ class Game(object):
         for creep in self.creeps:
             creep.draw()
         
+        self.turrets = sorted(self.turrets, key = lambda turret: turret.y)
         for turret in self.turrets:
             turret.draw( self )
             
@@ -514,6 +515,16 @@ class Game(object):
             barfg = pygame.Surface( (max( width ), 6) ).convert()
             barfg.fill( (0, 255, 0) )
             pos = self.convertGamePixelsToZoomCoorinates( (p.x, p.y) )
+            self.screen.blit( barbg, pygame.Rect( pos[0] - 1,     pos[1] + 32 * self.zoom,     barbg.get_width(), barbg.get_height() ) )
+            self.screen.blit( barfg, pygame.Rect( pos[0] - 1 + 1, pos[1] + 32 * self.zoom + 1, barfg.get_width(), barfg.get_height() ) )
+
+        for creep in self.creeps:
+            barbg = pygame.Surface( (int(26 * self.zoom), 6) ).convert()
+            barbg.fill( (0, 0, 0) )
+            width = [(int( 26 * self.zoom * float( creep.health ) / float( creep.max_health ) ) - 2), 0]
+            barfg = pygame.Surface( (max( width ), 4) ).convert()
+            barfg.fill( (255, 32, 0) )
+            pos = self.convertGamePixelsToZoomCoorinates( (creep.rect.x, creep.rect.y) )
             self.screen.blit( barbg, pygame.Rect( pos[0] - 1,     pos[1] + 32 * self.zoom,     barbg.get_width(), barbg.get_height() ) )
             self.screen.blit( barfg, pygame.Rect( pos[0] - 1 + 1, pos[1] + 32 * self.zoom + 1, barfg.get_width(), barfg.get_height() ) )
         
