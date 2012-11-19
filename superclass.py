@@ -71,6 +71,7 @@ class SuperClass(object):
         damageMultiplier = 100.0 / float(self.defense)
         #Apply defense buffs/debuffs
         #calculate damage:
+        
         dmg -= self.absorbtion / 2.0
         dmg *= damageMultiplier * self.damage_multiplier
         dmg -= self.absorbtion / 2.0
