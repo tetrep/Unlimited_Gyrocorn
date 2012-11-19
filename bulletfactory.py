@@ -33,25 +33,25 @@ class BulletFactory():
 
         # Basic Bullet
         if type == 0:
-            return Bullet(game, self.imgBasicBullet, 0 + area_of_effect, 2 + damage, 2 + range, 1, target, starting_x, starting_y)
+            return Bullet(game, self.imgBasicBullet, 0 + area_of_effect, 2 + damage, 1 + range, 1, target, starting_x, starting_y)
         # Sniper Bullet
         elif type == 1:
-            return Bullet(game, self.imgSniperBullet, 0 + area_of_effect, 30 + damage, 2 + range, 1, target, starting_x, starting_y)
+            return Bullet(game, self.imgSniperBullet, 0 + area_of_effect, 30 + damage, 1 + range, 1, target, starting_x, starting_y)
         # Piercing Bullet
         elif type == 2:
-            return PiercingBullet(game, self.imgPiercingBullet, 0 + area_of_effect, 10 + damage, 2 + range, 1, target, starting_x, starting_y)
+            return PiercingBullet(game, self.imgPiercingBullet, 0 + area_of_effect, 10 + damage, 1 + range, 1, target, starting_x, starting_y)
         # Mortar Bullet
         elif type == 3:
-            return MortarBullet(game, self.imgMortarBullet, 20 + area_of_effect, 8 + damage, 2 + range, 1, target, starting_x, starting_y)
+            return MortarBullet(game, self.imgMortarBullet, 20 + area_of_effect, 8 + damage, 1 + range, 1, target, starting_x, starting_y)
         # Paralyze Bullet
         elif type == 4:
-            return ParalyzeBullet(game, self.imgParalyzeBullet, 0 + area_of_effect, 0 + damage, 2 + range, 1, target, starting_x, starting_y)
+            return ParalyzeBullet(game, self.imgParalyzeBullet, 0 + area_of_effect, 0 + damage, 1 + range, 1, target, starting_x, starting_y)
         # Fire Bullet
         elif type == 5:
-            return FireBullet(game, self.imgFireBullet, 0 + area_of_effect, 10 + damage, 2 + range, 2, target, starting_x, starting_y)
+            return FireBullet(game, self.imgFireBullet, 0 + area_of_effect, 10 + damage, 1 + range, 2, target, starting_x, starting_y)
         # Ice Bullet
         elif type == 6:
-            return IceBullet(game, self.imgIceBullet, 0 + area_of_effect, 10 + damage, 2 + range, 3, target, starting_x, starting_y)
+            return IceBullet(game, self.imgIceBullet, 0 + area_of_effect, 10 + damage, 1 + range, 3, target, starting_x, starting_y)
         # Lightning Bullet
         elif type == 7:
-            return LightningBullet(game, self.imgLightningBullet, 0 + area_of_effect, 10 + damage, 2 + range, 4, target, starting_x, starting_y)
+            return LightningBullet(game, self.imgLightningBullet, 0 + area_of_effect, 10 + damage, 1 + range, 4, target, starting_x, starting_y)
