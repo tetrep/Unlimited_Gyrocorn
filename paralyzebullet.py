@@ -9,9 +9,16 @@ class ParalyzeBullet(Bullet):
         """update the bullet(per frame)"""
         self.moving = self.moving + game.deltaT
         if self.moving <= self.attack_range * 1000.0:
-            self.rect.move_ip( - (self.x_movement * game.deltaT / 1000.0), -(self.y_movement * game.deltaT / 1000.0))
-            self.x = self.rect.x
-            self.y = self.rect.y
+            #calculate our next x/y coords
+            self.x_real += -(self.x_movement * game.deltaT / 1000.0)
+            self.y_real += -(self.y_movement * game.deltaT / 1000.0)
+
+            #update our rect
+            self.rect.move_ip(int(self.x_real) - self.x, int(self.y_real) - self.y)
+
+            #update our x/y positon
+            self.x = int(self.x_real)
+            self.y = int(self.y_real)
         else:
             #dies if it has reached its initial destination
             self.dead = True
