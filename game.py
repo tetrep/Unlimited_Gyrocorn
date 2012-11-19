@@ -99,6 +99,10 @@ class Game(object):
         self.buy_sound = pygame.mixer.Sound("Music/cash.ogg")
         self.hit_sound = pygame.mixer.Sound("Music/playerhit.ogg")
         self.hit_sound.set_volume(.7)
+        self.enemy_hit_sound = pygame.mixer.Sound("Music/enemyhit.ogg")
+        self.enemy_hit_sound.set_volume(.4)
+        self.attack_sound = pygame.mixer.Sound("Music/enemyattack.ogg")
+        self.attack_sound.set_volume(.7)
         
         for map in os.listdir("Levels"):
             self.maps.append(Terrain(self,"Levels/"+map))
