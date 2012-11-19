@@ -27,12 +27,12 @@ class CreepFactory(object):
 
         #print "spawn: (", self.x, ',', self.y, ',', cnum, ')'
         if cnum == 1:
-            return Creep(self.img, x, y, self.game, ctype)
+            return Creep(self.game.imgCreep, x, y, self.game, ctype)
         elif cnum == 2:
-            return FireCreep(self.img, x, y, self.game, ctype)
+            return FireCreep(self.game.imgCreepFire, x, y, self.game, ctype)
         elif cnum == 3:
-            return ElectricCreep(self.img, x, y, self.game, ctype)
+            return ElectricCreep(self.game.imgCreepLightning, x, y, self.game, ctype)
         elif cnum == 4:
-            return IceCreep(self.img, x, y, self.game, ctype)
+            return IceCreep(self.game.imgCreepFrost, x, y, self.game, ctype)
         elif cnum == 5:
-            return ChargeCreep(self.img, x, y, self.game, ctype)
+            return ChargeCreep(self.game.imgCreepArmored, x, y, self.game, ctype)
