@@ -34,6 +34,8 @@ class Bullet(object):
 
         
         self.distance = math.sqrt((self.rect.x - self.attack_direction_x)**2 + (self.rect.y - self.attack_direction_y)**2)
+        if self.distance <= 0:
+            self.distance = 1
         self.x_movement = self.speed * (self.rect.x - self.attack_direction_x ) / self.distance
         self.y_movement = self.speed * (self.rect.y - self.attack_direction_y) / self.distance
         

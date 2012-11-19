@@ -7,17 +7,15 @@ class Weapon(object):
     ## the constructor
     #  @param damage the amount of health to deduct from the target, optional
     #  @param target the target, optional
-    def __init__(self, damage = 10, target = None):
+    def __init__(self, game, damage = 10, target = None):
         self.damage = damage
-        self.target = target
-        self.attack_sound = pygame.mixer.Sound("Music/enemyattack.ogg")
-        self.attack_sound.set_volume(.7)
+        self.game = game
 
     ## the attack function
     #  @brief attacks the given target
     #  @param target the target we are attacking
     def attack(self, target): 
-        self.attack_sound.play()
+        self.game.attack_sound.play()
         
         #set target
         self.target = target
@@ -47,9 +45,9 @@ class FireWeapon(Weapon):
     ## the constructor
     #  @param damage the amount of health to deduct from the target, optional
     #  @param target the target, optional
-    def __init__(self, damage = 10, target = None):
+    def __init__(self, game, damage = 10, target = None):
         #initialize inherited attributes
-        super(FireWeapon, self).__init__(damage, target)
+        super(FireWeapon, self).__init__(game, damage, target)
 
     ## the apply_effects function
     #  @brief the mighty fire weapon burns its foes
@@ -63,9 +61,9 @@ class IceWeapon(Weapon):
     ## the constructor
     #  @param damage the amount of health to deduct from the target, optional
     #  @param target the target, optional
-    def __init__(self, damage = 10, target = None):
+    def __init__(self, game, damage = 10, target = None):
         #initialize inherited attributes
-        super(IceWeapon, self).__init__(damage, target)
+        super(IceWeapon, self).__init__(game, damage, target)
 
     ## the apply_effects function
     #  @brief the mighty ice weapon chills its foes
@@ -79,9 +77,9 @@ class ElectricWeapon(Weapon):
     ## the constructor
     #  @param damage the amount of health to deduct from the target, optional
     #  @param target the target, optional
-    def __init__(self, damage = 10, target = None):
+    def __init__(self, game, damage = 10, target = None):
         #initialize inherited attributes
-        super(ElectricWeapon, self).__init__(damage, target)
+        super(ElectricWeapon, self).__init__(game, damage, target)
 
     ## the apply_effects function
     #  @brief the mighty electric weapon shocks its foes

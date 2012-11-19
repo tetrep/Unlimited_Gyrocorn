@@ -36,7 +36,7 @@ class Creep(SuperClass):
         self.m = 0
 
         #our weapon
-        self.weapon = Weapon()
+        self.weapon = Weapon(game)
 
         #append our needed functions
         self.update_functions.append((0, self.update_tile))
