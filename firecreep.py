@@ -10,7 +10,7 @@ class FireCreep(Creep):
         super(FireCreep, self).__init__(img, x, y, game, (ctype[0]*5, ctype[1]*0.25, ctype[2]*6, 28))
 
         #use a fire weapon
-        self.weapon = FireWeapon()
+        self.weapon = FireWeapon(game)
 
     #we want to explode on death and spawn smaller minions
     def reap(self):

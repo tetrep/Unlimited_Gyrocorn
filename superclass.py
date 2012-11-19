@@ -45,9 +45,6 @@ class SuperClass(object):
         self.update_functions.append((99, self.checkParalyzed))
         #"""
         
-        self.hit_sound = pygame.mixer.Sound("Music/enemyhit.ogg")
-        self.hit_sound.set_volume(.4)
-
         self.xp_value = 10
         self.gold_value = 20
         
@@ -65,7 +62,7 @@ class SuperClass(object):
 
     def take_damage(self, dmg, dtype = 1):
         """applies modifiers to damage, then takes it"""
-        self.hit_sound.play()
+        self.game.enemy_hit_sound.play()
         
         #DR% = 1 - (100 / x). 
         damageMultiplier = 100.0 / float(self.defense)

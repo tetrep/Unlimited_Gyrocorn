@@ -28,13 +28,10 @@ class Turret(object):
         #colliding towers are cleaned up at the end of update in the game class
         self.valid_placement = True
         
-        if int(tile_position_x) >= 32 or int(tile_position_y) >= 32:
-            self.valid_placement = False
-        elif game.tiles[int(tile_position_x)][int(tile_position_y)].blocking == True:
+        if game.tiles[int(tile_position_x)][int(tile_position_y)].blocking == True:
             self.valid_placement = False
         
-        if self.valid_placement == True:
-            game.tiles[int(tile_position_x)][int(tile_position_y)].setBlocking(True)  
+        game.tiles[int(tile_position_x)][int(tile_position_y)].setBlocking(True)  
                 
                 
         self.attack_speed = attack_speed
@@ -50,10 +47,8 @@ class Turret(object):
         
         self.bulletFactory = BulletFactory();
         self.projectiles = []
-        self.time_of_last_shot = attack_speed
+        self.time_of_last_shot = 0
         self.target = 0
-       
-        game.buy_sound.play()
         
     ## the Turret update
     #  @param game the instance of the class Game that this Turret resides in
@@ -72,7 +67,6 @@ class Turret(object):
             if self.target != 0:
                 center_x = self.rect.x + (self.rect.width / 2)
                 center_y = self.rect.y + (self.rect.height / 2)
-                game.missile_sound.play()
                 self.projectiles.append(self.bulletFactory.createBullet(game, self.type, self.attack_area_of_effect, self.attack_damage, self.attack_range, self.target, center_x, center_y))
             #elif self.time_of_last_shot + self.attack_speed < pygame.time.get_ticks() / 1000.0:   
             #    self.time_of_last_shot = -1
@@ -120,10 +114,8 @@ class Turret(object):
         min_distance = -1
         min_creep = -1
         for creep in creeps:
-            #x_distance = creep.x - self.x
-            x_distance = creep.x - (self.rect.x + (self.rect.width / 2))
-            #y_distance = creep.y - self.y
-            y_distance = creep.y - (self.rect.y + (self.rect.height / 2))
+            x_distance = creep.x - self.x
+            y_distance = creep.y - self.y
             total_distance = math.sqrt(x_distance**2 + y_distance**2)
             if total_distance < min_distance or min_distance == -1:
                 min_distance = total_distance

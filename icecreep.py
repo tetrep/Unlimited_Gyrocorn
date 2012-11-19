@@ -10,4 +10,4 @@ class IceCreep(Creep):
         super(IceCreep, self).__init__(img, x, y, game, (ctype[0]*8, ctype[1]*.01, ctype[2]*12.5, 16))
 
         #use a ice weapon
-        self.weapon = IceWeapon()
+        self.weapon = IceWeapon(game)
