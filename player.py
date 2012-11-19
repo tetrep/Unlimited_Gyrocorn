@@ -9,9 +9,10 @@ from target import *
 class Player(SuperClass):
     #  @param img a reference to a pygame.Surface containing the spritesheet to be used for draw calls.
     #  @param img2 a refence to a pygame.Surface containing the spritesheet to use when the player is not active.
-    def __init__(self, img, img2,pos=(0,0)):
+    def __init__(self, game, img, img2,pos=(0,0)):
         """initialize player"""
         super(Player, self).__init__()
+        self.game = game
         self.update_functions = None
         self.img = img
         self.img2 = img2
@@ -63,9 +64,6 @@ class Player(SuperClass):
         self.frameTimer = 0     #ms spent in current frame
         self.frameDelay = 100   #time between frames in ms
         
-        self.hit_sound = pygame.mixer.Sound("Music/playerhit.ogg")
-        self.hit_sound.set_volume(.7)
-
     def update_stats(self):
         """updates stats used for calculations based on equipment"""
         modEnum = Mod_Enum()
@@ -103,7 +101,7 @@ class Player(SuperClass):
     
     def take_damage(self, dmg, dtype = 1):
         """applies modifiers to damage, then takes it"""
-        self.hit_sound.play()
+        self.game.hit_sound.play()
         
         #DR% = 1 - (100 / x). 
         damageMultiplier = 100.0 / float(self.defense)
