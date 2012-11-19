@@ -348,7 +348,7 @@ class Game(object):
                     self.go_to_SkillGUI()
                     
                 #Start Level
-                if event.key == pygame.K_ENTER:
+                if event.key == pygame.K_RETURN:
                     self.go_to_Game()
                     
             #key released
