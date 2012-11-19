@@ -40,18 +40,18 @@ class CreepPath(object):
 
         self.queue.join()
 
-        """
+        #"""
         temp = ""
         temp2 = 0
         for x2 in range(0, self.game.mapSize[0]):
             for y2 in range(0, self.game.mapSize[1]):
-                temp += str(self.game.tiles[x2][y2].creep_value) + " "
-                temp2 += self.game.tiles[x2][y2].creep_value
+                temp += str(self.game.tiles[x2][y2].effective_value()) + " "
+                temp2 += self.game.tiles[x2][y2].effective_value()
             print temp
             temp = ""
         print temp2
 
-        sys.exit()
+        #sys.exit()
         #"""
 
     ## the path_queue function
@@ -105,6 +105,9 @@ class CreepPath(object):
             #check down-left
             if y+1 < self.game.mapSize[1] and x > 0:# and value + 1.4 < self.game.tiles[x-1][y+1].creep_value:
                 self.queue.put((x-1, y+1, self.game.tiles[x][y].effective_value()+1.4))
+            #check left
+            if x > 0:
+                self.queue.put((x-1, y, self.game.tiles[x][y].effective_value()+1))
 
 """
     ## the path_recursion function

@@ -26,11 +26,11 @@ class ChargeCreep(Creep):
             #have we increased our speed too recently?
             if self.charge_wait >= 500:
                 #are we already going at max speed?
-                if self.speed < self.speed_max:
+                if self.speed < self.max_speed:
                     self.speed += 2
                     #not allowed to go faster than max speed
-                    if self.speed > self.speed_max:
-                        self.speed = self.speed_max
+                    if self.speed > self.max_speed:
+                        self.speed = self.max_speed
             #increment waiting time
             else:
                 self.charge_wait += self.game.deltaT

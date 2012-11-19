@@ -47,6 +47,9 @@ class SuperClass(object):
         
         self.hit_sound = pygame.mixer.Sound("Music/enemyhit.ogg")
         self.hit_sound.set_volume(.4)
+
+        self.xp_value = 10
+        self.gold_value = 20
         
     ## the update function
     #  @brief iterates over a list of functions and calls them, in order

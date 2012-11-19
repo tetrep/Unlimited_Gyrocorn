@@ -86,42 +86,42 @@ class Creep(SuperClass):
         self.y_tile_next = self.y_tile
 
         #look up [][-1]
-        if self.y_tile > 0 and self.game.tiles[self.x_tile][self.y_tile-1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
+        if self.y_tile > 0 and self.game.tiles[self.x_tile][self.y_tile-1].effective_value() <= self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
             #print "up"
             self.x_tile_next = self.x_tile
             self.y_tile_next = self.y_tile - 1
         #look down [][+1]
-        if self.y_tile < self.game.mapSize[1]-1 and self.game.tiles[self.x_tile][self.y_tile+1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
+        if self.y_tile < self.game.mapSize[1]-1 and self.game.tiles[self.x_tile][self.y_tile+1].effective_value() <= self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
             #print "down"
             self.x_tile_next = self.x_tile
             self.y_tile_next = self.y_tile + 1
         #look left [-1][]
-        if self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
+        if self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile].effective_value() <= self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
             #print "left"
             self.x_tile_next = self.x_tile - 1
             self.y_tile_next = self.y_tile
         #look right [+1][]
-        if self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
+        if self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile].effective_value() <= self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
             #print "right"
             self.x_tile_next = self.x_tile + 1
             self.y_tile_next = self.y_tile
         #look up-left [-1][-1]
-        if self.y_tile > 0 and self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile-1].creep_value < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and not (self.game.tiles[self.x_tile][self.y_tile-1].blocking or self.game.tiles[self.x_tile-1][self.y_tile].blocking):
+        if self.y_tile > 0 and self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile-1].effective_value() <= self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and not (self.game.tiles[self.x_tile][self.y_tile-1].blocking or self.game.tiles[self.x_tile-1][self.y_tile].blocking):
             #print "up-left"
             self.x_tile_next = self.x_tile - 1
             self.y_tile_next = self.y_tile - 1
         #look up-right [+1][-1]
-        if self.y_tile > 0 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile-1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and not (self.game.tiles[self.x_tile][self.y_tile-1].blocking or self.game.tiles[self.x_tile+1][self.y_tile].blocking):
+        if self.y_tile > 0 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile-1].effective_value() <= self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and not (self.game.tiles[self.x_tile][self.y_tile-1].blocking or self.game.tiles[self.x_tile+1][self.y_tile].blocking):
             #print "up-right"
             self.x_tile_next = self.x_tile + 1
             self.y_tile_next = self.y_tile - 1
         #look down-left [-1][+1]
-        if self.y_tile < self.game.mapSize[1]-1 and self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile+1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and not (self.game.tiles[self.x_tile][self.y_tile+1].blocking or self.game.tiles[self.x_tile-1][self.y_tile].blocking):
+        if self.y_tile < self.game.mapSize[1]-1 and self.x_tile > 0 and self.game.tiles[self.x_tile-1][self.y_tile+1].effective_value() <= self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and not (self.game.tiles[self.x_tile][self.y_tile+1].blocking or self.game.tiles[self.x_tile-1][self.y_tile].blocking):
             #print "down-left"
             self.x_tile_next = self.x_tile - 1
             self.y_tile_next = self.y_tile + 1
         #look down-right [+1][+1]
-        if self.y_tile < self.game.mapSize[1]-1 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile+1].effective_value() < self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and not (self.game.tiles[self.x_tile][self.y_tile+1].blocking or self.game.tiles[self.x_tile+1][self.y_tile].blocking):
+        if self.y_tile < self.game.mapSize[1]-1 and self.x_tile < self.game.mapSize[0]-1 and self.game.tiles[self.x_tile+1][self.y_tile+1].effective_value() <= self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value() and not (self.game.tiles[self.x_tile][self.y_tile+1].blocking or self.game.tiles[self.x_tile+1][self.y_tile].blocking):
             #print "down-right"
             self.x_tile_next = self.x_tile + 1
             self.y_tile_next = self.y_tile + 1
@@ -142,6 +142,10 @@ class Creep(SuperClass):
     ## the move function
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
+        if self.x_tile == self.x_tile_next and self.y_tile == self.y_tile_next:
+            self.print_neighbors()
+            self.health = -1
+            return None
         #calculate our next x/y coords
         self.x_real += (self.x_move * self.speed) * self.game.deltaT / 1000
         self.y_real += (self.y_move * self.speed) * self.game.deltaT / 1000
@@ -155,11 +159,15 @@ class Creep(SuperClass):
         self.x = int(self.x_real)
         self.y = int(self.y_real)
 
+        #print '(', self.x_tile_next, ',', self.y_tile_next, ')', '(', self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value(), ',', self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value(), ')'
+
     ## the reap function
     #  @brief handles what to do if we are dead
     def reap(self):
         #are we dead?
         if self.health <= 0:
+            #self.game.give_xp(self.xp_value)
+            #self.game.give_gold(self.gold_value)
             return True
         #we're not dead yet
         else:
@@ -209,3 +217,11 @@ class Creep(SuperClass):
         #wait for attack_speed ms before we can attack again
         else:
             self.attack_wait += self.game.deltaT
+
+    ## the print neighbors function
+    #  @brief prints the effective value of the current and neighboring tiles
+    def print_neighbors(self):
+        print self.game.tiles[self.x_tile-1][self.y_tile-1].effective_value(), ' ', self.game.tiles[self.x_tile][self.y_tile-1].effective_value(), ' ', self.game.tiles[self.x_tile+1][self.y_tile-1].effective_value()
+        print self.game.tiles[self.x_tile-1][self.y_tile].effective_value(), ' ', self.game.tiles[self.x_tile][self.y_tile].effective_value(), ' ', self.game.tiles[self.x_tile+1][self.y_tile].effective_value()
+        print self.game.tiles[self.x_tile-1][self.y_tile+1].effective_value(), ' ', self.game.tiles[self.x_tile][self.y_tile+1].effective_value(), ' ', self.game.tiles[self.x_tile+1][self.y_tile+1].effective_value()
+        print "============"
