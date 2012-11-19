@@ -661,13 +661,15 @@ class Game(object):
     def go_to_Load(self):
         self.MenuButtons = []
         self.MenuButtons.append(Button("Return To Menu",32,(25,25),self.imgButton,self.go_to_MainMenu,[]))
-        self.MenuButtons.append(Button("Load", 32, (25,200), self.imgButton, self.saver.load_game,[self]))
+        #self.MenuButtons.append(Button("Load", 32, (25,200), self.imgButton, self.saver.load_game,[self]))
+        #Eventually will display a list of available save files
+        
         
         self.gameState=5
         
     def go_to_InGameMenu(self):
         self.MenuButtons = []
-        self.MenuButtons.append(Button("Return To Menu", 32, (25,25), self.imgButton, self.go_to_MainMenu,[]))
+        self.MenuButtons.append(Button("Go To Menu", 32, (25,25), self.imgButton, self.go_to_MainMenu,[]))
         self.MenuButtons.append(Button("Return To Game", 32, (25,200), self.imgButton, self.go_to_Game,[]))
         self.MenuButtons.append(Button("Exit Game",32,(25,375),self.imgButton,self.game_exit,[]))
     
@@ -677,7 +679,7 @@ class Game(object):
         self.MenuButtons = []
         self.MenuButtons.append(Button("Go To Menu", 32, (25,25), self.imgButton, self.go_to_MainMenu,[]))
         self.MenuButtons.append(Button("Return To Game", 32, (25,200), self.imgButton, self.go_to_Build,[]))
-        self.MenuButtons.append(Button("Save",32,(25,375),self.imgButton,self.saver.save_game,[self]))
+        #self.MenuButtons.append(Button("Save",32,(25,375),self.imgButton,self.saver.save_game,[self]))
         self.MenuButtons.append(Button("Exit Game",32,(25,550),self.imgButton,self.game_exit,[]))
     
         self.gameState=7
