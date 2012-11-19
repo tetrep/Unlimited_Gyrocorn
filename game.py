@@ -143,10 +143,12 @@ class Game(object):
                 #remove turrets that do not have valid placement
                 self.turrets.pop(x)
 
-        #update bullets
-        for bullet in self.bullets:
-            bullet.update( self )
-
+        #updates existing bullets
+        for b, bullet in enumerate(self.bullets):
+            if bullet.dead == True:
+                self.bullets.pop(b)
+            bullet.update(self)
+            
         #kill creeps
         self.reap()
 
@@ -435,7 +437,7 @@ class Game(object):
     def give_xp(self, amt):
         """give the players amt xp"""
         for p in self.players:
-            p.xp += amt
+            p.exp += amt
             
 
     def give_gold(self, amt):

@@ -35,3 +35,8 @@ class SaveLoad(object):
 
         #we're done with the file
         file_in.close()
+
+    ## the save game function
+    #  @brief saves the game
+    def save_game(self, game, filename = "test"):
+        pass

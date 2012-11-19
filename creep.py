@@ -162,8 +162,8 @@ class Creep(SuperClass):
     def reap(self):
         #are we dead?
         if self.health <= 0:
-            #self.game.give_xp(self.xp_value)
-            #self.game.give_gold(self.gold_value)
+            self.game.give_xp(self.xp_value)
+            self.game.give_gold(self.gold_value)
             return True
         #we're not dead yet
         else:
