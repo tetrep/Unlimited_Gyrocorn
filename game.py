@@ -390,7 +390,7 @@ class Game(object):
                                 self.go_to_TowerUpgrade()
                         
                         #if there's no turret here, and it is affordable, place one. (in build mode)
-                        if self.players[self.playerIndex].gold >= self.turretCost:
+                        if self.turretType != -1 and self.players[self.playerIndex].gold >= self.turretCost:
                             self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
                             self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
                         
@@ -608,6 +608,12 @@ class Game(object):
         self.turretFactory = TurretFactory()
         
     def go_to_Game(self,targetLevel=0):
+        #we're done bulding, we dont want a turrect selected anymore
+        self.turretType = -1
+
+        #recalculate path
+        self.cp.find_path()
+
         self.battle_background_sound.play(loops = -1)
         self.menu_background_sound.stop()
         self.build_background_sound.stop()
