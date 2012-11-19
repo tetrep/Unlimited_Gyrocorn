@@ -90,6 +90,7 @@ class SaveLoad(object):
             print e
 
 ####DO NOT CALL THIS FUNCTION####
+####it returns None just to be safe####
     ## the load game function
     #  @brief loads the game
     #  @param game the game to load to
