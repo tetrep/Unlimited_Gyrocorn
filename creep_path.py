@@ -54,6 +54,14 @@ class CreepPath(object):
         #sys.exit()
         #"""
 
+        """
+        temp = ""
+        temp2 = 0
+        for x2 in range(0, self.game.mapSize[0]):
+            for y2 in range(0, self.game.mapSize[1]):
+                self.game.tiles[x2][y2].creep_value = 999
+        #"""
+
     ## the path_queue function
     #  @brief starting from the source, flow outwards with threads to find the shortest path
     #  @todo optimize

@@ -611,6 +611,9 @@ class Game(object):
         #we're done bulding, we dont want a turrect selected anymore
         self.turretType = -1
 
+        #recalculate path
+        self.cp.find_path()
+
         self.battle_background_sound.play(loops = -1)
         self.menu_background_sound.stop()
         self.build_background_sound.stop()
