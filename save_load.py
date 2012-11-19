@@ -71,7 +71,11 @@ class SaveLoad(object):
     #  @param filename the name of the save files, optional
     def save_game(self, game, filename = "test"):
         #save the players
+        for player in game.players:
+          player.game = None
         self.save_object(filename+"-players.save", game.players)
+        for player in game.players:
+          player.game = game
 
         #save the towers
         self.save_object(filename+"-towers.save", game.turrets)
