@@ -546,17 +546,21 @@ class Game(object):
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------        
 
     def start_game(self,targetLevel=0):
-        #players
-        self.players = [Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI), \
-                        Player(self.imgPlayer, self.imgPlayerAI), Player(self.imgPlayer, self.imgPlayerAI)]
-        self.playerIndex = 0
-        self.player = self.players[self.playerIndex]
-        self.player.activate()
-
         #map
         self.mapSize = [32, 32]
         self.tiles = self.maps[targetLevel]
         self.selectedLevel = targetLevel
+        
+        
+        #players
+        self.players = [Player(self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height)),
+                        Player(self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height)), \
+                        Player(self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height)), 
+                        Player(self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height))]
+        self.playerIndex = 0
+        self.player = self.players[self.playerIndex]
+        self.player.activate()
+
 
         #turrets
         self.turrets = []

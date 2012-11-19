@@ -18,15 +18,15 @@ class SuperClass(object):
         self.max_aborbtion = absorbtion
         self.health = health
         self.max_health = health
-        self.speed = speed
-        self.max_speed = speed
+        self.speed = speed*3
+        self.max_speed = speed*3
         
         #instance of game we are in
         self.game = game
 
         self.timeBurning = -1
         self.timeChilled = -1
-        self.timeShocked = -1
+        self.timeShocked = -1g
         self.timeParalyzed = -1
         self.burningCounter = 0
         self.damage_multiplier = 1
@@ -74,7 +74,8 @@ class SuperClass(object):
         dmg -= self.absorbtion
         dmg *= damageMultiplier * self.damage_multiplier
         #apply damage
-        self.health -= dmg
+        if > 0:
+          self.health -= dmg
         
     def applyBurning(self):
         self.timeBurning = 0

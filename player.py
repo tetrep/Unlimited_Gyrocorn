@@ -9,7 +9,7 @@ from target import *
 class Player(SuperClass):
     #  @param img a reference to a pygame.Surface containing the spritesheet to be used for draw calls.
     #  @param img2 a refence to a pygame.Surface containing the spritesheet to use when the player is not active.
-    def __init__(self, img, img2):
+    def __init__(self, img, img2,pos=(0,0)):
         """initialize player"""
         super(Player, self).__init__()
         self.update_functions = None
@@ -17,8 +17,8 @@ class Player(SuperClass):
         self.img2 = img2
         self.font = pygame.font.Font(None, 32)
         
-        self.x = 0 #position in pixels
-        self.y = 0 #position in pixels
+        self.x = pos[0] #position in pixels
+        self.y = pos[1]-8 #position in pixels
         self.rect = pygame.Rect(self.x, self.y, 24, 32) #collision box
         self.speed = 64.0 #speed in pixels/sec
         self.direction = [0, 0] #-1, 0, or 1 x multiplier for orientation of motion along x and y axes
