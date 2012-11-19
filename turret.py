@@ -120,7 +120,7 @@ class Turret(object):
             if total_distance < min_distance or min_distance == -1:
                 min_distance = total_distance
                 min_creep = creep
-        if min_creep == -1:
+        if min_creep == -1 or min_distance > (self.attack_range + 1) * 500:
             return 0
         else:
             return min_creep
