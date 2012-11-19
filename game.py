@@ -118,6 +118,7 @@ class Game(object):
         self.creep_wins += 1
 
         if(self.creep_wins > self.max_creep_wins):
+            print "YOU LOST HAHAHAHA"
             self.go_to_MainMenu()
         
     def update(self):
@@ -161,7 +162,7 @@ class Game(object):
             pygame.quit()
             sys.exit()
             
-        if self.gameState != 2:
+        if self.gameState == 0:
             self.check_level_over()
 
     def update_view(self):
