@@ -53,6 +53,15 @@ class Game(object):
         self.font = pygame.font.Font(None, 20)
         self.bigfont = pygame.font.Font(None, 32)
         self.imgCreep = pygame.image.load("Art/units/pikeman-red.png").convert()
+        self.imgCreep.set_colorkey( (255, 0, 255) )
+        self.imgCreepArmored = pygame.image.load("Art/units/armored-red.png").convert()
+        self.imgCreepArmored.set_colorkey( (255, 0, 255) )
+        self.imgCreepFire = pygame.image.load("Art/units/mage-red-fire.png").convert()
+        self.imgCreepFire.set_colorkey( (255, 0, 255) )
+        self.imgCreepFrost = pygame.image.load("Art/units/mage-red-frost.png").convert()
+        self.imgCreepFrost.set_colorkey( (255, 0, 255) )
+        self.imgCreepLightning = pygame.image.load("Art/units/mage-red-lightning.png").convert()
+        self.imgCreepLightning.set_colorkey( (255, 0, 255) )
         self.imgPlayer = pygame.image.load("Art/units/sprite-general-gabe.png").convert()
         self.imgPlayer.set_colorkey( (255, 0, 255) )
         self.imgPlayerAI = pygame.image.load("Art/units/sprite-general-gabe2.png").convert()
@@ -407,6 +416,18 @@ class Game(object):
                 self.creeps.append(self.cfactory.make(random.randint(1, 5)))
         else:
             self.creeps.append(Creep(img, x, y, self, ctype))
+
+    def give_xp(self, amt):
+        """give the players amt xp"""
+        for p in self.players:
+            p.xp += amt
+            
+
+    def give_gold(self, amt):
+        """give the players amt gold"""
+        for p in self.players:
+            p.gold += amt
+        
 
     def game_lost(self):
         """returns true if the game has been lost"""
