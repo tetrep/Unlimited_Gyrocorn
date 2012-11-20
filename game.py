@@ -651,6 +651,7 @@ class Game(object):
 #State Machine
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------        
 
+    ## Initializes all variables related to a single game. 
     def start_game(self,targetLevel=0):
         #map
         self.mapSize = [32, 32]
@@ -692,7 +693,8 @@ class Game(object):
         # all draw calls in game-space MUST use zoom and focus. GUI draws don't need to.  
 
         self.turretFactory = TurretFactory()
-        
+
+    ## Sets the gamestate to the in-game state. Everything is updated in this state, but the player cannot buy or upgrade anything. 
     def go_to_Game(self,targetLevel=0):
         #we're done bulding, we dont want a turrect selected anymore
         self.turretType = -1
@@ -710,26 +712,34 @@ class Game(object):
         self.MenuButtons = []
         self.gameState = 0
         
+    ## Activates the equipment buy gui
     def go_to_GUI(self):
         self.gui = GUI_Equipment( self )
         self.gameState = 1
         
+    ## Activates the tower buying gui
     def go_to_TowerBuy(self):
         self.gui = GUI_Tower_Buy( self )
         self.gameState = 1
 
+    ## Activates the tower upgrade gui
     def go_to_TowerUpgrade(self):
         #gui requires a reference to a turret. Created elsewhere.
         self.gameState = 1
 
+    ## Activates the skill selection gui
     def go_to_SkillGUI(self):
         self.gui = GUI_Skill( self, self.playerIndex )
         self.gameState = 1
         
+    ## Sets the gamestate to the build phase and resets certain aspects if coming from certain
+    #  game states. Player can buy and upgrade towers, skills and stats. 
     def go_to_Build(self,targetLevel=0):
-        if self.gameState != 0 and self.gameState != 1 and self.gameState !=2 and self.gameState != 7:  #Not coming back from an ingame state, so reset
+        #Not coming back from an ingame state, so reset
+        if self.gameState != 0 and self.gameState != 1 and self.gameState !=2 and self.gameState != 7:  
             self.start_game(targetLevel)
             
+        #Returning from an in-game state, so resets the buttons and sounds
         if self.gameState == 0 or self.gameState == 3 or self.gameState == 4 or self.gameState == 7:
             self.build_background_sound.play(loops = -1)
             self.battle_background_sound.stop()
@@ -739,28 +749,40 @@ class Game(object):
             
         self.gameState = 2
     
+    ## Sets the gameState to the Main Menu
+    #  Also sets up the background by starting a game (the game does not take player input for
+    #  this game, and automatically spawns enemies)
     def go_to_MainMenu(self):
+    
+        #Sounds for the menu
         self.menu_background_sound.play(loops = -1)
         self.battle_background_sound.stop()
         self.build_background_sound.stop()
         
+        #Creates the 4 buttons
         self.MenuButtons = [] 
         self.MenuButtons.append(Button("Start",32,(25,25),self.imgButton,self.go_to_Build,[]))
         self.MenuButtons.append(Button("Select Level",32,(25,200),self.imgButton,self.go_to_LevelSelect,[]))
         self.MenuButtons.append(Button("Load",32,(25,375),self.imgButton,self.go_to_Load,[]))
         self.MenuButtons.append(Button("Exit Game",32,(25,550),self.imgButton,self.game_exit,[]))
         
+        
+        #Sets up the background
         self.start_game()
         
+        #Controls automatic creep spawning
         self.timeBetweenSpawns = 900
         self.timeToNextSpawn = 800
         
+        #Sets the current view for the screen (screen will only show contents of this rect)
         randSize = random.randint(200,760)
         self.viewSize = pygame.Rect(random.randint(0,768),random.randint(200,768),randSize,randSize).clamp(self.screen.get_rect())
         
+        #Sets the target view for the screen (screen will pan and zoom to this rect)
         randSize = random.randint(200,760)
         self.targetViewSize = pygame.Rect(random.randint(0,768),random.randint(0,768),randSize,randSize).clamp(self.screen.get_rect())
         
+        #Creates towers of random type on the map
         for i in xrange(0,10):
             pos = [random.randint(1,31),random.randint(1,31)]
             if not self.tiles[pos[0]][pos[1]].blocking:
@@ -770,8 +792,12 @@ class Game(object):
         
     ## Sets gameState to the Level Select state, creating the appropriate buttons
     def go_to_LevelSelect(self):
+    
+        #Resets the buttons and adds one that returns to the main menu
         self.MenuButtons = []
         self.MenuButtons.append(Button("Return To Menu",32,(50,50),self.imgButton,self.go_to_MainMenu,[]))
+        
+        #Adds buttons that go to the given levels
         for i in xrange(len(self.maps)):
             self.MenuButtons.append(Button("",32,
             ((i*265)%(self.screen.get_width()-265)+100,(215+(i/2)*265)),
