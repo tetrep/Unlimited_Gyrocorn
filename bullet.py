@@ -34,8 +34,12 @@ class Bullet(object):
 
         
         self.distance = math.sqrt((self.rect.x - self.attack_direction_x)**2 + (self.rect.y - self.attack_direction_y)**2)
+        
+        #checks to make sure it doesn't try to fire at a creep that is inside of it
         if self.distance <= 0:
             self.distance = 1
+            
+        #calculates the direction of the bullet
         self.x_movement = self.speed * (self.rect.x - self.attack_direction_x ) / self.distance
         self.y_movement = self.speed * (self.rect.y - self.attack_direction_y) / self.distance
         
@@ -43,8 +47,6 @@ class Bullet(object):
     #  @param game the instance of the class Game that this Turret resides in
     def update(self, game):
         """update the bullet(per frame)"""
-        #self.distance = math.sqrt((self.rect.x - self.attack_direction_x)**2 + (self.rect.y - self.attack_direction_y)**2)
-        #if self.attack_direction_x != self.rect.x and self.attack_direction_y != self.rect.y:
         self.moving = self.moving + game.deltaT
         if self.moving <= self.attack_range * 1000.0:
             #calculate our next x/y coords

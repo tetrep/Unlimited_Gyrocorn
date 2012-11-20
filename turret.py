@@ -10,7 +10,6 @@ class Turret(object):
     #  @param game the instance of the class Game that this Turret resides in
     #  @param starting_x the x coordinate that marks the middle position of the tower (defaults to 0)
     #  @param starting_y the y coordinate that marks the bottom position of the tower (defaults to 0)
-    #  @todo add basics for turret animation, lock tower placement to tiles
     def __init__(self, game, img, type, attack_speed, starting_x = 0, starting_y = 0):
         self.img = img
         self.rect = self.img.get_rect()
@@ -52,7 +51,6 @@ class Turret(object):
         
     ## the Turret update
     #  @param game the instance of the class Game that this Turret resides in
-    #  @todo add attacking and animation
     def update(self, game):
         """update the turret (per frame)"""
     
@@ -61,15 +59,15 @@ class Turret(object):
             #keeps track of when you fired the bullet
             #self.time_of_last_shot = self.time_of_last_shot + game.deltaT
             self.time_of_last_shot = 0
+            
             #finds a target for the bullets you fire in this frame
             self.target = self.findTarget(game.creeps)
+            
             #actually fires the bullet
             if self.target != 0:
                 center_x = self.rect.x + (self.rect.width / 2)
                 center_y = self.rect.y + (self.rect.height / 2)
                 self.projectiles.append(self.bulletFactory.createBullet(game, self.type, self.attack_area_of_effect, self.attack_damage, self.attack_range, self.target, center_x, center_y))
-            #elif self.time_of_last_shot + self.attack_speed < pygame.time.get_ticks() / 1000.0:   
-            #    self.time_of_last_shot = -1
         else:
             self.time_of_last_shot = self.time_of_last_shot + game.deltaT
         
@@ -98,10 +96,6 @@ class Turret(object):
         #draw to the game screen
         g.screen.blit( temp, pygame.Rect( (int)(self.x * g.zoom) + offset[0], (int)(self.y * g.zoom) + offset[1], \
             (int)(self.rect.width * g.zoom), (int)(self.rect.height * g.zoom) ) )
-        
-        #if self.target != 0:
-        #    if self.target.health > 0:   
-        #        pygame.draw.line( g.screen, (255, 0, 0) , (self.rect.x + (self.rect.width / 2), self.rect.y + (self.rect.height / 2)), (self.target.x, self.target.y), 1)
             
         for bullet in self.projectiles:
             bullet.draw(g)
@@ -109,7 +103,7 @@ class Turret(object):
     
     ## find the target for the bullet is it about to fire
     ## right now this only finds the closest enemy to the turret
-    # @param the list of creeps to search through
+    #  @param the list of creeps to search through
     def findTarget(self, creeps):
         min_distance = -1
         min_creep = -1
@@ -124,21 +118,25 @@ class Turret(object):
             return 0
         else:
             return min_creep
-            
+    
+    ## return the damage upgrade level for this turret
     def getDamageLevel(self):
         return self.damage_level
-        
+    
+    ## return the attack speed upgrade level for this turret    
     def getAttackSpeedLevel(self):
         return self.attack_speed_level
-        
+    
+    ## return the aoe upgrade level for this turret      
     def getAoELevel(self):
         return self.aoe_level
-        
+    
+    ## return the range upgrade level for this turret
     def getRangeLevel(self):
         return self.range_level
     
     
-    
+    ## upgrades the turret's damage
     def upgradeDamage(self):
         if(self.damage_level >= 5):
             return False
@@ -146,7 +144,8 @@ class Turret(object):
             self.damage_level = self.damage_level + 1
             self.attack_damage = self.attack_damage + 10
             return True
-        
+    
+    ## upgrades the turret's attack speed
     def upgradeAttackSpeed(self):
         if(self.attack_speed_level >= 5):
             return False
@@ -154,7 +153,8 @@ class Turret(object):
             self.attack_speed_level = self.attack_speed_level + 1
             self.attack_speed = self.attack_speed - .25
             return True
-        
+    
+    ## upgrades the turret's area of effect    
     def upgradeAoE(self):
         if(self.aoe_level >= 5):
             return False
@@ -162,7 +162,8 @@ class Turret(object):
             self.aoe_level = self.aoe_level + 1
             self.attack_area_of_effect = self.attack_area_of_effect + 5
             return True
-        
+    
+    ## upgrades the turret's range   
     def upgradeRange(self):
         if(self.range_level >= 5):
             return False

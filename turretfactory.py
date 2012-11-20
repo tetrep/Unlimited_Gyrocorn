@@ -3,6 +3,7 @@ import time
 from turret import *
 
 class TurretFactory():
+    ## the TurretFactory constructor
     def __init__(self):
         # load tower images
         self.imgBasicTurret = pygame.image.load("Art/tiles/obj-guardtower.png").convert()
@@ -21,7 +22,12 @@ class TurretFactory():
         self.imgIceTurret.set_colorkey( (255, 0, 255) )
         self.imgLightningTurret = pygame.image.load("Art/tiles/lightningtower.png").convert()
         self.imgLightningTurret.set_colorkey( (255, 0, 255) )
-        
+    
+    ## Creates a Turret based on input type
+    #  @param game the instance of the class Game that this Turret resides in
+    #  @param type the 0-7 value corresponding to a specific type of turret
+    #  @param starting_x the x coordinate of the turret (defaults to 0)
+    #  @param starting_y the y coordinate of the turret (defaults to 0)
     def createTurret(self, game, type, starting_x = 0, starting_y = 0):
         # turret constructor is game, image, type, attack speed, startign x, starting y
     
