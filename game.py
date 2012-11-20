@@ -180,9 +180,8 @@ class Game(object):
         
         #Spawns creeps every time an interval has passed
         if self.timeToNextSpawn >= self.timeBetweenSpawns:
-            self.spawn_creep()
-            self.spawn_creep()
-            self.spawn_creep()
+            for i in xrange(0,5):
+                self.spawn_creep()
             
             #Also sets the target view to one of the creeps
             randSize = random.randint(200,760)
