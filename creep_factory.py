@@ -17,8 +17,8 @@ class CreepFactory(object):
     def make(self, cnum):
         if(len(self.game.tiles.spawns) != 0):
             tempnum = random.randint(0, len(self.game.tiles.spawns)-1)
-            x = self.game.tiles.spawns[tempnum][0]
-            y = self.game.tiles.spawns[tempnum][1]
+            x = self.game.tiles.spawns[tempnum][0]*self.game.tiles.tileSize.width
+            y = self.game.tiles.spawns[tempnum][1]*self.game.tiles.tileSize.height
         else:
             x = random.randint(30, 300)
             y = random.randint(30, 300)
