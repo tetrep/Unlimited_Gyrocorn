@@ -4,7 +4,7 @@ import random
 from bullet import *
 
 class IceBullet(Bullet):
-    ## the Bullet update
+    ## the IceBullet update
     #  @param game the instance of the class Game that this Turret resides in
     def update(self, game):
         """update the bullet(per frame)"""

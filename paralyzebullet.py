@@ -3,7 +3,7 @@ import time
 from bullet import *
 
 class ParalyzeBullet(Bullet):
-    ## the Bullet update
+    ## the ParalyzeBullet update
     #  @param game the instance of the class Game that this Turret resides in
     def update(self, game):
         """update the bullet(per frame)"""

@@ -9,6 +9,7 @@ from icebullet import *
 from lightningbullet import *
 
 class BulletFactory():
+    ## the BulletFactory constructory
     def __init__(self):
         # load bullet images
         self.imgBasicBullet = pygame.image.load("Art/items/itm-glaive.png").convert()
@@ -27,7 +28,16 @@ class BulletFactory():
         self.imgIceBullet.set_colorkey( (255, 0, 255) )
         self.imgLightningBullet = pygame.image.load("Art/items/lightningbullet.png").convert()
         self.imgLightningBullet.set_colorkey( (255, 0, 255) )
-        
+     
+    ## Creates a Bullet based on input type
+    #  @param game the instance of the class Game that this Turret resides in
+    #  @param type the 0-7 value corresponding to a specific type of bullet
+    #  @param area_of_effect the area of effect upgrade bonus for the turret that is shooting the bullet
+    #  @param damage the damage upgrade bonus for the turret that is shooting the bullet
+    #  @param range the range upgrade bonus for the turret that is shooting the bullet
+    #  @param target the enemy that the bullet is shooting towards
+    #  @param starting_x the x coordinate of the turret (defaults to 0)
+    #  @param starting_y the y coordinate of the turret (defaults to 0)     
     def createBullet(self, game, type, area_of_effect, damage, range, target, starting_x = 0, starting_y = 0):
         # bullet constructor is game, image, area of effect, attack damage, range, damage type, target, starting x, starting y
 

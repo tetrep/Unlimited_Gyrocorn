@@ -3,7 +3,7 @@ import time
 from bullet import *
 
 class PiercingBullet(Bullet):        
-    ## the Bullet update
+    ## the PiercingBullet update
     #  @param game the instance of the class Game that this Turret resides in
     def update(self, game):
         """update the bullet(per frame)"""
@@ -24,7 +24,6 @@ class PiercingBullet(Bullet):
             self.dead = True
         
         # deal damage to the creeps it collides with
-        # after colliding with creeps it dies
         for target in game.creeps:
             if self.rect.colliderect(target.rect):
                 if self.attack_area_of_effect == 0:
