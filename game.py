@@ -173,6 +173,97 @@ class Game(object):
             
         if self.gameState == 0:
             self.check_level_over()
+            
+    ## Update function that affects the background for menus
+    def update_menu_background(self):
+        self.timeToNextSpawn += 1
+        
+        #Spawns creeps every time an interval has passed
+        if self.timeToNextSpawn >= self.timeBetweenSpawns:
+            self.spawn_creep()
+            self.spawn_creep()
+            self.spawn_creep()
+            
+            #Also sets the target view to one of the creeps
+            randSize = random.randint(200,760)
+            self.targetViewSize = pygame.Rect(0,0,randSize,randSize)
+            self.targetViewSize.centerx = self.creeps[0].rect.centerx
+            self.targetViewSize.centery = self.creeps[0].rect.centery
+            self.targetViewSize.clamp_ip(self.screen.get_rect())
+        
+            self.timeToNextSpawn = 0
+            
+        #Zooms view on certain area
+        viewSurface = self.screen.subsurface(self.viewSize)
+        viewSurface = pygame.transform.scale(viewSurface,
+        (self.screen.get_width(),self.screen.get_height()))
+        self.screen.blit(viewSurface,(0,0))
+        
+        #update viewSurface to move it towards target
+        xDiff = self.viewSize.left-self.targetViewSize.left
+        yDiff = self.viewSize.top-self.targetViewSize.top
+        
+        #Checks how much farther it has to go, and if it's done, sets a  new target
+        if math.fabs(xDiff) < 1.0 and math.fabs(yDiff) < 1.0:
+            #If there are no creeps, focusses on a random tower
+            if len(self.creeps) == 0:
+                if len(self.turrets) > 0:
+                    selectedTurret = random.randint(0,len(self.turrets)-1)
+                    randSize = random.randint(300,500)
+                    self.targetViewSize = pygame.Rect(0,0,randSize,randSize)
+                    self.targetViewSize.centerx = self.turrets[selectedTurret].rect.centerx
+                    self.targetViewSize.centery = self.turrets[selectedTurret].rect.centery
+                    self.targetViewSize.clamp_ip(self.screen.get_rect())
+                #No creeps, and no turrets
+                else:
+                    randSize = random.randint(500,760)
+                    self.targetViewSize = pygame.Rect(random.randint(0,768),random.randint(0,768),randSize,randSize).clamp(self.screen.get_rect())
+            #Else, focusses on one of the creeps
+            else:
+                selectedCreep = random.randint(0,len(self.creeps)-1)
+                randSize = random.randint(300,500)
+                self.targetViewSize = pygame.Rect(0,0,randSize,randSize)
+                self.targetViewSize.centerx = self.creeps[selectedCreep].rect.centerx
+                self.targetViewSize.centery = self.creeps[selectedCreep].rect.centery
+                self.targetViewSize.clamp_ip(self.screen.get_rect())
+                
+                self.targetCreepView = selectedCreep
+        
+        if xDiff>0:
+            xDiff=1
+        elif xDiff<0:
+            xDiff=-1
+        else:
+            xDiff=0
+        if yDiff>0:
+            yDiff=1
+        elif yDiff<0:
+            yDiff=-1
+        else:
+            yDiff=0
+        
+        self.viewSize.move_ip(-xDiff,-yDiff)
+        
+        #Update the viewSurface to resize to targetSize
+        wDiff = self.viewSize.width-self.targetViewSize.width
+        hDiff = self.viewSize.height-self.targetViewSize.height
+        
+        if wDiff>0:
+            wDiff=1
+        elif wDiff<0:
+            wDiff=-1
+        else:
+            wDiff=0
+        if hDiff>0:
+            hDiff=1
+        elif hDiff<0:
+            hDiff=-1
+        else:
+            hDiff=0
+        
+        self.viewSize.inflate_ip(-wDiff,-hDiff)
+        self.viewSize.clamp_ip(self.screen.get_rect())
+            
 
     def update_view(self):
         """create view and focus variables (draw control) based on the screen size and zoom level."""
@@ -493,9 +584,6 @@ class Game(object):
         self.turrets = sorted(self.turrets, key = lambda turret: turret.y)
         for turret in self.turrets:
             turret.draw( self )
-            
-        for button in self.MenuButtons:
-            button.draw(self.screen)
 
         for bullet in self.bullets:
             bullet.draw( self )
@@ -508,7 +596,6 @@ class Game(object):
                 self.tiles[x][y].draw( self ) #[ [(0,0), (0,1), ...], [(1,0),(1,1),...], ...]
 
     def draw_menu(self):
-        self.screen.fill((0,0,0))
         for button in self.MenuButtons:
             button.draw(self.screen)
             
@@ -621,7 +708,7 @@ class Game(object):
         if self.gameState == 2:     #Returning from the build Phase, just spawn more creeps
             self.spawn_creep()
             
-        self.MenuButtons = [] 
+        self.MenuButtons = []
         self.gameState = 0
         
     def go_to_GUI(self):
@@ -663,6 +750,22 @@ class Game(object):
         self.MenuButtons.append(Button("Select Level",32,(25,200),self.imgButton,self.go_to_LevelSelect,[]))
         self.MenuButtons.append(Button("Load",32,(25,375),self.imgButton,self.go_to_Load,[]))
         self.MenuButtons.append(Button("Exit Game",32,(25,550),self.imgButton,self.game_exit,[]))
+        
+        self.start_game()
+        
+        self.timeBetweenSpawns = 900
+        self.timeToNextSpawn = 800
+        
+        randSize = random.randint(200,760)
+        self.viewSize = pygame.Rect(random.randint(0,768),random.randint(200,768),randSize,randSize).clamp(self.screen.get_rect())
+        
+        randSize = random.randint(200,760)
+        self.targetViewSize = pygame.Rect(random.randint(0,768),random.randint(0,768),randSize,randSize).clamp(self.screen.get_rect())
+        
+        for i in xrange(0,10):
+            pos = [random.randint(1,31),random.randint(1,31)]
+            if not self.tiles[pos[0]][pos[1]].blocking:
+                self.turrets.append( self.turretFactory.createTurret( self, random.randint(0,5), pos[0]*24, pos[1]*24 ) )
         
         self.gameState=3
         
@@ -716,18 +819,28 @@ class Game(object):
             if self.gameState == 0: #standard game
                 self.update()
                 self.draw()
-            elif self.gameState == 1: #In game player menu
+            elif self.gameState == 1: #In game GUI
                 self.gui.update()
                 self.draw()
                 self.gui.draw()
             elif self.gameState == 2: #BuildPhase
                 self.update()
                 self.draw()
+                self.draw_menu()
             elif self.gameState == 3: #Main menu
+                self.update()
+                self.draw()
+                self.update_menu_background()
                 self.draw_menu()
             elif self.gameState == 4: #Level Selection
+                self.update()
+                self.draw()
+                self.update_menu_background()
                 self.draw_menu()
             elif self.gameState == 5: #Load screen (theoretical at this point)
+                self.update()
+                self.draw()
+                self.update_menu_background()
                 self.draw_menu()
             elif self.gameState == 6: #InGame Menu
                 self.draw()
