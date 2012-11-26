@@ -655,9 +655,12 @@ class Game(object):
     def start_game(self,targetLevel=0):
         #map
         self.mapSize = [32, 32]
-        self.tiles = self.maps[targetLevel]
         self.selectedLevel = targetLevel
         
+        #Resets map to original state
+        self.maps[targetLevel] = Terrain(self,self.maps[targetLevel].sourcePath)
+        
+        self.tiles = self.maps[targetLevel]
         
         #players
         self.players = [Player(self, self.imgPlayer, self.imgPlayerAI, (self.tiles.target[0]*self.tiles.tileSize.width,self.tiles.target[1]*self.tiles.tileSize.height)),
@@ -667,7 +670,6 @@ class Game(object):
         self.playerIndex = 0
         self.player = self.players[self.playerIndex]
         self.player.activate()
-
 
         #turrets
         self.turrets = []
