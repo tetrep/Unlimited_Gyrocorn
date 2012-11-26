@@ -136,12 +136,18 @@ class Creep(SuperClass):
         print "====="
         #"""
 
+        #self.print_neighbors()
+
         #find our line
         self.move_vector()
 
     ## the move function
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
+        if self.x_tile_next == self.x_tile and self.y_tile_next == self.y_tile:
+            self.health = -1
+            self.print_neighbors()
+
         #calculate our next x/y coords
         self.x_real += (self.x_move * self.speed) * self.game.deltaT / 1000
         self.y_real += (self.y_move * self.speed) * self.game.deltaT / 1000
