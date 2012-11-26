@@ -32,7 +32,7 @@ class CreepPath(object):
     #  @brief gives all the tiles values, so creeps know where to go, lower is better
     def find_path(self):
 
-        """reset creep_values
+        #"""reset creep_values
         for y2 in range(0, self.game.mapSize[0]):
             for x2 in range(0, self.game.mapSize[1]):
                 self.game.tiles[x2][y2].creep_value = 99
