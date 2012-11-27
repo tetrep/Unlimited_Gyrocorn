@@ -26,12 +26,16 @@ class CreepPath(object):
         t1.daemon = True
         t1.start()
 
+        self.pathed = False
+
     ## the reset path function
     #  @brief resets creep_value of all the tiles
     def reset_path(self):
         for y2 in range(0, self.game.mapSize[0]):
             for x2 in range(0, self.game.mapSize[1]):
                 self.game.tiles[x2][y2].creep_value = 999
+
+        self.pathed = False
 
     ## the find path function
     #  @brief gives all the tiles values, so creeps know where to go, lower is better
@@ -55,6 +59,8 @@ class CreepPath(object):
         self.queue.put((self.source[0], self.source[1], 0))
 
         self.queue.join()
+
+        self.pathed = True
 
         """
         temp = ""

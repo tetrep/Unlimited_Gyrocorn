@@ -15,6 +15,10 @@ class CreepFactory(object):
         self.game = game
         pass
     def make(self, cnum):
+        #find a path for our lovely creeps if we don't have one
+        if self.game.cp.pathed == False:
+            self.game.cp.find_path()
+
         if(len(self.game.tiles.spawns) != 0):
             tempnum = random.randint(0, len(self.game.tiles.spawns)-1)
             x = self.game.tiles.spawns[tempnum][0]*self.game.tiles.tileSize.width
