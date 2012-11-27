@@ -121,7 +121,6 @@ class Game(object):
                 self.tiles[x].append( tempTile )
 
         self.cp = CreepPath(self.tiles.target, 4, self)
-        self.cp.find_path()
 
     def creep_won(self):
         self.creep_wins += 1
@@ -679,7 +678,6 @@ class Game(object):
         self.cfactory = CreepFactory(self.imgCreep, self)
         self.creeps = []
         self.cp = CreepPath(self.tiles.target, 4, self)
-        self.cp.find_path()
         self.level = 1 
 
         #gui
@@ -735,6 +733,7 @@ class Game(object):
     ## Sets the gamestate to the build phase and resets certain aspects if coming from certain
     #  game states. Player can buy and upgrade towers, skills and stats. 
     def go_to_Build(self,targetLevel=0):
+        self.cp.reset_path()
         #Not coming back from an ingame state, so reset
         if self.gameState != 0 and self.gameState != 1 and self.gameState !=2 and self.gameState != 7:  
             self.start_game(targetLevel)
@@ -857,6 +856,12 @@ class Game(object):
                 self.draw()
                 self.update_menu_background()
                 self.draw_menu()
+                """
+                for super_dooper_counter_looper in range(0, 100):
+                    self.cp.reset_path()
+                    self.cp.find_path()
+                sys.exit()
+                #"""
             elif self.gameState == 4: #Level Selection
                 self.update()
                 self.draw()
@@ -884,9 +889,8 @@ def main():
     g.main()
 
 #don't profile:
-#main()
-#profile the game
 main()
+#profile the game
 """
 profile.run('main()','profile results')
 p = pstats.Stats('profile results')

@@ -85,6 +85,8 @@ class Creep(SuperClass):
         self.x_tile_next = self.x_tile
         self.y_tile_next = self.y_tile
 
+        #print '(', self.x_tile, ',', self.y_tile, ')'
+
         #look up [][-1]
         if self.y_tile > 0 and self.game.tiles[self.x_tile][self.y_tile-1].effective_value() <= self.game.tiles[self.x_tile_next][self.y_tile_next].effective_value():
             #print "up"
@@ -145,8 +147,9 @@ class Creep(SuperClass):
     #  @brief handles what happens when the creep can actually move to its desired location
     def move(self):
         if self.x_tile_next == self.x_tile and self.y_tile_next == self.y_tile:
-            self.health = -1
-            self.print_neighbors()
+            return None
+            #self.health = -1
+            #self.print_neighbors()
 
         #calculate our next x/y coords
         self.x_real += (self.x_move * self.speed) * self.game.deltaT / 1000
@@ -181,6 +184,15 @@ class Creep(SuperClass):
         #update our current tile position
         self.x_tile = self.rect.centerx // 24
         self.y_tile = self.rect.centery // 24
+
+        if self.x_tile > 31:
+            self.x_tile = 31
+        if self.y_tile > 31:
+            self.y_tile = 31
+        if self.x_tile < 0:
+            self.x_tile = 0
+        if self.y_tile < 0:
+            self.y_tile = 0
 
         #have we arrived?
         if (self.x_tile, self.y_tile) == self.game.tiles.target:
