@@ -15,6 +15,7 @@ class Terrain(object):
         self.engine = engine
                 
         self.tiles = [] # The terrain itself, a 2D collection of tiles
+        self.sourcePath = source
         
         terrainSource = open(source)
         lines = terrainSource.readlines()
