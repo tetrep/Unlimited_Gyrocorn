@@ -62,7 +62,8 @@ class SuperClass(object):
 
     def take_damage(self, dmg, dtype = 1):
         """applies modifiers to damage, then takes it"""
-        self.game.enemy_hit_sound.play()
+        if self.game.gameState != 3:
+            self.game.enemy_hit_sound.play()
         
         #DR% = 1 - (100 / x). 
         damageMultiplier = 100.0 / float(self.defense)
