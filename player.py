@@ -258,7 +258,7 @@ class Player(SuperClass):
                 self.mana[0] -= float(skill.skillCost) * g.deltaT / 1000.0
 
         #AI
-        if self.active == False and self.attackTimer >= self.attackSpeedMultiplier:
+        if self.active == False and self.attackTimer >= self.attackDelay:
             self.do_ai()
         
         #collision detection
