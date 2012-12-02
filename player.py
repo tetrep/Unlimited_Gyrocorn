@@ -337,10 +337,10 @@ class Player(SuperClass):
             return #don't draw them if they died.
         
         #make a temporary surface to perform transformations on. (DO NOT TRANSFORM the img reference!)
-        temp = pygame.Surface( (24, 32) ).convert()
+        temp = pygame.Surface( (24, 32), pygame.SRCALPHA, 32 ).convert() #use srcalpha for overlay compliance
         #transparency
-        temp.fill( (255, 255, 0) )
-        temp.set_colorkey( (255, 255, 0) )
+        temp.fill( (255, 0, 255) )
+        temp.set_colorkey( (255, 0, 255) )
         if self.active == True:
             temp.blit(self.img, pygame.Rect(0, 0, 24, 32), pygame.Rect(25 * self.frameDirection, 33 * self.frame, 24, 32) )
         else:
@@ -349,6 +349,14 @@ class Player(SuperClass):
         pos = g.convertGamePixelsToZoomCoorinates( (self.x, self.y) )
         #zoom logic
         temp = pygame.transform.scale(temp, ( (int)(temp.get_width() * g.zoom), (int)(temp.get_height() * g.zoom) ) )
+
+        #overlays for burning, chilled, shocked
+        if self.timeBurning != -1:
+            temp.fill( (255, 0, 0), special_flags = pygame.BLEND_ADD)
+        if self.timeChilled != -1:
+            temp.fill( (0, 0, 255), special_flags = pygame.BLEND_ADD)
+        if self.timeShocked != -1:
+            temp.fill( (128, 0, 128), special_flags = pygame.BLEND_ADD)
         
         g.screen.blit(temp, pygame.Rect( pos[0], pos[1], (int)(24 * g.zoom), (int)(32 * g.zoom) ) )
         #screen.blit(self.img, pygame.Rect(self.x, self.y, 24, 32), pygame.Rect(25 * self.frameDirection, 33 * self.frame, 24, 32) )

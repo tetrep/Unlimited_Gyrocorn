@@ -55,8 +55,6 @@ class Game(object):
         """pre-load all graphics and sound"""
         self.font = pygame.font.Font(None, 20)
         self.bigfont = pygame.font.Font(None, 32)
-        self.font = pygame.font.Font(None, 20)
-        self.bigfont = pygame.font.Font(None, 32)
         self.imgCreep = pygame.image.load("Art/units/pikeman-red.png").convert()
         self.imgCreep.set_colorkey( (255, 0, 255) )
         self.imgCreepArmored = pygame.image.load("Art/units/armored-red.png").convert()
@@ -603,6 +601,8 @@ class Game(object):
         self.screen.blit( self.font.render( str(self.player.exp), 0, (255, 255, 255) ), pygame.Rect(24, 24, 256, 24) )
         #gold
         self.screen.blit( self.font.render( str(self.player.gold), 0, (255, 255, 255) ), pygame.Rect(24, 48, 256, 24) )
+        #round
+        self.screen.blit( self.bigfont.render( str(self.level), 0, (255, 255, 255) ), pygame.Rect(24, 72, 256, 32) )
         
         #party faces
         #HP/MP bars

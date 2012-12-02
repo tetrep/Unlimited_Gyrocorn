@@ -209,11 +209,20 @@ class Creep(SuperClass):
         #blit it!
         #zoom logic
         pos = self.game.convertGamePixelsToZoomCoorinates( (self.rect.x, self.rect.y) )
-        temp = pygame.Surface( ( 24, 32 ) )
+        temp = pygame.Surface( ( 24, 32 ), pygame.SRCALPHA, 32 ).convert() #use srcalpha for overlay compliance
         temp.fill( (255, 0, 255) )
         temp.set_colorkey( (255, 0, 255) )
         temp.blit( self.img, pygame.Rect(0, 0, 24, 32), pygame.Rect(0, 0, 24, 32) )
         temp = pygame.transform.scale(temp, ( (int)(temp.get_width() * self.game.zoom), (int)(temp.get_height() * self.game.zoom) ) )
+
+        #overlays for burning, chilled, shocked
+        if self.timeBurning != -1:
+            temp.fill( (255, 0, 0), special_flags = pygame.BLEND_ADD)
+        if self.timeChilled != -1:
+            temp.fill( (0, 0, 255), special_flags = pygame.BLEND_ADD)
+        if self.timeShocked != -1:
+            temp.fill( (128, 0, 128), special_flags = pygame.BLEND_ADD)
+            
         self.game.screen.blit(temp, pygame.Rect( pos[0], pos[1], int(self.rect.width * self.game.zoom), int(self.rect.height * self.game.zoom) ) )
 
     ## the attack function
