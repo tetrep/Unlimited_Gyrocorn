@@ -250,9 +250,18 @@ class Player(SuperClass):
         for skill in self.skill:
             if skill.skillKey == 0 and skill.active == True: #aura is on
                 #damage all creeps in AoE
+                r = 4 * 24 #the radius of the AoE, in pixels at zoom = 1.
                 for creep in g.creeps:
-                    if ( (creep.rect.centerx - self.rect.centerx) ** 2 + (creep.rect.centery - self.rect.centery) ** 2 ) ** 0.5 < 4 * 24:
-                        creep.take_damage( self.attack * g.deltaT / 1000.0 ) #THIS SHOULD IGNORE ABSORBTION?
+                    if ( (creep.rect.centerx - self.rect.centerx) ** 2 + (creep.rect.centery - self.rect.centery) ** 2 ) ** 0.5 < r:
+                        creep.take_damage( self.attack * 0.1 * g.deltaT / 1000.0, 2 ) #THIS SHOULD IGNORE ABSORBTION
+                        #apply debuffs, based on type
+                        if skill.skillAttr == 0:   #fire
+                            creep.applyBurning()
+                        elif skill.skillAttr == 1: #frost
+                            creep.applyChilled()
+                        elif skill.skillAttr == 2: #lightning
+                            creep.applyShocked()
+                        
                 #buff all players in AoE
                 #take mana
                 self.mana[0] -= float(skill.skillCost) * g.deltaT / 1000.0
