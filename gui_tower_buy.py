@@ -33,7 +33,7 @@ class GUI_Tower_Buy(object):
         temp.text = [["X"]]
         self.objects.append( temp )
 
-        for i in range(0, 7):
+        for i in range(0, 8):
             y += 24
             temp = GUIObject(x, y, 256, 24, self.buy_action, [i, self.get_cost(i)])
             temp.text = [ [self.get_name(i), " g: ", self.get_cost(i)] ]

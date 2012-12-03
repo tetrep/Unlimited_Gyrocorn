@@ -599,17 +599,22 @@ class Game(object):
     def draw_HUD(self):
         """Draws the HUD"""
         #xp
-        self.screen.blit( self.font.render( str(self.player.exp), 0, (255, 255, 255) ), pygame.Rect(24, 24, 256, 24) )
+        self.screen.blit( self.font.render( "xp: " + str(self.player.exp), 0, (255, 255, 255) ), pygame.Rect(24, 56, 256, 24) )
         #gold
-        self.screen.blit( self.font.render( str(self.player.gold), 0, (255, 255, 255) ), pygame.Rect(24, 48, 256, 24) )
+        self.screen.blit( self.font.render( "g : " + str(self.player.gold), 0, (255, 255, 255) ), pygame.Rect(24, 80, 256, 24) )
         #round
-        self.screen.blit( self.bigfont.render( str(self.level), 0, (255, 255, 255) ), pygame.Rect(24, 72, 256, 32) )
-        
+        self.screen.blit( self.bigfont.render( "ROUND " + str(self.level), 0, (192, 0, 0) ), pygame.Rect(24, 24, 256, 32) )
+
+        #i was going to do all this, but got lazy.
         #party faces
         #HP/MP bars
-
         #Active player: HP/MP bars
+        
         #skills
+        #gray if not enough mana.
+        #symbol for aura, breath, projectile.
+        #highlight selected skill
+        #mouse wheel to change selection
         
         
         #HP bars under players
