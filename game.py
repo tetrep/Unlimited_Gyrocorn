@@ -476,10 +476,11 @@ class Game(object):
                                 self.gui = GUI_Tower_Upgrade( self, t )
                                 self.go_to_TowerUpgrade()
                         
-                        #if there's no turret here, and it is affordable, place one. (in build mode)
-                        if self.turretType != -1 and self.players[self.playerIndex].gold >= self.turretCost:
-                            self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
-                            self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
+                        #if there's no turret here, and this tile isn't blocked, and it is affordable, place one. (in build mode)
+                        if self.turretType != -1 and self.tiles[pos[0] / 24][pos[1] / 24].blocking == False:
+                            if self.players[self.playerIndex].gold >= self.turretCost:
+                                self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
+                                self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
                         
 
 

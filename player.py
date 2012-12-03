@@ -147,11 +147,11 @@ class Player(SuperClass):
         if self.skill[i].skillKey == 0: #Aura
             #turn the aura on/off
             if self.skill[i].active == False:
-                print("aura on")
+                #print("aura on")
                 self.skill[i].active = True
             else:
                 self.skill[i].active = False
-                print("aura off")
+                #print("aura off")
         
         elif self.skill[i].skillKey == 1: #Missile
             if self.mana[0] > self.skill[i].skillCost:
@@ -163,7 +163,7 @@ class Player(SuperClass):
                 #bullet types: fire 5, ice 6, lightning 7
                 #skill types: fire 0, ice 1, lightning 2
                 g.bullets.append(self.bulletFactory.createBullet(g, self.skill[i].skillAttr + 5, 0, self.attack, 1024, target, center_x, center_y))
-                print("missile")
+                #print("missile")
 
         elif self.skill[i].skillKey == 2: #Breath
             #for each creep in the AoE cone, do damage.
@@ -182,7 +182,14 @@ class Player(SuperClass):
                         #and the distance to the creep is below the skill's range
                         if ( (creep.rect.centerx - self.rect.centerx) ** 2 + (creep.rect.centery - self.rect.centery) ** 2 ) ** 0.5 < 4 * 24:
                             creep.take_damage( self.attack )
-                            print("breath")
+                            #print("breath")
+                            #apply debuffs, based on type
+                            if self.skill[i].skillAttr == 0:   #fire
+                                creep.applyBurning()
+                            elif self.skill[i].skillAttr == 1: #frost
+                                creep.applyChilled()
+                            elif self.skill[i].skillAttr == 2: #lightning
+                                creep.applyShocked()
 
     def do_ai(self):
         """perform AI actions"""
