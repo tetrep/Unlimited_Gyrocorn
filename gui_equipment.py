@@ -135,9 +135,12 @@ class GUI_Equipment(object):
                 temp.text = [ ["LOCKED", ], \
                     [ self.g.players[self.PID].equipment[0].slot[0].decode_mod( g.players[self.PID].equipment[i].slot[j].modCode ), \
                     "  lv. ", g.players[self.PID].equipment[i].slot[j].modTier, "  xp: ",\
-                    self.g.players[self.PID].equipment[0].slot[0].get_price( g.players[self.PID].equipment[i].slot[j].modCode, g.players[self.PID].equipment[i].slot[j].modTier + 1)] ]
-                if g.players[self.PID].equipment[i].slot[j].locked == False:
+                    self.g.players[self.PID].equipment[0].slot[0].get_price( g.players[self.PID].equipment[i].slot[j].modCode, g.players[self.PID].equipment[i].slot[j].modTier + 1)], \
+                    [ self.g.players[self.PID].equipment[0].slot[0].decode_mod( g.players[self.PID].equipment[i].slot[j].modCode ), "  MAX" ]]
+                if g.players[self.PID].equipment[i].slot[j].locked == False: #display stats if the equipment is unlocked
                     temp.textIndex = 1
+                if g.players[self.PID].equipment[i].slot[j].modTier == 4: #display max message if maxed
+                    temp.textIndex = 2
                 self.objects.append( temp )
                 y += 24
         #sub menu objects
