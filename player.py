@@ -47,6 +47,7 @@ class Player(SuperClass):
         self.defense = 100      #total defense (cap: 1,600)(ABS CAP: 10,000)
         self.absorbtion = 0     #damage absorbtion: applied 50% before and 50% after defense
         self.regen = 0.00       #life regen (HP / sec)
+        self.manaRegen = 5.00   #mana regen (mana / sec)
         self.lifeLeech = 0.00   #% damage stolen as life per hit
         self.crit = 0.00        #% chance of scoring a critical hit
         self.attackSpeedMultiplier = 1.0
@@ -124,6 +125,11 @@ class Player(SuperClass):
         """give AI control over this unit"""
         self.active = False
 
+    def refill(self):
+        """at the end of a round, revive the player, and give them full mana"""
+        self.deadt = self.reviveTime
+        self.mana[0] = self.mana[1]
+
     def use_skill(self, g, i, x, y):
         """uses the player's ith skill"""
         # @ param g a reference to the game engine
@@ -197,11 +203,15 @@ class Player(SuperClass):
         for i in range(0, self.skill.__len__() ):
             #1: if the player has less than 10% mana, deactivate all auras
             #   else, activate all auras
-            if self.skill[i].skillKey == 0: #Aura
-                if self.mana[0] < 0.1 * self.mana[1]:
+            if self.skill[i].skillKey == -1: #uninitialized skill handler
+                pass
+            elif self.skill[i].skillKey == 0: #Aura
+                if self.mana[0] < 0.1 * self.mana[1]: #deactivate when low on mana
                     self.skill[i].active = False
-                else:
+                elif self.mana[0] > 0.5 * self.mana[1]: #reactivate when high on mana
                     self.skill[i].active = True
+                if self.g.state == 2: #if in build mode, deactivate all auras
+                    self.skill[i].active = False
             else: #non-aura
                 #aim it at the nearest creep
                 mindist = 9999
@@ -242,7 +252,7 @@ class Player(SuperClass):
             self.hp[0] += self.regen * g.deltaT / 1000.0
             if self.hp[0] > self.hp[1]:
                 self.hp[0] = self.hp[1]
-            self.mana[0] += g.deltaT / 1000.0
+            self.mana[0] += self.manaRegen * g.deltaT / 1000.0
             if self.mana[0] > self.mana[1]:
                 self.mana[0] = self.mana[1]
             self.attackTimer += self.attackSpeedMultiplier * g.deltaT / 1000.0
@@ -256,6 +266,8 @@ class Player(SuperClass):
         #AURA
         for skill in self.skill:
             if skill.skillKey == 0 and skill.active == True: #aura is on
+                #take mana
+                self.mana[0] -= float(skill.skillCost) * g.deltaT / 1000.0
                 #damage all creeps in AoE
                 r = 4 * 24 #the radius of the AoE, in pixels at zoom = 1.
                 for creep in g.creeps:
@@ -270,8 +282,6 @@ class Player(SuperClass):
                             creep.applyShocked()
                         
                 #buff all players in AoE
-                #take mana
-                self.mana[0] -= float(skill.skillCost) * g.deltaT / 1000.0
 
         #AI
         if self.active == False and self.attackTimer >= self.attackDelay:

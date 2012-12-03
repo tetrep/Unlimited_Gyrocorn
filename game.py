@@ -612,7 +612,7 @@ class Game(object):
         #skills
         
         
-        #HP bars over players
+        #HP bars under players
         for p in self.players:
             barbg = pygame.Surface( (int(26 * self.zoom), 8) ).convert()
             barbg.fill( (0, 0, 0) )
@@ -623,6 +623,18 @@ class Game(object):
             self.screen.blit( barbg, pygame.Rect( pos[0] - 1,     pos[1] + 32 * self.zoom,     barbg.get_width(), barbg.get_height() ) )
             self.screen.blit( barfg, pygame.Rect( pos[0] - 1 + 1, pos[1] + 32 * self.zoom + 1, barfg.get_width(), barfg.get_height() ) )
 
+        #MP bars under players
+        for p in self.players:
+            barbg = pygame.Surface( (int(26 * self.zoom), 5) ).convert()
+            barbg.fill( (0, 0, 0) )
+            width = [(int( 26 * self.zoom * float( p.mana[0] ) / float( p.mana[1] ) ) - 2), 0]
+            barfg = pygame.Surface( (max( width ), 3) ).convert()
+            barfg.fill( (0, 64, 224) )
+            pos = self.convertGamePixelsToZoomCoorinates( (p.x, p.y) )
+            self.screen.blit( barbg, pygame.Rect( pos[0] - 1,     pos[1] + (32 + 8 - 1) * self.zoom,     barbg.get_width(), barbg.get_height() ) )
+            self.screen.blit( barfg, pygame.Rect( pos[0] - 1 + 1, pos[1] + (32 + 8 - 1) * self.zoom + 1, barfg.get_width(), barfg.get_height() ) )
+
+        #HP bars under creeps
         for creep in self.creeps:
             barbg = pygame.Surface( (int(26 * self.zoom), 6) ).convert()
             barbg.fill( (0, 0, 0) )
@@ -748,6 +760,9 @@ class Game(object):
             self.menu_background_sound.stop()
             self.MenuButtons = []
             self.MenuButtons.append(Button("Start!",32,(self.screen.get_width()-100,self.screen.get_height()-100),None,self.go_to_Game,[]))
+            #also, refill the player's transient stats
+            for p in self.players:
+                p.refill()
             
         self.gameState = 2
     

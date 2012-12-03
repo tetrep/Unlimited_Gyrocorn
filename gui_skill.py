@@ -182,11 +182,11 @@ class GUI_Skill(object):
         # @ param key an int representing the skill type
         # @ param attr an int representing the skill attribute
         if key == 0: #AURA
-            return 1
+            return 5
         elif key == 1: #Missile
-            return 0
+            return 5
         elif key == 2: #Breath
-            return 20
+            return 35
 
 
     #GUI OBJECT FUNCTION DEFINITIONS
