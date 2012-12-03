@@ -4,6 +4,7 @@ from icecreep import *
 from firecreep import *
 from electriccreep import *
 from creep import *
+from creep_stats import *
 
 import random
 
@@ -27,7 +28,37 @@ class CreepFactory(object):
             x = random.randint(30, 300)
             y = random.randint(30, 300)
 
-        ctype = (random.randint(self.game.level//2, self.game.level)+1, random.randint(self.game.level//2, self.game.level)+1, random.randint(self.game.level//2, self.game.level)+1)
+        cStats = CreepStats()
+        cStats.randomize_level(self.game.level//2, self.game.level)
+        #set stats by creep class
+        if cnum == 1: #normal
+            pass #default stats are fine
+        elif cnum == 2: #fire
+            #lower HP
+            cStats.set_health_base(160)
+            cStats.set_health_growth(15)
+        elif cnum == 3: #electric
+            #low HP, high absorbtion
+            cStats.set_health_base(100)
+            cStats.set_health_growth(10)
+            cStats.set_absorbtion_base(75)
+            cStats.set_absorbtion_growth(2)
+        elif cnum == 4: #frost
+            #tanky mages. Get nasty later on?
+            cStats.set_health_base(100)
+            cStats.set_health_growth(60)
+            cStats.set_absorbtion_base(0)
+            cStats.set_absorbtion_growth(1)
+            cStats.set_defense_growth(1)
+        elif cnum == 5: #armored
+            #HIGH defensive stats, all around.
+            cStats.set_health_base(400)
+            cStats.set_health_growth(60)
+            cStats.set_absorbtion_base(50)
+            cStats.set_absorbtion_growth(1)
+            cStats.set_defense_growth(2)
+            
+        ctype = (cStats.get_defense(), cStats.get_absorbtion(), cStats.get_health(), 24)
 
         #print "spawn: (", self.x, ',', self.y, ',', cnum, ')'
         if cnum == 1:

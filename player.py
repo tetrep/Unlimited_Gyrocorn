@@ -57,6 +57,7 @@ class Player(SuperClass):
         self.buffs = []
         self.equipment = [Equipment(), Equipment(), Equipment(), Equipment()]
         self.skill = [Skill(), Skill(), Skill(), Skill()]
+        self.skillIndex = 0     #[0 - 3]. Designates which of the 4 skills are selected.
 
         #animation variables
         self.frame = 0          #current frame in animation
@@ -210,7 +211,7 @@ class Player(SuperClass):
                     self.skill[i].active = False
                 elif self.mana[0] > 0.5 * self.mana[1]: #reactivate when high on mana
                     self.skill[i].active = True
-                if self.g.state == 2: #if in build mode, deactivate all auras
+                if self.game.gameState == 2: #if in build mode, deactivate all auras
                     self.skill[i].active = False
             else: #non-aura
                 #aim it at the nearest creep

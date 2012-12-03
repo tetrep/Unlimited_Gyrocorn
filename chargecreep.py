@@ -6,7 +6,7 @@ import random
 class ChargeCreep(Creep):
     def __init__(self, img, x, y, game, ctype):
         #intitialize inherited stats
-        super(ChargeCreep, self).__init__(img, x, y, game, (ctype[0]*12.5, ctype[1]*1.2, ctype[2]*3.5, 48))
+        super(ChargeCreep, self).__init__(img, x, y, game, (ctype[0], ctype[1], ctype[2], 48))
 
         #we want to charge in liens
         self.update_functions.append((11, self.charge))

@@ -612,6 +612,7 @@ class Game(object):
         
         #skills
         #gray if not enough mana.
+        #exception: auras: gray if off
         #symbol for aura, breath, projectile.
         #highlight selected skill
         #mouse wheel to change selection
