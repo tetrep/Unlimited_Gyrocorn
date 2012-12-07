@@ -7,7 +7,7 @@ import random
 class ElectricCreep(Creep):
     def __init__(self, img, x, y, game, ctype):
         #intitialize inherited stats
-        super(ElectricCreep, self).__init__(img, x, y, game, (ctype[0]*5, ctype[1]*1.5, ctype[2]*5, 40))
+        super(ElectricCreep, self).__init__(img, x, y, game, (ctype[0], ctype[1], ctype[2], 40))
 
         #use an electric weapon
         self.weapon = ElectricWeapon(game)

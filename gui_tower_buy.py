@@ -33,7 +33,7 @@ class GUI_Tower_Buy(object):
         temp.text = [["X"]]
         self.objects.append( temp )
 
-        for i in range(0, 7):
+        for i in range(0, 8):
             y += 24
             temp = GUIObject(x, y, 256, 24, self.buy_action, [i, self.get_cost(i)])
             temp.text = [ [self.get_name(i), " g: ", self.get_cost(i)] ]
@@ -43,9 +43,9 @@ class GUI_Tower_Buy(object):
         """get the cost of the tower"""
         # @ param i the turret's type (enumerated int)
         if i == 0:   # basic
-            return 100
+            return 10
         elif i == 1: # sniper
-            return 200
+            return 100
         elif i == 2: # piercing
             return 300
         elif i == 3: # mortar

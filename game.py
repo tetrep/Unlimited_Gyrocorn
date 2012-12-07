@@ -55,8 +55,6 @@ class Game(object):
         """pre-load all graphics and sound"""
         self.font = pygame.font.Font("freesansbold.ttf", 20)
         self.bigfont = pygame.font.Font("freesansbold.ttf", 32)
-        self.font = pygame.font.Font("freesansbold.ttf", 20)
-        self.bigfont = pygame.font.Font("freesansbold.ttf", 32)
         self.imgCreep = pygame.image.load("Art/units/pikeman-red.png").convert()
         self.imgCreep.set_colorkey( (255, 0, 255) )
         self.imgCreepArmored = pygame.image.load("Art/units/armored-red.png").convert()
@@ -478,10 +476,11 @@ class Game(object):
                                 self.gui = GUI_Tower_Upgrade( self, t )
                                 self.go_to_TowerUpgrade()
                         
-                        #if there's no turret here, and it is affordable, place one. (in build mode)
-                        if self.turretType != -1 and self.players[self.playerIndex].gold >= self.turretCost:
-                            self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
-                            self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
+                        #if there's no turret here, and this tile isn't blocked, and it is affordable, place one. (in build mode)
+                        if self.turretType != -1 and self.tiles[pos[0] / 24][pos[1] / 24].blocking == False:
+                            if self.players[self.playerIndex].gold >= self.turretCost:
+                                self.turrets.append( self.turretFactory.createTurret( self, self.turretType, pos[0], pos[1] ) )
+                                self.players[self.playerIndex].gold -= self.turretCost #TODO: make sure it places turret before taking cash!
                         
 
 
@@ -600,18 +599,26 @@ class Game(object):
     def draw_HUD(self):
         """Draws the HUD"""
         #xp
-        self.screen.blit( self.font.render( str(self.player.exp), 0, (255, 255, 255) ), pygame.Rect(24, 24, 256, 24) )
+        self.screen.blit( self.font.render( "xp: " + str(self.player.exp), 0, (255, 255, 255) ), pygame.Rect(24, 56, 256, 24) )
         #gold
-        self.screen.blit( self.font.render( str(self.player.gold), 0, (255, 255, 255) ), pygame.Rect(24, 48, 256, 24) )
-        
+        self.screen.blit( self.font.render( "g : " + str(self.player.gold), 0, (255, 255, 255) ), pygame.Rect(24, 80, 256, 24) )
+        #round
+        self.screen.blit( self.bigfont.render( "ROUND " + str(self.level), 0, (192, 0, 0) ), pygame.Rect(24, 24, 256, 32) )
+
+        #i was going to do all this, but got lazy.
         #party faces
         #HP/MP bars
-
         #Active player: HP/MP bars
+        
         #skills
+        #gray if not enough mana.
+        #exception: auras: gray if off
+        #symbol for aura, breath, projectile.
+        #highlight selected skill
+        #mouse wheel to change selection
         
         
-        #HP bars over players
+        #HP bars under players
         for p in self.players:
             barbg = pygame.Surface( (int(26 * self.zoom), 8) ).convert()
             barbg.fill( (0, 0, 0) )
@@ -622,6 +629,18 @@ class Game(object):
             self.screen.blit( barbg, pygame.Rect( pos[0] - 1,     pos[1] + 32 * self.zoom,     barbg.get_width(), barbg.get_height() ) )
             self.screen.blit( barfg, pygame.Rect( pos[0] - 1 + 1, pos[1] + 32 * self.zoom + 1, barfg.get_width(), barfg.get_height() ) )
 
+        #MP bars under players
+        for p in self.players:
+            barbg = pygame.Surface( (int(26 * self.zoom), 5) ).convert()
+            barbg.fill( (0, 0, 0) )
+            width = [(int( 26 * self.zoom * float( p.mana[0] ) / float( p.mana[1] ) ) - 2), 0]
+            barfg = pygame.Surface( (max( width ), 3) ).convert()
+            barfg.fill( (0, 64, 224) )
+            pos = self.convertGamePixelsToZoomCoorinates( (p.x, p.y) )
+            self.screen.blit( barbg, pygame.Rect( pos[0] - 1,     pos[1] + (32 + 8 - 1) * self.zoom,     barbg.get_width(), barbg.get_height() ) )
+            self.screen.blit( barfg, pygame.Rect( pos[0] - 1 + 1, pos[1] + (32 + 8 - 1) * self.zoom + 1, barfg.get_width(), barfg.get_height() ) )
+
+        #HP bars under creeps
         for creep in self.creeps:
             barbg = pygame.Surface( (int(26 * self.zoom), 6) ).convert()
             barbg.fill( (0, 0, 0) )
@@ -747,6 +766,9 @@ class Game(object):
             self.menu_background_sound.stop()
             self.MenuButtons = []
             self.MenuButtons.append(Button("Start!",32,(self.screen.get_width()-100,self.screen.get_height()-100),None,self.go_to_Game,[]))
+            #also, refill the player's transient stats
+            for p in self.players:
+                p.refill()
             
         self.gameState = 2
     

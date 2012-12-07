@@ -47,6 +47,7 @@ class Player(SuperClass):
         self.defense = 100      #total defense (cap: 1,600)(ABS CAP: 10,000)
         self.absorbtion = 0     #damage absorbtion: applied 50% before and 50% after defense
         self.regen = 0.00       #life regen (HP / sec)
+        self.manaRegen = 5.00   #mana regen (mana / sec)
         self.lifeLeech = 0.00   #% damage stolen as life per hit
         self.crit = 0.00        #% chance of scoring a critical hit
         self.attackSpeedMultiplier = 1.0
@@ -56,6 +57,7 @@ class Player(SuperClass):
         self.buffs = []
         self.equipment = [Equipment(), Equipment(), Equipment(), Equipment()]
         self.skill = [Skill(), Skill(), Skill(), Skill()]
+        self.skillIndex = 0     #[0 - 3]. Designates which of the 4 skills are selected.
 
         #animation variables
         self.frame = 0          #current frame in animation
@@ -124,6 +126,11 @@ class Player(SuperClass):
         """give AI control over this unit"""
         self.active = False
 
+    def refill(self):
+        """at the end of a round, revive the player, and give them full mana"""
+        self.deadt = self.reviveTime
+        self.mana[0] = self.mana[1]
+
     def use_skill(self, g, i, x, y):
         """uses the player's ith skill"""
         # @ param g a reference to the game engine
@@ -147,11 +154,11 @@ class Player(SuperClass):
         if self.skill[i].skillKey == 0: #Aura
             #turn the aura on/off
             if self.skill[i].active == False:
-                print("aura on")
+                #print("aura on")
                 self.skill[i].active = True
             else:
                 self.skill[i].active = False
-                print("aura off")
+                #print("aura off")
         
         elif self.skill[i].skillKey == 1: #Missile
             if self.mana[0] > self.skill[i].skillCost:
@@ -163,7 +170,7 @@ class Player(SuperClass):
                 #bullet types: fire 5, ice 6, lightning 7
                 #skill types: fire 0, ice 1, lightning 2
                 g.bullets.append(self.bulletFactory.createBullet(g, self.skill[i].skillAttr + 5, 0, self.attack, 1024, target, center_x, center_y))
-                print("missile")
+                #print("missile")
 
         elif self.skill[i].skillKey == 2: #Breath
             #for each creep in the AoE cone, do damage.
@@ -182,7 +189,14 @@ class Player(SuperClass):
                         #and the distance to the creep is below the skill's range
                         if ( (creep.rect.centerx - self.rect.centerx) ** 2 + (creep.rect.centery - self.rect.centery) ** 2 ) ** 0.5 < 4 * 24:
                             creep.take_damage( self.attack )
-                            print("breath")
+                            #print("breath")
+                            #apply debuffs, based on type
+                            if self.skill[i].skillAttr == 0:   #fire
+                                creep.applyBurning()
+                            elif self.skill[i].skillAttr == 1: #frost
+                                creep.applyChilled()
+                            elif self.skill[i].skillAttr == 2: #lightning
+                                creep.applyShocked()
 
     def do_ai(self):
         """perform AI actions"""
@@ -190,11 +204,15 @@ class Player(SuperClass):
         for i in range(0, self.skill.__len__() ):
             #1: if the player has less than 10% mana, deactivate all auras
             #   else, activate all auras
-            if self.skill[i].skillKey == 0: #Aura
-                if self.mana[0] < 0.1 * self.mana[1]:
+            if self.skill[i].skillKey == -1: #uninitialized skill handler
+                pass
+            elif self.skill[i].skillKey == 0: #Aura
+                if self.mana[0] < 0.1 * self.mana[1]: #deactivate when low on mana
                     self.skill[i].active = False
-                else:
+                elif self.mana[0] > 0.5 * self.mana[1]: #reactivate when high on mana
                     self.skill[i].active = True
+                if self.game.gameState == 2: #if in build mode, deactivate all auras
+                    self.skill[i].active = False
             else: #non-aura
                 #aim it at the nearest creep
                 mindist = 9999
@@ -235,7 +253,7 @@ class Player(SuperClass):
             self.hp[0] += self.regen * g.deltaT / 1000.0
             if self.hp[0] > self.hp[1]:
                 self.hp[0] = self.hp[1]
-            self.mana[0] += g.deltaT / 1000.0
+            self.mana[0] += self.manaRegen * g.deltaT / 1000.0
             if self.mana[0] > self.mana[1]:
                 self.mana[0] = self.mana[1]
             self.attackTimer += self.attackSpeedMultiplier * g.deltaT / 1000.0
@@ -249,16 +267,25 @@ class Player(SuperClass):
         #AURA
         for skill in self.skill:
             if skill.skillKey == 0 and skill.active == True: #aura is on
-                #damage all creeps in AoE
-                for creep in g.creeps:
-                    if ( (creep.rect.centerx - self.rect.centerx) ** 2 + (creep.rect.centery - self.rect.centery) ** 2 ) ** 0.5 < 4 * 24:
-                        creep.take_damage( self.attack * g.deltaT / 1000.0 ) #THIS SHOULD IGNORE ABSORBTION?
-                #buff all players in AoE
                 #take mana
                 self.mana[0] -= float(skill.skillCost) * g.deltaT / 1000.0
+                #damage all creeps in AoE
+                r = 4 * 24 #the radius of the AoE, in pixels at zoom = 1.
+                for creep in g.creeps:
+                    if ( (creep.rect.centerx - self.rect.centerx) ** 2 + (creep.rect.centery - self.rect.centery) ** 2 ) ** 0.5 < r:
+                        creep.take_damage( self.attack * 0.1 * g.deltaT / 1000.0, 2 ) #THIS SHOULD IGNORE ABSORBTION
+                        #apply debuffs, based on type
+                        if skill.skillAttr == 0:   #fire
+                            creep.applyBurning()
+                        elif skill.skillAttr == 1: #frost
+                            creep.applyChilled()
+                        elif skill.skillAttr == 2: #lightning
+                            creep.applyShocked()
+                        
+                #buff all players in AoE
 
         #AI
-        if self.active == False and self.attackTimer >= self.attackSpeedMultiplier:
+        if self.active == False and self.attackTimer >= self.attackDelay:
             self.do_ai()
         
         #collision detection
@@ -328,10 +355,10 @@ class Player(SuperClass):
             return #don't draw them if they died.
         
         #make a temporary surface to perform transformations on. (DO NOT TRANSFORM the img reference!)
-        temp = pygame.Surface( (24, 32) ).convert()
+        temp = pygame.Surface( (24, 32), pygame.SRCALPHA, 32 ).convert() #use srcalpha for overlay compliance
         #transparency
-        temp.fill( (255, 255, 0) )
-        temp.set_colorkey( (255, 255, 0) )
+        temp.fill( (255, 0, 255) )
+        temp.set_colorkey( (255, 0, 255) )
         if self.active == True:
             temp.blit(self.img, pygame.Rect(0, 0, 24, 32), pygame.Rect(25 * self.frameDirection, 33 * self.frame, 24, 32) )
         else:
@@ -340,6 +367,14 @@ class Player(SuperClass):
         pos = g.convertGamePixelsToZoomCoorinates( (self.x, self.y) )
         #zoom logic
         temp = pygame.transform.scale(temp, ( (int)(temp.get_width() * g.zoom), (int)(temp.get_height() * g.zoom) ) )
+
+        #overlays for burning, chilled, shocked
+        if self.timeBurning != -1:
+            temp.fill( (255, 0, 0), special_flags = pygame.BLEND_ADD)
+        if self.timeChilled != -1:
+            temp.fill( (0, 0, 255), special_flags = pygame.BLEND_ADD)
+        if self.timeShocked != -1:
+            temp.fill( (128, 0, 128), special_flags = pygame.BLEND_ADD)
         
         g.screen.blit(temp, pygame.Rect( pos[0], pos[1], (int)(24 * g.zoom), (int)(32 * g.zoom) ) )
         #screen.blit(self.img, pygame.Rect(self.x, self.y, 24, 32), pygame.Rect(25 * self.frameDirection, 33 * self.frame, 24, 32) )

@@ -31,7 +31,7 @@ class Bullet(object):
         self.attack_direction_x = target.rect.x + target.rect.width/2
         self.attack_direction_y = target.rect.y + target.rect.height/2
         self.moving = 0
-
+        self.hit_delay = -1
         
         self.distance = math.sqrt((self.rect.x - self.attack_direction_x)**2 + (self.rect.y - self.attack_direction_y)**2)
         
@@ -62,6 +62,8 @@ class Bullet(object):
         else:
             #dies if it has reached its initial destination
             self.dead = True
+        
+        self.img = pygame.transform.rotate(self.img, 90)
         
         # deal damage to the creeps it collides with
         # after colliding with creeps it dies

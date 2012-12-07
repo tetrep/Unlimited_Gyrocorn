@@ -21,10 +21,10 @@ class GUI_Tower_Upgrade(object):
     def generate_GUI_objects(self):
         """builds the GUI"""
         #Turret Name
-        #  Rate Of Fire   lv. 1  xp 100
-        #  Damage         lv. 1  xp 100
-        #  Range          lv. 1  xp 100
-        #  AoE            lv. 1  xp 100
+        #  Rate Of Fire   lv. 1  g 100
+        #  Damage         lv. 1  g 100
+        #  Range          lv. 1  g 100
+        #  AoE            lv. 1  g 100
         
         #generate objects
         g = self.g #enable shorthand
@@ -40,29 +40,41 @@ class GUI_Tower_Upgrade(object):
         #RoF upgrade
         y += 24
         temp = GUIObject(x, y, 256, 24, self.upgrade_rof, [])
-        temp.text = [["Rate of Fire  lv. ", self.turret.getAttackSpeedLevel() , "  xp: ", self.get_cost( self.turret.getAttackSpeedLevel() ) ]]
+        temp.text = [["Rate of Fire  lv. ", self.turret.getAttackSpeedLevel() , "  g: ", self.get_cost( self.turret.getAttackSpeedLevel() ) ], \
+                     ["Rate of Fire  MAX"]]
+        if self.turret.getAttackSpeedLevel() == 5:
+            temp.textIndex = 1
         self.objects.append( temp )
         #Damage upgrade
         y += 24
         temp = GUIObject(x, y, 256, 24, self.upgrade_damage, [])
-        temp.text = [["Damage       lv. ", self.turret.getDamageLevel() , "  xp: ", self.get_cost( self.turret.getDamageLevel() ) ]]
+        temp.text = [["Damage       lv. ", self.turret.getDamageLevel() , "  g: ", self.get_cost( self.turret.getDamageLevel() ) ],\
+                     ["Damage       MAX"]]
+        if self.turret.getDamageLevel() == 5:
+            temp.textIndex = 1
         self.objects.append( temp )
         #range upgrade
         y += 24
         temp = GUIObject(x, y, 256, 24, self.upgrade_range, [])
-        temp.text = [["Range        lv. ", self.turret.getRangeLevel() , "  xp: ", self.get_cost( self.turret.getRangeLevel() ) ]]
+        temp.text = [["Range        lv. ", self.turret.getRangeLevel() , "  g: ", self.get_cost( self.turret.getRangeLevel() ) ],\
+                     ["Range        MAX"]]
+        if self.turret.getRangeLevel() == 5:
+            temp.textIndex = 1
         self.objects.append( temp )
         #AoE upgrade (only generate if applicable)
         if self.turret.type == 3: #mortars only
             y += 24
             temp = GUIObject(x, y, 256, 24, self.upgrade_aoe, [])
-            temp.text = [["AoE          lv. ", self.turret.getAoELevel() , "  xp: ", self.get_cost( self.turret.getAoELevel() ) ]]
+            temp.text = [["AoE          lv. ", self.turret.getAoELevel() , "  g: ", self.get_cost( self.turret.getAoELevel() ) ], \
+                         ["AoE          MAX"]]
+            if self.turret.getAoELevel() == 5:
+                temp.textIndex = 1
             self.objects.append( temp )
 
     def get_cost(self, level):
         """gets the cost of an upgrade"""
         # @ param level the tier of the upgrade
-        if level < 1 or level > 5:
+        if level < 1 or level > 4:
             return 0
         else:
             return level * 100

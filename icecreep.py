@@ -7,7 +7,7 @@ import random
 class IceCreep(Creep):
     def __init__(self, img, x, y, game, ctype):
         #intitialize inherited stats
-        super(IceCreep, self).__init__(img, x, y, game, (ctype[0]*8, ctype[1]*.01, ctype[2]*12.5, 16))
+        super(IceCreep, self).__init__(img, x, y, game, (ctype[0], ctype[1], ctype[2], 16))
 
         #use a ice weapon
         self.weapon = IceWeapon(game)
