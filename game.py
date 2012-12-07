@@ -53,10 +53,10 @@ class Game(object):
         
     def load_assets(self):
         """pre-load all graphics and sound"""
-        self.font = pygame.font.Font(None, 20)
-        self.bigfont = pygame.font.Font(None, 32)
-        self.font = pygame.font.Font(None, 20)
-        self.bigfont = pygame.font.Font(None, 32)
+        self.font = pygame.font.Font("freesansbold.ttf", 20)
+        self.bigfont = pygame.font.Font("freesansbold.ttf", 32)
+        self.font = pygame.font.Font("freesansbold.ttf", 20)
+        self.bigfont = pygame.font.Font("freesansbold.ttf", 32)
         self.imgCreep = pygame.image.load("Art/units/pikeman-red.png").convert()
         self.imgCreep.set_colorkey( (255, 0, 255) )
         self.imgCreepArmored = pygame.image.load("Art/units/armored-red.png").convert()

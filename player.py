@@ -16,7 +16,7 @@ class Player(SuperClass):
         self.update_functions = None
         self.img = img
         self.img2 = img2
-        self.font = pygame.font.Font(None, 32)
+        self.font = pygame.font.Font("freesansbold.ttf", 32)
         
         self.x = pos[0] #position in pixels
         self.y = pos[1]-8 #position in pixels

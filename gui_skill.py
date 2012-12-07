@@ -8,7 +8,7 @@ class GUI_Skill(object):
         super(GUI_Skill, self).__init__()
         self.img = pygame.image.load("Art/GUI.png").convert()
         self.img2 = pygame.image.load("Art/GUI2.png").convert()
-        self.font = pygame.font.Font(None, 20)
+        self.font = pygame.font.Font("freesansbold.ttf", 20)
         
         self.objects = []
         self.g = g #stores a reference to the game engine
